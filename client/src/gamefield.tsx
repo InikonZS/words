@@ -124,6 +124,13 @@ function traceField(letters:Array<Array<ILetter>>){
     }))
 }
 
+function getPoints(word: Array<ILetter>){
+    const result = word.reduce((ac, letter, index)=>{
+        return ac + (index + 1)
+    }, 0);
+    return result;
+}
+
 interface ILetter{
     id: string,
     x: number,
@@ -135,8 +142,14 @@ export default function GameField(){
     const [letters, setLetters] = useState(generateLetters(10, 10));
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
+    const [points, setPoints] = useState(0);
 
-    return <div className="field">
+    return (
+    <div>
+        <div className="score">
+            <div className="points">score: {points}</div>
+    </div>
+    <div className="field">
         {
             letters.map(row=> {
                 return <div className="row">
@@ -161,6 +174,7 @@ export default function GameField(){
                         const word = selected.map(it=> it.letter).join('');
                         if (formattedWords.includes(word)){
                             console.log('correct ', word);
+                            setPoints(last=> last + getPoints(selected));
                             setAnimate(selected);
                             setTimeout(()=>{
                                 setLetters(last=>{
@@ -192,5 +206,7 @@ export default function GameField(){
             })
         }
     </div>
+    </div>
+    )
 }
 
