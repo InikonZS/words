@@ -76,7 +76,7 @@ export class GameLogic{
                 };
             })
             //setPoints(last=> last + getPoints(selected));
-            //!!!selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
+            selected.map(it=>this.letters[it.y][it.x].bonus.forEach(jt=> jt.apply()))
             //setAnimate(selected);
             setTimeout(()=>{
                 this.updateLetters(selected);
