@@ -172,11 +172,24 @@ export default function GameField(){
     const [letters, setLetters] = useState(generateLetters(10, 10));
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
-    const [points, setPoints] = useState(0);
-    const [crystals, setCrystals] = useState(0);
-    const [players, setPlayers] = useState(['player', 'bot']);
+    //const [points, setPoints] = useState(0);
+    //const [crystals, setCrystals] = useState(0);
+    const [players, setPlayers] = useState<Array<IPlayerData>>([
+        {
+            name: 'player',
+            points: 0,
+            crystals: 0,
+            winWord: ''
+        },
+        {
+            name: 'bot',
+            points: 0,
+            crystals: 0,
+            winWord: ''
+        }
+    ]);
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-    const [winWord, setWinWord] = useState('');
+    //const [winWord, setWinWord] = useState('');
 
     useEffect(()=>{
         setLetters(last=>{
@@ -186,7 +199,12 @@ export default function GameField(){
                         {
                             name: 'crystal',
                             apply: ()=>{
-                                setCrystals(last => last + 1);
+                                setPlayers(last=>{
+                                    const current = last[currentPlayerIndex];
+                                    current.crystals += 1;
+                                    return last;
+                                })
+                                //setCrystals(last => last + 1);
                             }
                         }
                     ]
@@ -201,7 +219,13 @@ export default function GameField(){
         const word = selected.map(it=> it.letter).join('');
         if (formattedWords.includes(word)){
             console.log('correct ', word);
-            setPoints(last=> last + getPoints(selected));
+            setPlayers(last=>{
+                const current = last[currentPlayerIndex];
+                current.points += getPoints(selected);
+                current.winWord = selected.map(it=>it.letter).join('');
+                return last;
+            })
+            //setPoints(last=> last + getPoints(selected));
             selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
             setAnimate(selected);
             setTimeout(()=>{
@@ -214,7 +238,12 @@ export default function GameField(){
                                     {
                                         name: 'crystal',
                                         apply: ()=>{
-                                            setCrystals(last => last + 1);
+                                            //setCrystals(last => last + 1);
+                                            setPlayers(last=>{
+                                                const current = last[currentPlayerIndex];
+                                                current.crystals += 1;
+                                                return last;
+                                            })
                                         }
                                     }
                                 );
@@ -241,7 +270,7 @@ export default function GameField(){
     }
 
     useEffect(()=>{
-        if (players[currentPlayerIndex] == 'bot'){
+        if (players[currentPlayerIndex].name == 'bot'){
             const allWords = traceField(letters);
             const linearList: Array<Array<ILetter>> = [];
             allWords.forEach(row=>{
@@ -260,7 +289,12 @@ export default function GameField(){
                 setTimeout(()=>{
                     setSelected(word);
                     setTimeout(()=>{
-                        setWinWord(word.map(it=>it.letter).join(''));
+                        /*setPlayers(last=>{
+                            const current = last[currentPlayerIndex];
+                            current.winWord = word.map(it=>it.letter).join('');
+                            return last;
+                        })*/
+                        //setWinWord(word.map(it=>it.letter).join(''));
                         submitWord(word); 
                         setSelected([]); 
                     }, 3000); 
@@ -271,11 +305,11 @@ export default function GameField(){
 
     return (
     <div>
-        <div className="score">
-            <div className="points">score: {points}</div>
-            <div className="crystals">crystals: {crystals}</div>
-            <div>word: {winWord}</div>
-    </div>
+        <div className="players">
+            {players.map(player=>{
+                return <Player playerData={player}></Player>
+            })}
+        </div>
     <div className="field">
         {
             letters.map(row=> {
