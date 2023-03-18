@@ -14,6 +14,7 @@ export class GameLogic{
 
     onGameState: (state:IGameState)=>void;
     onCorrectWord: (word: ILetter[])=>void;
+    onSelectLetter: (word: ILetter[])=>void;
 
     constructor(){
         this.letters = generateLetters(10, 10);
@@ -92,6 +93,10 @@ export class GameLogic{
         }
     }
 
+    selectLetter(){
+
+    }
+
     updateLetters(selected: Array<ILetter>){
         const last = this.letters;
         const newLetters = last.map(row=> row.map(item=>{
@@ -140,6 +145,10 @@ export class GameLogic{
         }
     }
 
+    select(word:ILetter[]){
+        this.onSelectLetter(word);
+    }
+
     bot(){
         if (this.players[this.currentPlayerIndex]?.name == 'bot'){
             const allWords = traceField(this.letters);
@@ -160,6 +169,7 @@ export class GameLogic{
                 setTimeout(()=>{
                     //this.onCorrectWord(word);
                     //setSelected(word);
+                    this.onSelectLetter(word);
                     setTimeout(()=>{
                         /*setPlayers(last=>{
                             const current = last[currentPlayerIndex];

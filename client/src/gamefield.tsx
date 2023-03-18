@@ -88,10 +88,14 @@ export default function GameField(){
             if (message.type == 'correctWord'){
                 const word = message.data;
                 setAnimate(word);
+                setSelected([]);
                 setTimeout(()=>{
                     setAnimate([]);
                 }, 1000);
-            }   
+            }
+            if (message.type == 'selectLetter'){
+                setSelected(message.data);
+            } 
         }
         
         return ()=>{
@@ -212,18 +216,34 @@ export default function GameField(){
                         console.log(list);
                         //const all = traceField(letters);
                         //console.log(all);
-                        setSelected([letter]);
+                        //setSelected([letter]);
+                        socket.sendState({
+                            type: 'selectLetter',
+                            data: [letter]
+                        })
                     }}
                     onMouseMove={()=>{
                         if (selected.length && !selected.find(it=>it.id == letter.id) && isClosest(selected[selected.length-1].x, selected[selected.length-1].y, letter.x, letter.y)){
-                            setSelected(last=> [...last, letter])
+                            //setSelected(last=> [...last, letter])
+                            socket.sendState({
+                                type: 'selectLetter',
+                                data: [...selected, letter]
+                            })
                         } else if(selected.length>1 && selected[selected.length-2].id == letter.id) {
-                            setSelected(last=> [...last.slice(0, last.length-1)])
+                            //setSelected(last=> [...last.slice(0, last.length-1)])
+                            socket.sendState({
+                                type: 'selectLetter',
+                                data: [...selected.slice(0, selected.length-1)]
+                            })
                         }
                     }}
                     onMouseUp = {()=>{
                         submitWord(selected);
-                        setSelected([]); 
+                        socket.sendState({
+                            type: 'selectLetter',
+                            data: []
+                        })
+                        //setSelected([]); 
                     }}>
                         {letter.bonus.find(it=>it.name == 'crystal') && <div className="crystal"></div>}
                         {letter.letter}

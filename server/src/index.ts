@@ -45,6 +45,12 @@ gameLogic.onCorrectWord = (state)=>{
     data: state
   })))
 }
+gameLogic.onSelectLetter = (state)=>{
+  connections.forEach(connection => connection.sendUTF(JSON.stringify({
+    type: 'selectLetter',
+    data: state
+  })))
+}
 
 socket.on('request', (request) => {
   const connection = request.accept(undefined, request.origin)
@@ -72,6 +78,14 @@ socket.on('request', (request) => {
 
       if (parsed.type == 'submitWord'){
         gameLogic.submitWord(parsed.data.selected);
+        /*connection.sendUTF(JSON.stringify({
+          type: 'privateMessage',
+          requestId: parsed.requestId,
+          data: gameLogic.getState()
+        }))*/
+      }
+      if (parsed.type == 'selectLetter'){
+        gameLogic.select(parsed.data);
         /*connection.sendUTF(JSON.stringify({
           type: 'privateMessage',
           requestId: parsed.requestId,
