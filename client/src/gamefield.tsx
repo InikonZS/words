@@ -81,9 +81,9 @@ export default function GameField(){
                 const state = message.data;
                 setLetters(state.letters);
                 setPlayers(state.players);
-                if (currentPlayerIndex !== state.currentPlayerIndex){
+                //if (currentPlayerIndex !== state.currentPlayerIndex){
                     setCurrentPlayerIndex(state.currentPlayerIndex);
-                }
+                //}
             }
             if (message.type == 'correctWord'){
                 const word = message.data;
@@ -200,8 +200,8 @@ export default function GameField(){
         
     <div>
         <div className="players">
-            {players.map(player=>{
-                return <Player playerData={player}></Player>
+            {players.map((player, index)=>{
+                return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
             })}
         </div>
     <div className="field">

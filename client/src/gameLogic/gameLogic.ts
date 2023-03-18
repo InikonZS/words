@@ -16,6 +16,8 @@ export class GameLogic{
     onCorrectWord: (word: ILetter[])=>void;
     onSelectLetter: (word: ILetter[])=>void;
 
+    private moveTimer: any = null;
+
     constructor(){
         this.letters = generateLetters(10, 10);
         this.addCrystals();
@@ -58,8 +60,10 @@ export class GameLogic{
     }
 
     submitWord(selected:Array<ILetter>){
+        clearTimeout(this.moveTimer);
+        this.moveTimer = null;
         const word = selected.map(it=> it.letter).join('');
-        if (formattedWords.includes(word)){
+        if (formattedWords.includes(word) || word == ''){
             console.log('correct ', word);
             this.onCorrectWord(selected);
             /*setPlayers(last=>{
@@ -182,6 +186,10 @@ export class GameLogic{
                     }, 3000); 
                 }, 1000);  
             }
+        } else {
+            this.moveTimer = setTimeout(()=>{
+                this.submitWord([]);
+            }, 10000)
         }
     }
 }

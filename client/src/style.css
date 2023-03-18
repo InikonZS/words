@@ -43,3 +43,7 @@ body {
     height: 4px;
     border: 1px solid #60f;
 }
+
+.player_active{
+    background-color: #fff3;
+}
