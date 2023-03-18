@@ -61,7 +61,8 @@ function generateLetters(x: number, y: number){
             letter: abc[freqRandom()],//abc[Math.floor(Math.random() * abc.length)],
             x: j,
             y: i,
-            id: `x${j}y${i}`
+            id: `x${j}y${i}`,
+            bonus: []
     }}));
 }
 
@@ -131,11 +132,17 @@ function getPoints(word: Array<ILetter>){
     return result;
 }
 
+interface IBonus{
+    apply: ()=>void,
+    name: string
+}
+
 interface ILetter{
     id: string,
     x: number,
     y: number,
-    letter: string
+    letter: string,
+    bonus: Array<IBonus>
 }
 
 export default function GameField(){
@@ -143,11 +150,32 @@ export default function GameField(){
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
     const [points, setPoints] = useState(0);
+    const [crystals, setCrystals] = useState(0);
+
+    useEffect(()=>{
+        setLetters(last=>{
+            return last.map(row=> row.map(letter=>{
+                if (Math.random() < 0.1){
+                    letter.bonus = [
+                        {
+                            name: 'crystal',
+                            apply: ()=>{
+                                setCrystals(last => last + 1);
+                            }
+                        }
+                    ]
+                }
+                return letter;
+            }));
+            //return last;
+        });
+    }, [])
 
     return (
     <div>
         <div className="score">
             <div className="points">score: {points}</div>
+            <div className="crystals">crystals: {crystals}</div>
     </div>
     <div className="field">
         {
@@ -175,14 +203,27 @@ export default function GameField(){
                         if (formattedWords.includes(word)){
                             console.log('correct ', word);
                             setPoints(last=> last + getPoints(selected));
+                            selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
                             setAnimate(selected);
                             setTimeout(()=>{
                                 setLetters(last=>{
                                     const newLetters = last.map(row=> row.map(item=>{
                                         if (selected.find(it=> it.id == item.id)){
+                                            const bonus: Array<IBonus> = [];
+                                            if (Math.random() < 0.1) {
+                                                bonus.push(
+                                                    {
+                                                        name: 'crystal',
+                                                        apply: ()=>{
+                                                            setCrystals(last => last + 1);
+                                                        }
+                                                    }
+                                                );
+                                            }
                                             return {
                                                 ...item,
-                                                letter: abc[freqRandom()]
+                                                letter: abc[freqRandom()],
+                                                bonus: bonus
                                             } 
                                         } else {
                                             return item
@@ -199,6 +240,7 @@ export default function GameField(){
                         }
                         setSelected([]);
                     }}>
+                        {letter.bonus.find(it=>it.name == 'crystal') && <div className="crystal"></div>}
                         {letter.letter}
                     </div>
                     })}

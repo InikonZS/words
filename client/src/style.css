@@ -12,6 +12,7 @@ body {
 }
 
 .letter {
+    position: relative;
     width: 30px;
     height: 30px;
     border: 1px solid #600;
@@ -32,4 +33,13 @@ body {
 
 .letter_hide {
     transform: scale(0, 0);
+}
+
+.crystal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 4px;
+    border: 1px solid #60f;
 }
