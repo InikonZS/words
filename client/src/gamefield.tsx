@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {words} from "./words";
+import Socket from "./socket";
 
 const formattedWords = words.split('\n').filter(it=> it.length>=2);
 console.log(formattedWords);
@@ -213,7 +214,20 @@ export default function GameField(){
             }));
             //return last;
         });
-    }, [])
+    }, []);
+
+    useEffect(()=>{
+        const socket = new Socket();
+        socket.onConnect = ()=>{
+            console.log('connected');
+        }
+        socket.onMessage = (message)=>{
+        
+        }
+        return ()=>{
+            socket.destroy();
+        }
+    }, []);
 
     const submitWord = (selected:Array<ILetter>)=>{
         const word = selected.map(it=> it.letter).join('');
