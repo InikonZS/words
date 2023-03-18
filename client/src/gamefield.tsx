@@ -3,31 +3,39 @@ import Socket from "./socket";
 import { IBonus, ILetter, IPlayerData } from './gameLogic/interfaces';
 import { abc, formattedWords, freqRandom, generateLetters, getPoints, isClosest, traceField, traceOne } from './gameLogic/logicTools';
 import { Player } from './player';
+import { GameLogic } from './gameLogic/gameLogic';
 
 export default function GameField(){
-    const [letters, setLetters] = useState<Array<Array<ILetter>>>(generateLetters(10, 10));
+    const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
+    const [logic, setLogic] = useState<GameLogic>(null);
     //const [points, setPoints] = useState(0);
     //const [crystals, setCrystals] = useState(0);
-    const [players, setPlayers] = useState<Array<IPlayerData>>([
-        {
-            name: 'player',
-            points: 0,
-            crystals: 0,
-            winWord: ''
-        },
-        {
-            name: 'bot',
-            points: 0,
-            crystals: 0,
-            winWord: ''
-        }
-    ]);
+    const [players, setPlayers] = useState<Array<IPlayerData>>([]);
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     //const [winWord, setWinWord] = useState('');
 
     useEffect(()=>{
+        const logic = new GameLogic();
+        logic.onGameState = (state)=>{
+            setLetters(state.letters);
+            setPlayers(state.players);
+            setCurrentPlayerIndex(state.currentPlayerIndex);
+        }
+        logic.onCorrectWord = (word) => {
+            setAnimate(word);
+            setTimeout(()=>{
+                setAnimate([]);
+            }, 1000);
+        }
+        setLetters(logic.letters);
+        setPlayers(logic.players);
+        setCurrentPlayerIndex(logic.currentPlayerIndex);
+        setLogic(logic);
+    }, [])
+
+    /*useEffect(()=>{
         setLetters(last=>{
             return last.map(row=> row.map(letter=>{
                 if (Math.random() < 0.1){
@@ -49,7 +57,7 @@ export default function GameField(){
             }));
             //return last;
         });
-    }, []);
+    }, []);*/
 
     useEffect(()=>{
         const socket = new Socket();
@@ -65,7 +73,8 @@ export default function GameField(){
     }, []);
 
     const submitWord = (selected:Array<ILetter>)=>{
-        const word = selected.map(it=> it.letter).join('');
+        logic.submitWord(selected);
+        /*const word = selected.map(it=> it.letter).join('');
         if (formattedWords.includes(word)){
             console.log('correct ', word);
             setPlayers(last=>{
@@ -115,11 +124,11 @@ export default function GameField(){
             
         } else {
             console.log('incorrect ', word);
-        }
+        }*/
     }
 
     useEffect(()=>{
-        if (players[currentPlayerIndex].name == 'bot'){
+        if (players[currentPlayerIndex]?.name == 'bot'){
             const allWords = traceField(letters);
             const linearList: Array<Array<ILetter>> = [];
             allWords.forEach(row=>{
@@ -152,7 +161,8 @@ export default function GameField(){
         }
     }, [currentPlayerIndex]);
 
-    return (
+    return letters && (
+        
     <div>
         <div className="players">
             {players.map(player=>{
