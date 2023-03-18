@@ -1,5 +1,5 @@
 import { IBonus, ILetter, IPlayerData } from "./interfaces";
-import { abc, formattedWords, freqRandom, generateLetters, getPoints } from "./logicTools";
+import { abc, formattedWords, freqRandom, generateLetters, getPoints, traceField } from "./logicTools";
 
 interface IGameState{
     letters: ILetter[][];
@@ -34,7 +34,7 @@ export class GameLogic{
         ];
     }
 
-    addCrystals(){
+    private addCrystals(){
         this.letters.map(row=> row.map(letter=>{
             if (Math.random() < 0.1){
                 letter.bonus = [
@@ -75,7 +75,7 @@ export class GameLogic{
                 };
             })
             //setPoints(last=> last + getPoints(selected));
-            selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
+            //!!!selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
             //setAnimate(selected);
             setTimeout(()=>{
                 this.updateLetters(selected);
@@ -83,6 +83,7 @@ export class GameLogic{
                 //setAnimate([]);
                 this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
                 this.onGameState(this.getState());
+                this.bot();
                 //setCurrentPlayerIndex(last => (last + 1) % players.length);
             }, 1000);
             
@@ -136,6 +137,41 @@ export class GameLogic{
             letters: this.letters,
             players: this.players,
             currentPlayerIndex: this.currentPlayerIndex
+        }
+    }
+
+    bot(){
+        if (this.players[this.currentPlayerIndex]?.name == 'bot'){
+            const allWords = traceField(this.letters);
+            const linearList: Array<Array<ILetter>> = [];
+            allWords.forEach(row=>{
+                row.forEach(words=>{
+                    words.forEach(word=>{
+                        linearList.push(word);
+                    })
+                })
+            });
+
+            linearList.sort((a, b)=>{
+                return b.length - a.length;
+            });
+            const word = linearList[0];
+            if (word){
+                setTimeout(()=>{
+                    //this.onCorrectWord(word);
+                    //setSelected(word);
+                    setTimeout(()=>{
+                        /*setPlayers(last=>{
+                            const current = last[currentPlayerIndex];
+                            current.winWord = word.map(it=>it.letter).join('');
+                            return last;
+                        })*/
+                        //setWinWord(word.map(it=>it.letter).join(''));
+                        this.submitWord(word); 
+                        //setSelected([]); 
+                    }, 3000); 
+                }, 1000);  
+            }
         }
     }
 }

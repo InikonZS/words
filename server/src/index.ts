@@ -4,6 +4,7 @@ import * as http from 'http'
 import * as path from "path"
 import * as fs from "fs"
 import * as url from "url"
+import { GameLogic } from '../../client/src/gameLogic/gameLogic';
 
 const WebSocketServer = webSocket.server
 const port = process.env.PORT || 4002
@@ -31,22 +32,52 @@ const socket = new WebSocketServer({
 
 const connections: connection[] = []
 
+const gameLogic = new GameLogic();
+gameLogic.onGameState = (state)=>{
+  connections.forEach(connection => connection.sendUTF(JSON.stringify({
+    type: 'state',
+    data: state
+  })))
+}
+gameLogic.onCorrectWord = (state)=>{
+  connections.forEach(connection => connection.sendUTF(JSON.stringify({
+    type: 'correctWord',
+    data: state
+  })))
+}
+
 socket.on('request', (request) => {
   const connection = request.accept(undefined, request.origin)
   connections.push(connection)
   console.log(new Date() + ' Connection accepted.')
 
   connection.on('message', (message) => {
-    console.log("Message")
+    
     if (message.type === "binary") {
 
     } else if (message.type === 'utf8') {
       const parsed = JSON.parse(message.utf8Data)
-
+      console.log("Message", parsed)
       if (!('type' in parsed)) {
         return;
       }
 
+      if (parsed.type == 'getState'){
+        connection.sendUTF(JSON.stringify({
+          type: 'privateMessage',
+          requestId: parsed.requestId,
+          data: gameLogic.getState()
+        }))
+      }
+
+      if (parsed.type == 'submitWord'){
+        gameLogic.submitWord(parsed.data.selected);
+        /*connection.sendUTF(JSON.stringify({
+          type: 'privateMessage',
+          requestId: parsed.requestId,
+          data: gameLogic.getState()
+        }))*/
+      }
     }
   })
 

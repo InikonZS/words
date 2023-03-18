@@ -14,10 +14,11 @@ export default function GameField(){
     //const [crystals, setCrystals] = useState(0);
     const [players, setPlayers] = useState<Array<IPlayerData>>([]);
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+    const [socket, setSocket] = useState(null);
     //const [winWord, setWinWord] = useState('');
 
     useEffect(()=>{
-        const logic = new GameLogic();
+        /*const logic = new GameLogic();
         logic.onGameState = (state)=>{
             setLetters(state.letters);
             setPlayers(state.players);
@@ -32,7 +33,7 @@ export default function GameField(){
         setLetters(logic.letters);
         setPlayers(logic.players);
         setCurrentPlayerIndex(logic.currentPlayerIndex);
-        setLogic(logic);
+        setLogic(logic);*/
     }, [])
 
     /*useEffect(()=>{
@@ -63,17 +64,47 @@ export default function GameField(){
         const socket = new Socket();
         socket.onConnect = ()=>{
             console.log('connected');
+            setSocket(socket);
+            socket.sendState({
+                type: 'getState',
+                data: {}
+            }).then(res=>{
+                const logic = res;
+                setLetters(logic.letters);
+                setPlayers(logic.players);
+                setCurrentPlayerIndex(logic.currentPlayerIndex);
+                //setLogic(logic);
+            })
         }
         socket.onMessage = (message)=>{
-        
+            if (message.type == 'state'){
+                const state = message.data;
+                setLetters(state.letters);
+                setPlayers(state.players);
+                if (currentPlayerIndex !== state.currentPlayerIndex){
+                    setCurrentPlayerIndex(state.currentPlayerIndex);
+                }
+            }
+            if (message.type == 'correctWord'){
+                const word = message.data;
+                setAnimate(word);
+                setTimeout(()=>{
+                    setAnimate([]);
+                }, 1000);
+            }   
         }
+        
         return ()=>{
             socket.destroy();
         }
     }, []);
 
     const submitWord = (selected:Array<ILetter>)=>{
-        logic.submitWord(selected);
+        //logic.submitWord(selected);
+        socket.sendState({
+            type: 'submitWord',
+            data: {selected}
+        })
         /*const word = selected.map(it=> it.letter).join('');
         if (formattedWords.includes(word)){
             console.log('correct ', word);
@@ -127,7 +158,7 @@ export default function GameField(){
         }*/
     }
 
-    useEffect(()=>{
+    /*useEffect(()=>{
         if (players[currentPlayerIndex]?.name == 'bot'){
             const allWords = traceField(letters);
             const linearList: Array<Array<ILetter>> = [];
@@ -153,13 +184,13 @@ export default function GameField(){
                             return last;
                         })*/
                         //setWinWord(word.map(it=>it.letter).join(''));
-                        submitWord(word); 
+    /*                    submitWord(word); 
                         setSelected([]); 
                     }, 3000); 
                 }, 1000);  
             }
         }
-    }, [currentPlayerIndex]);
+    }, [currentPlayerIndex]);*/
 
     return letters && (
         

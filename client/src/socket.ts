@@ -33,6 +33,9 @@ export default class Socket {
       this.webSocket.onmessage = (message) => {
         console.log(message)
         const parsedData = JSON.parse(message.data)
+        if (parsedData.type === "privateMessage") {
+            this.privateMessageSignal.emit(parsedData)
+        }
         this.onMessage?.(parsedData);
       }
       this.webSocket.onclose = () => {
