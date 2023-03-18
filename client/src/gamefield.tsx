@@ -145,12 +145,38 @@ interface ILetter{
     bonus: Array<IBonus>
 }
 
+interface IPlayerData{
+    name: string;
+    points: number;
+    crystals: number;
+    winWord: string;
+}
+
+function Player({playerData}: {playerData: IPlayerData}) {
+    return (
+    <div>
+        <div>
+            {playerData.name}
+        </div>
+        <div className="score">
+            <div className="points">score: {playerData.points}</div>
+            <div className="crystals">crystals: {playerData.crystals}</div>
+            <div>word: {playerData.winWord}</div>
+        </div> 
+    </div>
+    
+    )
+}
+
 export default function GameField(){
     const [letters, setLetters] = useState(generateLetters(10, 10));
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
     const [points, setPoints] = useState(0);
     const [crystals, setCrystals] = useState(0);
+    const [players, setPlayers] = useState(['player', 'bot']);
+    const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
+    const [winWord, setWinWord] = useState('');
 
     useEffect(()=>{
         setLetters(last=>{
@@ -171,11 +197,84 @@ export default function GameField(){
         });
     }, [])
 
+    const submitWord = (selected:Array<ILetter>)=>{
+        const word = selected.map(it=> it.letter).join('');
+        if (formattedWords.includes(word)){
+            console.log('correct ', word);
+            setPoints(last=> last + getPoints(selected));
+            selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
+            setAnimate(selected);
+            setTimeout(()=>{
+                setLetters(last=>{
+                    const newLetters = last.map(row=> row.map(item=>{
+                        if (selected.find(it=> it.id == item.id)){
+                            const bonus: Array<IBonus> = [];
+                            if (Math.random() < 0.1) {
+                                bonus.push(
+                                    {
+                                        name: 'crystal',
+                                        apply: ()=>{
+                                            setCrystals(last => last + 1);
+                                        }
+                                    }
+                                );
+                            }
+                            return {
+                                ...item,
+                                letter: abc[freqRandom()],
+                                bonus: bonus
+                            } 
+                        } else {
+                            return item
+                        }
+                        
+                    }))
+                    return newLetters;
+                });
+                setAnimate([]);
+                setCurrentPlayerIndex(last => (last + 1) % players.length);
+            }, 1000);
+            
+        } else {
+            console.log('incorrect ', word);
+        }
+    }
+
+    useEffect(()=>{
+        if (players[currentPlayerIndex] == 'bot'){
+            const allWords = traceField(letters);
+            const linearList: Array<Array<ILetter>> = [];
+            allWords.forEach(row=>{
+                row.forEach(words=>{
+                    words.forEach(word=>{
+                        linearList.push(word);
+                    })
+                })
+            });
+
+            linearList.sort((a, b)=>{
+                return b.length - a.length;
+            });
+            const word = linearList[0];
+            if (word){
+                setTimeout(()=>{
+                    setSelected(word);
+                    setTimeout(()=>{
+                        setWinWord(word.map(it=>it.letter).join(''));
+                        submitWord(word); 
+                        setSelected([]); 
+                    }, 3000); 
+                }, 1000);  
+            }
+        }
+    }, [currentPlayerIndex]);
+
     return (
     <div>
         <div className="score">
             <div className="points">score: {points}</div>
             <div className="crystals">crystals: {crystals}</div>
+            <div>word: {winWord}</div>
     </div>
     <div className="field">
         {
@@ -199,46 +298,8 @@ export default function GameField(){
                         }
                     }}
                     onMouseUp = {()=>{
-                        const word = selected.map(it=> it.letter).join('');
-                        if (formattedWords.includes(word)){
-                            console.log('correct ', word);
-                            setPoints(last=> last + getPoints(selected));
-                            selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
-                            setAnimate(selected);
-                            setTimeout(()=>{
-                                setLetters(last=>{
-                                    const newLetters = last.map(row=> row.map(item=>{
-                                        if (selected.find(it=> it.id == item.id)){
-                                            const bonus: Array<IBonus> = [];
-                                            if (Math.random() < 0.1) {
-                                                bonus.push(
-                                                    {
-                                                        name: 'crystal',
-                                                        apply: ()=>{
-                                                            setCrystals(last => last + 1);
-                                                        }
-                                                    }
-                                                );
-                                            }
-                                            return {
-                                                ...item,
-                                                letter: abc[freqRandom()],
-                                                bonus: bonus
-                                            } 
-                                        } else {
-                                            return item
-                                        }
-                                        
-                                    }))
-                                    return newLetters;
-                                });
-                                setAnimate([]);
-                            }, 1000);
-                            
-                        } else {
-                            console.log('incorrect ', word);
-                        }
-                        setSelected([]);
+                        submitWord(selected);
+                        setSelected([]); 
                     }}>
                         {letter.bonus.find(it=>it.name == 'crystal') && <div className="crystal"></div>}
                         {letter.letter}
