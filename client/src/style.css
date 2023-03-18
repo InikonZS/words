@@ -1,0 +1,35 @@
+*{
+    box-sizing: border-box;
+}
+
+body {
+    background: rgb(14, 14, 14);
+    color: white;
+}
+
+.row {
+    display: flex;
+}
+
+.letter {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    color: #ccc;
+    cursor: default;
+    margin: 5px;
+    transform: scale(1, 1);
+    transition-duration: 1s;
+}
+
+.letter_selected {
+    color: #0c0;
+}
+
+.letter_hide {
+    transform: scale(0, 0);
+}
