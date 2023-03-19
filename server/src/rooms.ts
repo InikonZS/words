@@ -15,6 +15,7 @@ class Room{
     join(user: LobbyUser){
         const playerServer = new PlayerServer(this.logic, user.connection);
         this.players.push(playerServer);
+        this.logic.joinPlayer(Math.random().toFixed(5));
     }
 }
 

@@ -19,6 +19,7 @@ export interface IPlayerData{
 }
 
 export interface IGameState{
+    isStarted: boolean;
     letters: ILetter[][];
     players: Array<IPlayerData>;
     currentPlayerIndex: number;

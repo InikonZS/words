@@ -18,12 +18,12 @@ export class GameLogic{
     onSelectLetter: Signal<ILetter[]> = new Signal();//(word: ILetter[])=>void;
 
     private moveTimer: any = null;
+    isStarted: boolean = false;
 
     constructor(){
-        this.letters = langGenerateLetters(10, 10);
-        this.addCrystals();
+        this.letters = [[]];
         this.players = [
-            {
+        /*    {
                 name: 'player',
                 points: 0,
                 crystals: 0,
@@ -34,8 +34,25 @@ export class GameLogic{
                 points: 0,
                 crystals: 0,
                 winWord: ''
-            }
+            }*/
         ];
+    }
+
+    joinPlayer(playerName:string){
+        this.players.push({
+            name: playerName,
+            points: 0,
+            crystals: 0,
+            winWord: ''
+        });
+        this.onGameState.emit(this.getState());
+    }
+
+    start(){
+        this.letters = langGenerateLetters(10, 10);
+        this.addCrystals();
+        this.isStarted = true;
+        this.onGameState.emit(this.getState());
     }
 
     private addCrystals(){
@@ -144,6 +161,7 @@ export class GameLogic{
 
     getState(): IGameState{
         return {
+            isStarted: this.isStarted,
             letters: this.letters,
             players: this.players,
             currentPlayerIndex: this.currentPlayerIndex
