@@ -1,3 +1,4 @@
+import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
 import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
 
@@ -12,9 +13,9 @@ export class GameLogic{
     players: Array<IPlayerData>;
     currentPlayerIndex: number = 0;
 
-    onGameState: (state:IGameState)=>void;
-    onCorrectWord: (word: ILetter[])=>void;
-    onSelectLetter: (word: ILetter[])=>void;
+    onGameState: Signal<IGameState> = new Signal();//(state:IGameState)=>void;
+    onCorrectWord: Signal<ILetter[]> = new Signal();//(word: ILetter[])=>void;
+    onSelectLetter: Signal<ILetter[]> = new Signal();//(word: ILetter[])=>void;
 
     private moveTimer: any = null;
 
@@ -65,7 +66,7 @@ export class GameLogic{
         const [isCorrect, word] = langCheckWord(selected);//selected.map(it=> it.letter).join('');
         if ( isCorrect || word == ''){
             console.log('correct ', word);
-            this.onCorrectWord(selected);
+            this.onCorrectWord.emit(selected);
             /*setPlayers(last=>{
                 const current = last[currentPlayerIndex];
                 current.points += getPoints(selected);
@@ -87,7 +88,7 @@ export class GameLogic{
                 //setLetters
                 //setAnimate([]);
                 this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
-                this.onGameState(this.getState());
+                this.onGameState.emit(this.getState());
                 this.bot();
                 //setCurrentPlayerIndex(last => (last + 1) % players.length);
             }, 1000);
@@ -132,13 +133,13 @@ export class GameLogic{
             
         }));
         this.letters = newLetters;
-        this.onGameState(this.getState());
+        this.onGameState.emit(this.getState());
         //return newLetters;
     }
 
     updatePlayer(index:number, data: (last: IPlayerData) => IPlayerData){
         this.players[index] = data(this.players[index]);
-        this.onGameState(this.getState());
+        this.onGameState.emit(this.getState());
     }
 
     getState(): IGameState{
@@ -150,7 +151,7 @@ export class GameLogic{
     }
 
     select(word:ILetter[]){
-        this.onSelectLetter(word);
+        this.onSelectLetter.emit(word);
     }
 
     bot(){
@@ -173,7 +174,7 @@ export class GameLogic{
                 setTimeout(()=>{
                     //this.onCorrectWord(word);
                     //setSelected(word);
-                    this.onSelectLetter(word);
+                    this.onSelectLetter.emit(word);
                     setTimeout(()=>{
                         /*setPlayers(last=>{
                             const current = last[currentPlayerIndex];
