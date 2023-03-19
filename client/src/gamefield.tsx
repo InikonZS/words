@@ -36,30 +36,6 @@ export default function GameField(){
         setLogic(logic);*/
     }, [])
 
-    /*useEffect(()=>{
-        setLetters(last=>{
-            return last.map(row=> row.map(letter=>{
-                if (Math.random() < 0.1){
-                    letter.bonus = [
-                        {
-                            name: 'crystal',
-                            apply: ()=>{
-                                setPlayers(last=>{
-                                    const current = last[currentPlayerIndex];
-                                    current.crystals += 1;
-                                    return last;
-                                })
-                                //setCrystals(last => last + 1);
-                            }
-                        }
-                    ]
-                }
-                return letter;
-            }));
-            //return last;
-        });
-    }, []);*/
-
     useEffect(()=>{
         const socket = new Socket();
         socket.onConnect = ()=>{
@@ -109,92 +85,7 @@ export default function GameField(){
             type: 'submitWord',
             data: {selected}
         })
-        /*const word = selected.map(it=> it.letter).join('');
-        if (formattedWords.includes(word)){
-            console.log('correct ', word);
-            setPlayers(last=>{
-                const current = last[currentPlayerIndex];
-                current.points += getPoints(selected);
-                current.winWord = selected.map(it=>it.letter).join('');
-                return last;
-            })
-            //setPoints(last=> last + getPoints(selected));
-            selected.map(it=>it.bonus.forEach(jt=> jt.apply()))
-            setAnimate(selected);
-            setTimeout(()=>{
-                setLetters(last=>{
-                    const newLetters = last.map(row=> row.map(item=>{
-                        if (selected.find(it=> it.id == item.id)){
-                            const bonus: Array<IBonus> = [];
-                            if (Math.random() < 0.1) {
-                                bonus.push(
-                                    {
-                                        name: 'crystal',
-                                        apply: ()=>{
-                                            //setCrystals(last => last + 1);
-                                            setPlayers(last=>{
-                                                const current = last[currentPlayerIndex];
-                                                current.crystals += 1;
-                                                return last;
-                                            })
-                                        }
-                                    }
-                                );
-                            }
-                            return {
-                                ...item,
-                                letter: abc[freqRandom()],
-                                bonus: bonus
-                            } 
-                        } else {
-                            return item
-                        }
-                        
-                    }))
-                    return newLetters;
-                });
-                setAnimate([]);
-                setCurrentPlayerIndex(last => (last + 1) % players.length);
-            }, 1000);
-            
-        } else {
-            console.log('incorrect ', word);
-        }*/
     }
-
-    /*useEffect(()=>{
-        if (players[currentPlayerIndex]?.name == 'bot'){
-            const allWords = traceField(letters);
-            const linearList: Array<Array<ILetter>> = [];
-            allWords.forEach(row=>{
-                row.forEach(words=>{
-                    words.forEach(word=>{
-                        linearList.push(word);
-                    })
-                })
-            });
-
-            linearList.sort((a, b)=>{
-                return b.length - a.length;
-            });
-            const word = linearList[0];
-            if (word){
-                setTimeout(()=>{
-                    setSelected(word);
-                    setTimeout(()=>{
-                        /*setPlayers(last=>{
-                            const current = last[currentPlayerIndex];
-                            current.winWord = word.map(it=>it.letter).join('');
-                            return last;
-                        })*/
-                        //setWinWord(word.map(it=>it.letter).join(''));
-    /*                    submitWord(word); 
-                        setSelected([]); 
-                    }, 3000); 
-                }, 1000);  
-            }
-        }
-    }, [currentPlayerIndex]);*/
 
     return letters && (
         
