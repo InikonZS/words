@@ -44,7 +44,7 @@ export default class Socket {
       }
     }
   
-    sendState(state: Record<string, any>): Promise<Record<string, any>> {
+    sendState(state: Record<string, any>): Promise<any> {
       state.requestId = this.nextReqId()
       this.webSocket.send(JSON.stringify(state))
   

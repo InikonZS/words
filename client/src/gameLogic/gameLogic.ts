@@ -1,4 +1,4 @@
-import { IBonus, ILetter, IPlayerData } from "./interfaces";
+import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
 import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
 
 const langSumFreq = getSumFreq(frequency);
@@ -6,12 +6,6 @@ const langFreqRandom = ()=>freqRandom(langSumFreq);
 const langGenerateLetters = (x: number, y: number)=>generateLetters(x, y, langSumFreq);
 const langTraceField = (letters: ILetter[][])=> traceField(letters, (part)=> findWordsByPart(part, formattedWordsEn));
 const langCheckWord = (letters: ILetter[]) => checkWord(letters, formattedWordsEn);
-
-interface IGameState{
-    letters: ILetter[][];
-    players: Array<IPlayerData>;
-    currentPlayerIndex: number;
-}
 
 export class GameLogic{
     letters: ILetter[][];

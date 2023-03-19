@@ -17,3 +17,9 @@ export interface IPlayerData{
     crystals: number;
     winWord: string;
 }
+
+export interface IGameState{
+    letters: ILetter[][];
+    players: Array<IPlayerData>;
+    currentPlayerIndex: number;
+}

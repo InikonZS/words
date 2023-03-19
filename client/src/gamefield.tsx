@@ -4,6 +4,7 @@ import { IBonus, ILetter, IPlayerData } from './gameLogic/interfaces';
 import { isClosest, traceField, traceOne } from './gameLogic/logicTools';
 import { Player } from './player';
 import { GameLogic } from './gameLogic/gameLogic';
+import { PlayerClient } from './player_client';
 
 export default function GameField(){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
@@ -14,7 +15,7 @@ export default function GameField(){
     //const [crystals, setCrystals] = useState(0);
     const [players, setPlayers] = useState<Array<IPlayerData>>([]);
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-    const [socket, setSocket] = useState(null);
+    const [client, setClient] = useState<PlayerClient>(null);
     //const [winWord, setWinWord] = useState('');
 
     useEffect(()=>{
@@ -38,13 +39,11 @@ export default function GameField(){
 
     useEffect(()=>{
         const socket = new Socket();
+        const client = new PlayerClient(socket);
         socket.onConnect = ()=>{
             console.log('connected');
-            setSocket(socket);
-            socket.sendState({
-                type: 'getState',
-                data: {}
-            }).then(res=>{
+            setClient(client);
+            client.getState().then(res=>{
                 const logic = res;
                 setLetters(logic.letters);
                 setPlayers(logic.players);
@@ -52,14 +51,27 @@ export default function GameField(){
                 //setLogic(logic);
             })
         }
-        socket.onMessage = (message)=>{
+        client.onGameState = (state)=>{
+            setLetters(state.letters);
+            setPlayers(state.players);
+            //if (currentPlayerIndex !== state.currentPlayerIndex){
+                setCurrentPlayerIndex(state.currentPlayerIndex);
+            //}
+        }
+        client.onSelectLetter = (word)=>{
+            setSelected(word);
+        }
+        client.onCorrectWord = (word)=>{
+            setAnimate(word);
+            setSelected([]);
+            setTimeout(()=>{
+                setAnimate([]);
+            }, 1000);
+        }
+        /*socket.onMessage = (message)=>{
             if (message.type == 'state'){
                 const state = message.data;
-                setLetters(state.letters);
-                setPlayers(state.players);
-                //if (currentPlayerIndex !== state.currentPlayerIndex){
-                    setCurrentPlayerIndex(state.currentPlayerIndex);
-                //}
+                
             }
             if (message.type == 'correctWord'){
                 const word = message.data;
@@ -72,7 +84,7 @@ export default function GameField(){
             if (message.type == 'selectLetter'){
                 setSelected(message.data);
             } 
-        }
+        }*/
         
         return ()=>{
             socket.destroy();
@@ -80,11 +92,11 @@ export default function GameField(){
     }, []);
 
     const submitWord = (selected:Array<ILetter>)=>{
-        //logic.submitWord(selected);
-        socket.sendState({
+        client.submitWord(selected);
+        /*socket.sendState({
             type: 'submitWord',
             data: {selected}
-        })
+        })*/
     }
 
     return letters && (
@@ -108,32 +120,36 @@ export default function GameField(){
                         //const all = traceField(letters);
                         //console.log(all);
                         //setSelected([letter]);
-                        socket.sendState({
+                        /*socket.sendState({
                             type: 'selectLetter',
                             data: [letter]
-                        })
+                        })*/
+                        client.selectLetter([letter]);
                     }}
                     onMouseMove={()=>{
                         if (selected.length && !selected.find(it=>it.id == letter.id) && isClosest(selected[selected.length-1].x, selected[selected.length-1].y, letter.x, letter.y)){
                             //setSelected(last=> [...last, letter])
-                            socket.sendState({
+                            /*socket.sendState({
                                 type: 'selectLetter',
                                 data: [...selected, letter]
-                            })
+                            })*/
+                            client.selectLetter([...selected, letter]);
                         } else if(selected.length>1 && selected[selected.length-2].id == letter.id) {
                             //setSelected(last=> [...last.slice(0, last.length-1)])
-                            socket.sendState({
+                            /*socket.sendState({
                                 type: 'selectLetter',
                                 data: [...selected.slice(0, selected.length-1)]
-                            })
+                            })*/
+                            client.selectLetter([...selected.slice(0, selected.length-1)]);
                         }
                     }}
                     onMouseUp = {()=>{
                         submitWord(selected);
-                        socket.sendState({
+                        /*socket.sendState({
                             type: 'selectLetter',
                             data: []
-                        })
+                        })*/
+                        client.selectLetter([]);
                         //setSelected([]); 
                     }}>
                         {letter.bonus.find(it=>it.name == 'crystal') && <div className="crystal"></div>}
