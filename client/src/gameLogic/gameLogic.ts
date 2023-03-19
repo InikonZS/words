@@ -1,5 +1,11 @@
 import { IBonus, ILetter, IPlayerData } from "./interfaces";
-import { abc, formattedWords, freqRandom, generateLetters, getPoints, traceField } from "./logicTools";
+import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
+
+const langSumFreq = getSumFreq(frequency);
+const langFreqRandom = ()=>freqRandom(langSumFreq);
+const langGenerateLetters = (x: number, y: number)=>generateLetters(x, y, langSumFreq);
+const langTraceField = (letters: ILetter[][])=> traceField(letters, (part)=> findWordsByPart(part, formattedWordsEn));
+const langCheckWord = (letters: ILetter[]) => checkWord(letters, formattedWordsEn);
 
 interface IGameState{
     letters: ILetter[][];
@@ -19,7 +25,7 @@ export class GameLogic{
     private moveTimer: any = null;
 
     constructor(){
-        this.letters = generateLetters(10, 10);
+        this.letters = langGenerateLetters(10, 10);
         this.addCrystals();
         this.players = [
             {
@@ -62,8 +68,8 @@ export class GameLogic{
     submitWord(selected:Array<ILetter>){
         clearTimeout(this.moveTimer);
         this.moveTimer = null;
-        const word = selected.map(it=> it.letter).join('');
-        if (formattedWords.includes(word) || word == ''){
+        const [isCorrect, word] = langCheckWord(selected);//selected.map(it=> it.letter).join('');
+        if ( isCorrect || word == ''){
             console.log('correct ', word);
             this.onCorrectWord(selected);
             /*setPlayers(last=>{
@@ -123,7 +129,7 @@ export class GameLogic{
                 }
                 return {
                     ...item,
-                    letter: abc[freqRandom()],
+                    letter: langFreqRandom(),
                     bonus: bonus
                 } 
             } else {
@@ -155,7 +161,7 @@ export class GameLogic{
 
     bot(){
         if (this.players[this.currentPlayerIndex]?.name == 'bot'){
-            const allWords = traceField(this.letters);
+            const allWords = langTraceField(this.letters);
             const linearList: Array<Array<ILetter>> = [];
             allWords.forEach(row=>{
                 row.forEach(words=>{

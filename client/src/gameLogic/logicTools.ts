@@ -1,10 +1,14 @@
 import {words} from "../words";
+import {ruWords} from "../ru_words";
 import { ILetter } from "./interfaces";
 
-export const formattedWords = words.split('\n').filter(it=> it.length>=2);
+export const formattedWordsRu = ruWords.split('\n').filter(it=> it.length>=2);
+export const formattedWordsEn = words.split('\n').filter(it=> it.length>=2);
 //console.log(formattedWords);
 
 export const abc = 'abcdefghijklmnopqrstuvwxyz';
+export const polish = 'aąbcćdeęfghijklłmnńoóprsśtuwyzźż';
+export const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
 export const frequency = [
     7.8,
     2,
@@ -34,7 +38,44 @@ export const frequency = [
     0.44
 ];
 
-export function getSumFreq(){
+export const ru_freq = [
+    8.01,
+    1.59,
+    4.54,
+    1.70,
+    2.98,
+    8.45,
+    0.04,
+    0.94,
+    1.65,
+    7.35,
+    1.21,
+    3.49,
+    4.40,
+    3.21,
+    6.70,
+    10.97,
+    2.81,
+    4.73,
+    5.47,
+    6.26,
+    2.62,
+    0.26,
+    0.97,
+    0.48,
+    1.44,
+    0.73,
+    0.36,
+    0.04,
+    1.90,
+    1.74,
+    0.32,
+    0.64,
+    2.01,
+]
+
+//function getLetterGenerator(frequency: Array<number>, abc:string){
+export function getSumFreq(frequency:Array<number>){
     let sum = 0;
     const sumFreq = frequency.map(it=>{
         const res = it + sum;
@@ -44,22 +85,23 @@ export function getSumFreq(){
     return sumFreq;
 }
 
-const sumFreq = getSumFreq();
+//const sumFreq = getSumFreq();
 //console.log(sumFreq);
 
-export function freqRandom(){
+export function freqRandom(sumFreq: Array<number>):string{
     const sum = frequency.reduce((ac, it)=> ac + it, 0);
     const rnd = Math.random() * sum;
     const ind = sumFreq.findIndex(it=>rnd<it);
-    return ind;
+    return abc[ind];
 }
 //(window as any).rnd = freqRandom;
 //console.log(freqRandom());
 
-export function generateLetters(x: number, y: number){
+export function generateLetters(x: number, y: number, sumFreq:Array<number>):ILetter[][]{
+    //const sumFreq = getSumFreq(freq);
     return new Array(y).fill(null).map((it, i)=> new Array(x).fill('').map((jt, j)=> {
         return {
-            letter: abc[freqRandom()],//abc[Math.floor(Math.random() * abc.length)],
+            letter: freqRandom(sumFreq),//abc[Math.floor(Math.random() * abc.length)],
             x: j,
             y: i,
             id: `x${j}y${i}`,
@@ -67,24 +109,29 @@ export function generateLetters(x: number, y: number){
     }}));
 }
 
+  //  return [generateLetters, freqRandom];
+//}
+
+//export const [generateLettersEn, freqRandomEn] = getLetterGenerator(frequency, abc);
+//export const [generateLettersRu, freqRandomRu] = getLetterGenerator(ru_freq, ru);
 
 export function isClosest(x: number, y:number, x1: number, y1:number){
     return (((x - x1 == -1) || (x - x1 == 1) || (x - x1 == 0)) && ((y - y1 == -1) || (y - y1 == 1) || (y - y1 == 0))) && !(x == x1 && y == y1)
 }
 
-export function checkWord(word: Array<ILetter>): [boolean, string]{
+export function checkWord(word: Array<ILetter>, formattedWords:Array<string>): [boolean, string]{
     const wordString = word.map(it=> it.letter).join('');
     return [formattedWords.includes(wordString), wordString];
 }
 
-export function findWordsByPart(part:string){
+export function findWordsByPart(part:string, formattedWords:Array<string>){
     return formattedWords.filter(word=>{
         const partWord = word.slice(0, part.length);
         return partWord == part;
     })
 }
 
-export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, current:Array<ILetter>){
+export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, current:Array<ILetter>, findWordsByPart: (part: string)=>Array<string>){
     const closeList = [
         letters[y-1]?.[x],
         letters[y+1]?.[x],
@@ -110,7 +157,7 @@ export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, cur
                 //wordList.push(findWord);
                 fullWordList.push(findFullWord);
             }
-            const childList = traceOne(letters, letter.x, letter.y, findFullWord);
+            const childList = traceOne(letters, letter.x, letter.y, findFullWord, findWordsByPart);
             fullWordList.splice(fullWordList.length, 0, ...childList);
             //wordList.splice(wordList.length, 0, ...childList);
         } else {
@@ -120,9 +167,9 @@ export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, cur
     return fullWordList;//wordList;
 }
 
-export function traceField(letters:Array<Array<ILetter>>){
+export function traceField(letters:Array<Array<ILetter>>, findWordsByPart: (part: string)=>Array<string>){
     return letters.map(row => row.map(letter=>{
-        return traceOne(letters, letter.x, letter.y, [letter]);
+        return traceOne(letters, letter.x, letter.y, [letter], findWordsByPart);
     }))
 }
 

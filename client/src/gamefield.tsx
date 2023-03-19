@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Socket from "./socket";
 import { IBonus, ILetter, IPlayerData } from './gameLogic/interfaces';
-import { abc, formattedWords, freqRandom, generateLetters, getPoints, isClosest, traceField, traceOne } from './gameLogic/logicTools';
+import { isClosest, traceField, traceOne } from './gameLogic/logicTools';
 import { Player } from './player';
 import { GameLogic } from './gameLogic/gameLogic';
 
@@ -212,8 +212,8 @@ export default function GameField(){
                     row.map(letter=> {
                     return <div className={`letter ${selected.find(it=>it.id == letter.id) ?  "letter_selected" : ""} ${animate.find(it=>it.id == letter.id) ?  "letter_hide" : ""}`} 
                     onMouseDown={()=>{
-                        const list = traceOne(letters, letter.x, letter.y, [letter]);
-                        console.log(list);
+                        //const list = traceOne(letters, letter.x, letter.y, [letter]);
+                        //console.log(list);
                         //const all = traceField(letters);
                         //console.log(all);
                         //setSelected([letter]);
