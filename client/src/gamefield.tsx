@@ -6,7 +6,7 @@ import { Player } from './player';
 import { GameLogic } from './gameLogic/gameLogic';
 import { PlayerClient } from './player_client';
 
-export default function GameField(){
+export default function GameField({player}: {player: PlayerClient}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
@@ -38,19 +38,21 @@ export default function GameField(){
     }, [])
 
     useEffect(()=>{
-        const socket = new Socket();
-        const client = new PlayerClient(socket);
-        socket.onConnect = ()=>{
+        //const socket = new Socket();
+        const client = player;//new PlayerClient(socket);
+        /*socket.onConnect = ()=>{
             console.log('connected');
-            setClient(client);
-            client.getState().then(res=>{
-                const logic = res;
-                setLetters(logic.letters);
-                setPlayers(logic.players);
-                setCurrentPlayerIndex(logic.currentPlayerIndex);
-                //setLogic(logic);
-            })
-        }
+            
+            
+        }*/
+        setClient(client);
+        client.getState().then(res=>{
+            const logic = res;
+            setLetters(logic.letters);
+            setPlayers(logic.players);
+            setCurrentPlayerIndex(logic.currentPlayerIndex);
+            //setLogic(logic);
+        })
         client.onGameState = (state)=>{
             setLetters(state.letters);
             setPlayers(state.players);
@@ -87,9 +89,9 @@ export default function GameField(){
         }*/
         
         return ()=>{
-            socket.destroy();
+            //socket.destroy();
         }
-    }, []);
+    }, [player]);
 
     const submitWord = (selected:Array<ILetter>)=>{
         client.submitWord(selected);

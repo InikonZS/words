@@ -6,6 +6,8 @@ import * as fs from "fs"
 import * as url from "url"
 import { GameLogic } from '../../client/src/gameLogic/gameLogic';
 import { PlayerServer } from './playerServer';
+import { Rooms } from './rooms';
+import { LobbyUser } from './lobbyUser';
 
 const WebSocketServer = webSocket.server
 const port = process.env.PORT || 4002
@@ -33,12 +35,14 @@ const socket = new WebSocketServer({
 
 //const connections: connection[] = []
 
-const gameLogic = new GameLogic();
+//const gameLogic = new GameLogic();
+const rooms = new Rooms();
 
 socket.on('request', (request) => {
   const connection = request.accept(undefined, request.origin)
   //connections.push(connection)
   console.log(new Date() + ' Connection accepted.')
-  const player = new PlayerServer(gameLogic, connection);
+  //const player = new PlayerServer(gameLogic, connection);
+  const user = new LobbyUser(rooms, connection);
 })
 
