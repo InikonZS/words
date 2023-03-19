@@ -20,7 +20,7 @@ export default class Socket {
   
     constructor() {
       this.privateMessageSignal = new Signal()
-      this.webSocket = new WebSocket(socketUrl)
+      this.webSocket = new WebSocket(socketUrl+'?session='+ localStorage.getItem('words_session'))
       // this.webSocket.binaryType = "arraybuffer"
       this.webSocket.binaryType = "blob"
       this.webSocket.onopen = () => {
@@ -35,6 +35,15 @@ export default class Socket {
         const parsedData = JSON.parse(message.data)
         if (parsedData.type === "privateMessage") {
             this.privateMessageSignal.emit(parsedData)
+        }
+        if (parsedData.type === "newSession") {
+          localStorage.setItem('words_session', parsedData.data.session);
+          console.log('new session ', parsedData.data.session);
+          //this.privateMessageSignal.emit(parsedData)
+        }
+        if (parsedData.type === "restoreSession") {
+          console.log('restore session ', parsedData.data.session);
+          //this.privateMessageSignal.emit(parsedData)
         }
         this.onMessage?.(parsedData);
       }

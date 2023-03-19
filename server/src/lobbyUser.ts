@@ -3,8 +3,10 @@ import { Rooms } from "./rooms";
 
 export class LobbyUser{
     connection: connection;
+    session: string;
 
     constructor(rooms: Rooms, _connection: connection){
+        this.session = Math.random().toString() + Date.now().toString();
         this.connection = _connection;
         _connection.on('message', (message: Message)=>{
             if (message.type == 'utf8') {
