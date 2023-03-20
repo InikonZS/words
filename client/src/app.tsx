@@ -41,7 +41,10 @@ export default function App() {
           setPageName('gameField');
         }}></Lobby>}
 
-        {pageName == 'gameField' && socket && <GameField player={player}/>}  
+        {pageName == 'gameField' && socket && <GameField player={player} onLeave={()=>{
+          setPlayer(null);
+          setPageName('lobby');
+        }}/>}  
         {/*<GameField />*/}
       </div>
   )

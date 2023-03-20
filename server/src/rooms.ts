@@ -20,6 +20,9 @@ class Room{
         } else {
             const playerServer = new PlayerServer(this.logic, user);
             this.players.push(playerServer);
+            playerServer.onLeave = ()=>{
+                this.players.splice(this.players.length-1, 1);
+            }
             this.logic.joinPlayer(user.name);
             console.log('new player');
         }

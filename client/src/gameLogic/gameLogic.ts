@@ -50,7 +50,16 @@ export class GameLogic{
     }
 
     leavePlayer(playerName:string){
-
+        const playerIndex = this.players.findIndex(it=> playerName == it.name);
+        if (playerIndex != -1) {
+            this.players.splice(playerIndex, 1);
+            if (this.currentPlayerIndex >= this.players.length){
+                this.currentPlayerIndex = 0;
+            }
+            this.onGameState.emit(this.getState());
+            return true;
+        }
+        return false;
     }
 
     connectPlayer(playerName: string){
@@ -63,8 +72,10 @@ export class GameLogic{
 
     disconnectPlayer(playerName: string){
         const player = this.players.find(it=> playerName == it.name);
-        player.connected = false;
-        this.onGameState.emit(this.getState());
+        if (player){
+            player.connected = false;
+            this.onGameState.emit(this.getState());
+        }
     }
 
     start(){

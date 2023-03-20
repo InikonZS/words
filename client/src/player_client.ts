@@ -56,4 +56,11 @@ export class PlayerClient{
             data: {}
         })
     }
+
+    leaveRoom(){
+        return this.socket.sendState({
+            type: 'leaveRoom',
+            data: {}
+        })
+    }
 }

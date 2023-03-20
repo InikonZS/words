@@ -7,6 +7,7 @@ export class PlayerServer {
     private gameLogic: GameLogic;
     public user: LobbyUser;
     private connection: connection;
+    onLeave: ()=>void;
 
     constructor(gameLogic: GameLogic, user: LobbyUser) { 
         this.user = user;
@@ -68,6 +69,19 @@ export class PlayerServer {
                     requestId: parsed.requestId,
                     data: this.gameLogic.getState()
                 }))
+            }
+
+            if (parsed.type == 'leaveRoom') {
+                const status = this.gameLogic.leavePlayer(this.user.name);
+                this.onLeave?.();
+                this.user.connection.sendUTF(JSON.stringify({
+                    type: 'privateMessage',
+                    requestId: parsed.requestId,
+                    data: {status: status}
+                }));
+                this.gameLogic.onGameState.remove(this.handleState);
+                this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
+                this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);
             }
 
             if (parsed.type == 'submitWord') {
