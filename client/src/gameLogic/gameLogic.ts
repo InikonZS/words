@@ -43,8 +43,27 @@ export class GameLogic{
             name: playerName,
             points: 0,
             crystals: 0,
-            winWord: ''
+            winWord: '',
+            connected: true
         });
+        this.onGameState.emit(this.getState());
+    }
+
+    leavePlayer(playerName:string){
+
+    }
+
+    connectPlayer(playerName: string){
+        const player = this.players.find(it=> playerName == it.name);
+        if (player){
+            player.connected = true;
+            this.onGameState.emit(this.getState());
+        }
+    }
+
+    disconnectPlayer(playerName: string){
+        const player = this.players.find(it=> playerName == it.name);
+        player.connected = false;
         this.onGameState.emit(this.getState());
     }
 

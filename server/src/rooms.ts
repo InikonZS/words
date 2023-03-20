@@ -20,7 +20,7 @@ class Room{
         } else {
             const playerServer = new PlayerServer(this.logic, user);
             this.players.push(playerServer);
-            this.logic.joinPlayer(Math.random().toFixed(5));
+            this.logic.joinPlayer(user.name);
             console.log('new player');
         }
     }

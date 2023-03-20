@@ -19,12 +19,14 @@ export class PlayerServer {
 
     updateConnection(user: LobbyUser){
         this.connection = user.connection;
+        this.gameLogic.connectPlayer(user.name);
         this.connection.on('message', (message) => {
             this.handleMessage(message);
         });
 
         this.connection.on('close', (reasonCode, description) => {
             console.log('Close!!!!', description);
+            this.gameLogic.disconnectPlayer(user.name)
            /* this.gameLogic.onGameState.remove(this.handleState);
             this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
             this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);*/

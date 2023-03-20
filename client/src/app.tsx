@@ -12,14 +12,23 @@ export default function App() {
   const [player, setPlayer] = useState<PlayerClient>(null);
 
   useEffect(()=>{
-    const socket = new Socket();
-    socket.onConnect = ()=>{
-      setSocket(socket);
-    }
-    socket.onClose = ()=>{
-      setSocket(null);
+    const connect = ()=>{
+      const socket = new Socket();
+      socket.onConnect = ()=>{
+        setSocket(socket);
+      }
+      socket.onClose = ()=>{
+        setSocket(null);
+        setPlayer(null);
+        setPageName('lobby');
+        setTimeout(()=>{
+          console.log('try connect');
+          connect();
+        }, 3000);
+      }
     }
 
+    connect();
   }, []);
 
   return (

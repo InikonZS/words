@@ -5,6 +5,7 @@ export class LobbyUser{
     connection: connection;
     session: string;
     rooms: Rooms;
+    name: string = Math.random().toFixed(5);
 
     constructor(rooms: Rooms, _connection: connection){
         this.session = Math.random().toString() + Date.now().toString();

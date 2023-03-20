@@ -16,6 +16,7 @@ export interface IPlayerData{
     points: number;
     crystals: number;
     winWord: string;
+    connected: boolean;
 }
 
 export interface IGameState{
