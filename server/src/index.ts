@@ -56,6 +56,7 @@ socket.on('request', (request) => {
   if (params['session']){
     user = users.find(it=> it.session == params['session']);
     if (user){
+      user.updateConnection(connection);
       connection.sendUTF(JSON.stringify({
         type: 'restoreSession',
         data: {

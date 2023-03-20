@@ -1,46 +1,52 @@
 import { connection, Message } from "websocket";
 import { GameLogic } from "../../client/src/gameLogic/gameLogic";
 import { IGameState, ILetter } from "../../client/src/gameLogic/interfaces";
+import { LobbyUser } from "./lobbyUser";
 
 export class PlayerServer {
     private gameLogic: GameLogic;
+    public user: LobbyUser;
     private connection: connection;
 
-    constructor(gameLogic: GameLogic, connection: connection) { 
-        this.connection = connection;
+    constructor(gameLogic: GameLogic, user: LobbyUser) { 
+        this.user = user;
         this.gameLogic = gameLogic;
         this.gameLogic.onGameState.add(this.handleState);
         this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
+        this.updateConnection(user);
+    }
 
-        connection.on('message', (message) => {
+    updateConnection(user: LobbyUser){
+        this.connection = user.connection;
+        this.connection.on('message', (message) => {
             this.handleMessage(message);
         });
 
-        connection.on('close', (reasonCode, description) => {
+        this.connection.on('close', (reasonCode, description) => {
             console.log('Close!!!!', description);
-            this.gameLogic.onGameState.remove(this.handleState);
+           /* this.gameLogic.onGameState.remove(this.handleState);
             this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
-            this.gameLogic.onSelectLetter.remove(this.handleCorrectWord);
+            this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);*/
         })
     }
 
     handleState = (state: IGameState)=>{
-        this.connection.sendUTF(JSON.stringify({
+        this.user.connection.sendUTF(JSON.stringify({
           type: 'state',
           data: state
         }))
       }
 
     handleCorrectWord = (state: ILetter[])=>{
-        this.connection.sendUTF(JSON.stringify({
+        this.user.connection.sendUTF(JSON.stringify({
             type: 'correctWord',
             data: state
         }))
         }
 
     handleSelectLetter = (state: ILetter[])=>{
-        this.connection.sendUTF(JSON.stringify({
+        this.user.connection.sendUTF(JSON.stringify({
             type: 'selectLetter',
             data: state
         }))
@@ -55,7 +61,7 @@ export class PlayerServer {
             }
 
             if (parsed.type == 'getState') {
-                this.connection.sendUTF(JSON.stringify({
+                this.user.connection.sendUTF(JSON.stringify({
                     type: 'privateMessage',
                     requestId: parsed.requestId,
                     data: this.gameLogic.getState()

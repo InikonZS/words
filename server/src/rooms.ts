@@ -13,9 +13,16 @@ class Room{
     }
 
     join(user: LobbyUser){
-        const playerServer = new PlayerServer(this.logic, user.connection);
-        this.players.push(playerServer);
-        this.logic.joinPlayer(Math.random().toFixed(5));
+        const existingPlayer = this.players.find(player => player.user == user)
+        if (existingPlayer){
+            existingPlayer.updateConnection(user);
+            console.log('restore player');
+        } else {
+            const playerServer = new PlayerServer(this.logic, user);
+            this.players.push(playerServer);
+            this.logic.joinPlayer(Math.random().toFixed(5));
+            console.log('new player');
+        }
     }
 }
 

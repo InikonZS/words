@@ -4,10 +4,17 @@ import { Rooms } from "./rooms";
 export class LobbyUser{
     connection: connection;
     session: string;
+    rooms: Rooms;
 
     constructor(rooms: Rooms, _connection: connection){
         this.session = Math.random().toString() + Date.now().toString();
-        this.connection = _connection;
+        this.rooms = rooms;
+        this.updateConnection(_connection);
+    }
+
+    updateConnection(_connection: connection){
+        this.connection = _connection; 
+        const rooms = this.rooms;
         _connection.on('message', (message: Message)=>{
             if (message.type == 'utf8') {
                 const parsed = JSON.parse(message.utf8Data)
