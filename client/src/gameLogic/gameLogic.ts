@@ -96,7 +96,13 @@ export class GameLogic{
         }))
     }
 
-    submitWord(selected:Array<ILetter>){
+    submitWord(playerName: string, selected:Array<ILetter>){
+        const player = this.players.find(it=> playerName == it.name);
+        const current = this.players[this.currentPlayerIndex];
+        if (!player || player.name !== current.name) {
+            return;
+        }
+
         clearTimeout(this.moveTimer);
         this.moveTimer = null;
         const [isCorrect, word] = langCheckWord(selected);//selected.map(it=> it.letter).join('');
@@ -187,7 +193,13 @@ export class GameLogic{
         }
     }
 
-    select(word:ILetter[]){
+    select(playerName: string, word:ILetter[]){
+        const player = this.players.find(it=> playerName == it.name);
+        const current = this.players[this.currentPlayerIndex];
+        if (!player || player.name !== current.name) {
+            return;
+        }
+
         this.onSelectLetter.emit(word);
     }
 
@@ -219,14 +231,14 @@ export class GameLogic{
                             return last;
                         })*/
                         //setWinWord(word.map(it=>it.letter).join(''));
-                        this.submitWord(word); 
+                        this.submitWord('bot', word); 
                         //setSelected([]); 
                     }, 3000); 
                 }, 1000);  
             }
         } else {
             this.moveTimer = setTimeout(()=>{
-                this.submitWord([]);
+                this.submitWord('bot', []);
             }, 10000)
         }
     }

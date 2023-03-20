@@ -18,6 +18,7 @@ export default function App() {
         setSocket(socket);
       }
       socket.onClose = ()=>{
+        socket.destroy();
         setSocket(null);
         setPlayer(null);
         setPageName('lobby');

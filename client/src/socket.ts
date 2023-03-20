@@ -28,7 +28,8 @@ export default class Socket {
       }
       this.webSocket.onerror = () => {
         console.log('Socket Error');
-        this.onClose?.();
+        this.webSocket.close();
+        //this.onClose?.();
       }
       this.webSocket.onmessage = (message) => {
         console.log(message)

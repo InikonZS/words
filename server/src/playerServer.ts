@@ -71,7 +71,7 @@ export class PlayerServer {
             }
 
             if (parsed.type == 'submitWord') {
-                this.gameLogic.submitWord(parsed.data.selected);
+                this.gameLogic.submitWord(this.user.name, parsed.data.selected);
                 /*connection.sendUTF(JSON.stringify({
                   type: 'privateMessage',
                   requestId: parsed.requestId,
@@ -79,7 +79,7 @@ export class PlayerServer {
                 }))*/
             }
             if (parsed.type == 'selectLetter') {
-                this.gameLogic.select(parsed.data);
+                this.gameLogic.select(this.user.name, parsed.data);
                 /*connection.sendUTF(JSON.stringify({
                   type: 'privateMessage',
                   requestId: parsed.requestId,
