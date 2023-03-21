@@ -13,22 +13,28 @@ body {
 
 .letter {
     position: relative;
-    width: 30px;
-    height: 30px;
-    border: 1px solid #600;
+    width: 60px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
+    font-size: 26px;
+    font-weight: bold;
     color: #ccc;
     cursor: default;
     margin: 5px;
     transform: scale(1, 1);
     transition-duration: 1s;
+    border: 1px solid #be37f3;
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px #8904bd;
 }
 
 .letter_selected {
     color: #0c0;
+    border: 1px solid #0c0;
+    box-shadow: 0px 0px 5px #0c0;
 }
 
 .letter_hide {
@@ -38,12 +44,11 @@ body {
 .crystal {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 4px;
-    height: 4px;
-    border: 1px solid #60f;
+    left: -6px;
+    width: 30px;
+    height: 40px;
+    background-image: url('../src/assets/cristal.png');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 
-.player_active{
-    background-color: #fff3;
-}

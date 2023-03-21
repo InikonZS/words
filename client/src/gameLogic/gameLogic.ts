@@ -21,7 +21,7 @@ export class GameLogic{
     isStarted: boolean = false;
 
     constructor(){
-        this.letters = [[]];
+        this.letters = langGenerateLetters(10, 10);
         this.players = [
         /*    {
                 name: 'player',

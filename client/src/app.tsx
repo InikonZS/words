@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
-import GameField from './gamefield';
+import GameField from './components/gamefield/gamefield';
 import { Lobby } from './lobby';
 import Socket from "./socket";
 import { PlayerClient } from "./player_client";

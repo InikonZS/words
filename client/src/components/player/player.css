@@ -1,0 +1,23 @@
+.player {
+  width: 200px;
+  margin-bottom: 15px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid #73d1ee;
+}
+
+.player:not(:last-child) {
+  margin-right: 20px;
+}
+
+.player--active{
+  background-color: #fff3;
+  box-shadow: 0px 0px 10px #73d1ee;
+}
+
+.player__score {
+  text-align: center;
+}
