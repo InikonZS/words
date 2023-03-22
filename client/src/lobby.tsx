@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Socket from "./socket";
+import {AnimatedList} from './animatedList';
 
 interface ILobbyProps{
     socket: Socket;
@@ -8,6 +9,7 @@ interface ILobbyProps{
 
 export function Lobby({socket, onRoomJoin}: ILobbyProps) {
     const [roomName, setRoomName] = useState('');
+    //const [items, setItems] = useState([]);
 
     return <div>
         <button onClick={()=>{
@@ -38,5 +40,6 @@ export function Lobby({socket, onRoomJoin}: ILobbyProps) {
                 }
             })
         }}>join room</button>
+        <AnimatedList></AnimatedList>
     </div>
 }
