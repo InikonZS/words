@@ -12,14 +12,24 @@ export default function App() {
   const [player, setPlayer] = useState<PlayerClient>(null);
 
   useEffect(()=>{
-    const socket = new Socket();
-    socket.onConnect = ()=>{
-      setSocket(socket);
-    }
-    socket.onClose = ()=>{
-      setSocket(null);
+    const connect = ()=>{
+      const socket = new Socket();
+      socket.onConnect = ()=>{
+        setSocket(socket);
+      }
+      socket.onClose = ()=>{
+        socket.destroy();
+        setSocket(null);
+        setPlayer(null);
+        setPageName('lobby');
+        setTimeout(()=>{
+          console.log('try connect');
+          connect();
+        }, 3000);
+      }
     }
 
+    connect();
   }, []);
 
   return (
@@ -31,7 +41,10 @@ export default function App() {
           setPageName('gameField');
         }}></Lobby>}
 
-        {pageName == 'gameField' && socket && <GameField player={player}/>}  
+        {pageName == 'gameField' && socket && <GameField player={player} onLeave={()=>{
+          setPlayer(null);
+          setPageName('lobby');
+        }}/>}  
         {/*<GameField />*/}
       </div>
   )

@@ -3,9 +3,19 @@ import { Rooms } from "./rooms";
 
 export class LobbyUser{
     connection: connection;
+    session: string;
+    rooms: Rooms;
+    name: string = Math.random().toFixed(5);
 
     constructor(rooms: Rooms, _connection: connection){
-        this.connection = _connection;
+        this.session = Math.random().toString() + Date.now().toString();
+        this.rooms = rooms;
+        this.updateConnection(_connection);
+    }
+
+    updateConnection(_connection: connection){
+        this.connection = _connection; 
+        const rooms = this.rooms;
         _connection.on('message', (message: Message)=>{
             if (message.type == 'utf8') {
                 const parsed = JSON.parse(message.utf8Data)

@@ -1,14 +1,15 @@
 import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
 import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
-
-const langSumFreq = getSumFreq(frequency);
+import { ILangGen } from './logicGenerator'; 
+/*const langSumFreq = getSumFreq(frequency);
 const langFreqRandom = ()=>freqRandom(langSumFreq);
 const langGenerateLetters = (x: number, y: number)=>generateLetters(x, y, langSumFreq);
 const langTraceField = (letters: ILetter[][])=> traceField(letters, (part)=> findWordsByPart(part, formattedWordsEn));
-const langCheckWord = (letters: ILetter[]) => checkWord(letters, formattedWordsEn);
+const langCheckWord = (letters: ILetter[]) => checkWord(letters, formattedWordsEn);*/
 
 export class GameLogic{
+    gen: ILangGen;
     letters: ILetter[][];
     players: Array<IPlayerData>;
     currentPlayerIndex: number = 0;
@@ -20,8 +21,9 @@ export class GameLogic{
     private moveTimer: any = null;
     isStarted: boolean = false;
 
-    constructor(){
-        this.letters = langGenerateLetters(10, 10);
+    constructor(gen: ILangGen){
+        this.gen = gen;
+        this.letters = this.gen.generateLetters(10, 10);
         this.players = [
         /*    {
                 name: 'player',
@@ -43,13 +45,43 @@ export class GameLogic{
             name: playerName,
             points: 0,
             crystals: 0,
-            winWord: ''
+            winWord: '',
+            connected: true
         });
         this.onGameState.emit(this.getState());
     }
 
+    leavePlayer(playerName:string){
+        const playerIndex = this.players.findIndex(it=> playerName == it.name);
+        if (playerIndex != -1) {
+            this.players.splice(playerIndex, 1);
+            if (this.currentPlayerIndex >= this.players.length){
+                this.currentPlayerIndex = 0;
+            }
+            this.onGameState.emit(this.getState());
+            return true;
+        }
+        return false;
+    }
+
+    connectPlayer(playerName: string){
+        const player = this.players.find(it=> playerName == it.name);
+        if (player){
+            player.connected = true;
+            this.onGameState.emit(this.getState());
+        }
+    }
+
+    disconnectPlayer(playerName: string){
+        const player = this.players.find(it=> playerName == it.name);
+        if (player){
+            player.connected = false;
+            this.onGameState.emit(this.getState());
+        }
+    }
+
     start(){
-        this.letters = langGenerateLetters(10, 10);
+        this.letters = this.gen.generateLetters(10, 10);
         this.addCrystals();
         this.isStarted = true;
         this.onGameState.emit(this.getState());
@@ -77,10 +109,16 @@ export class GameLogic{
         }))
     }
 
-    submitWord(selected:Array<ILetter>){
+    submitWord(playerName: string, selected:Array<ILetter>){
+        const player = this.players.find(it=> playerName == it.name);
+        const current = this.players[this.currentPlayerIndex];
+        if (!player || player.name !== current.name) {
+            return;
+        }
+
         clearTimeout(this.moveTimer);
         this.moveTimer = null;
-        const [isCorrect, word] = langCheckWord(selected);//selected.map(it=> it.letter).join('');
+        const [isCorrect, word] = this.gen.checkWord(selected);//selected.map(it=> it.letter).join('');
         if ( isCorrect || word == ''){
             console.log('correct ', word);
             this.onCorrectWord.emit(selected);
@@ -141,7 +179,7 @@ export class GameLogic{
                 }
                 return {
                     ...item,
-                    letter: langFreqRandom(),
+                    letter: this.gen.randomLetter(),
                     bonus: bonus
                 } 
             } else {
@@ -168,13 +206,19 @@ export class GameLogic{
         }
     }
 
-    select(word:ILetter[]){
+    select(playerName: string, word:ILetter[]){
+        const player = this.players.find(it=> playerName == it.name);
+        const current = this.players[this.currentPlayerIndex];
+        if (!player || player.name !== current.name) {
+            return;
+        }
+
         this.onSelectLetter.emit(word);
     }
 
     bot(){
         if (this.players[this.currentPlayerIndex]?.name == 'bot'){
-            const allWords = langTraceField(this.letters);
+            const allWords = this.gen.traceField(this.letters);
             const linearList: Array<Array<ILetter>> = [];
             allWords.forEach(row=>{
                 row.forEach(words=>{
@@ -200,14 +244,14 @@ export class GameLogic{
                             return last;
                         })*/
                         //setWinWord(word.map(it=>it.letter).join(''));
-                        this.submitWord(word); 
+                        this.submitWord('bot', word); 
                         //setSelected([]); 
                     }, 3000); 
                 }, 1000);  
             }
         } else {
             this.moveTimer = setTimeout(()=>{
-                this.submitWord([]);
+                this.submitWord('bot', []);
             }, 10000)
         }
     }

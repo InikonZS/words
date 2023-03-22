@@ -88,7 +88,7 @@ export function getSumFreq(frequency:Array<number>){
 //const sumFreq = getSumFreq();
 //console.log(sumFreq);
 
-export function freqRandom(sumFreq: Array<number>):string{
+export function freqRandom(abc:string, sumFreq: Array<number>):string{
     const sum = frequency.reduce((ac, it)=> ac + it, 0);
     const rnd = Math.random() * sum;
     const ind = sumFreq.findIndex(it=>rnd<it);
@@ -97,11 +97,11 @@ export function freqRandom(sumFreq: Array<number>):string{
 //(window as any).rnd = freqRandom;
 //console.log(freqRandom());
 
-export function generateLetters(x: number, y: number, sumFreq:Array<number>):ILetter[][]{
+export function generateLetters(x: number, y: number, abc: string, sumFreq:Array<number>):ILetter[][]{
     //const sumFreq = getSumFreq(freq);
     return new Array(y).fill(null).map((it, i)=> new Array(x).fill('').map((jt, j)=> {
         return {
-            letter: freqRandom(sumFreq),//abc[Math.floor(Math.random() * abc.length)],
+            letter: freqRandom(abc, sumFreq),//abc[Math.floor(Math.random() * abc.length)],
             x: j,
             y: i,
             id: `x${j}y${i}`,
