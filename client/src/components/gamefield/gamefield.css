@@ -1,0 +1,32 @@
+.game__wrapper {
+  width: 950px;
+  position: relative;
+  margin: 0 auto;
+  /* height: calc(100vh - 85px); */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(225 188 248 / 20%);
+}
+
+.game__center-container {
+  width: 100%;
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.players {
+  width: 100%;
+  padding: 20px 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}

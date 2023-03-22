@@ -1,0 +1,31 @@
+.player {
+  width: 190px;
+  margin-bottom: 15px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  border: 1px solid #73d1ee;
+  transition: all 0.5s ease;
+  border-radius: 7px;
+}
+
+.player:not(:last-child) {
+  margin-right: 25px;
+}
+
+.player--active{
+  transform: scale(1.1);
+  box-shadow: 0px 0px 10px #73d1ee; 
+}
+
+.player__score {
+  text-align: center;
+}
+
+.player__name {
+  color: #73d1ee;
+  font-size: 24px;
+  font-weight: bold;
+}
