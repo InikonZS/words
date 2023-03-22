@@ -1,4 +1,5 @@
 import { GameLogic } from "../../client/src/gameLogic/gameLogic";
+import { enGen, ruGen } from "../../client/src/gameLogic/logicGenerator";
 import { LobbyUser } from "./lobbyUser";
 import { PlayerServer } from './playerServer';
 
@@ -8,7 +9,7 @@ class Room{
     players: Array<PlayerServer> = [];
 
     constructor(name: string){
-        this.logic = new GameLogic();
+        this.logic = new GameLogic(enGen);
         this.name = name;
     }
 

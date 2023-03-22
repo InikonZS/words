@@ -1,14 +1,15 @@
 import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
 import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
-
-const langSumFreq = getSumFreq(frequency);
+import { ILangGen } from './logicGenerator'; 
+/*const langSumFreq = getSumFreq(frequency);
 const langFreqRandom = ()=>freqRandom(langSumFreq);
 const langGenerateLetters = (x: number, y: number)=>generateLetters(x, y, langSumFreq);
 const langTraceField = (letters: ILetter[][])=> traceField(letters, (part)=> findWordsByPart(part, formattedWordsEn));
-const langCheckWord = (letters: ILetter[]) => checkWord(letters, formattedWordsEn);
+const langCheckWord = (letters: ILetter[]) => checkWord(letters, formattedWordsEn);*/
 
 export class GameLogic{
+    gen: ILangGen;
     letters: ILetter[][];
     players: Array<IPlayerData>;
     currentPlayerIndex: number = 0;
@@ -20,8 +21,9 @@ export class GameLogic{
     private moveTimer: any = null;
     isStarted: boolean = false;
 
-    constructor(){
-        this.letters = langGenerateLetters(10, 10);
+    constructor(gen: ILangGen){
+        this.gen = gen;
+        this.letters = this.gen.generateLetters(10, 10);
         this.players = [
         /*    {
                 name: 'player',
@@ -79,7 +81,7 @@ export class GameLogic{
     }
 
     start(){
-        this.letters = langGenerateLetters(10, 10);
+        this.letters = this.gen.generateLetters(10, 10);
         this.addCrystals();
         this.isStarted = true;
         this.onGameState.emit(this.getState());
@@ -116,7 +118,7 @@ export class GameLogic{
 
         clearTimeout(this.moveTimer);
         this.moveTimer = null;
-        const [isCorrect, word] = langCheckWord(selected);//selected.map(it=> it.letter).join('');
+        const [isCorrect, word] = this.gen.checkWord(selected);//selected.map(it=> it.letter).join('');
         if ( isCorrect || word == ''){
             console.log('correct ', word);
             this.onCorrectWord.emit(selected);
@@ -177,7 +179,7 @@ export class GameLogic{
                 }
                 return {
                     ...item,
-                    letter: langFreqRandom(),
+                    letter: this.gen.randomLetter(),
                     bonus: bonus
                 } 
             } else {
@@ -216,7 +218,7 @@ export class GameLogic{
 
     bot(){
         if (this.players[this.currentPlayerIndex]?.name == 'bot'){
-            const allWords = langTraceField(this.letters);
+            const allWords = this.gen.traceField(this.letters);
             const linearList: Array<Array<ILetter>> = [];
             allWords.forEach(row=>{
                 row.forEach(words=>{
