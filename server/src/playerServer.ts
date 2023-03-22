@@ -8,6 +8,7 @@ export class PlayerServer {
     public user: LobbyUser;
     private connection: connection;
     onLeave: ()=>void;
+    disconnectTimeout: NodeJS.Timeout;
 
     constructor(gameLogic: GameLogic, user: LobbyUser) { 
         this.user = user;
@@ -19,6 +20,10 @@ export class PlayerServer {
     }
 
     updateConnection(user: LobbyUser){
+        if (this.disconnectTimeout){
+            clearTimeout(this.disconnectTimeout);
+            this.disconnectTimeout = null;
+        }
         this.connection = user.connection;
         this.gameLogic.connectPlayer(user.name);
         this.connection.on('message', (message) => {
@@ -27,7 +32,10 @@ export class PlayerServer {
 
         this.connection.on('close', (reasonCode, description) => {
             console.log('Close!!!!', description);
-            this.gameLogic.disconnectPlayer(user.name)
+            this.gameLogic.disconnectPlayer(user.name);
+            this.disconnectTimeout = setTimeout(()=>{
+                this.leaveRoom();
+            }, 3000);
            /* this.gameLogic.onGameState.remove(this.handleState);
             this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
             this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);*/
@@ -72,16 +80,17 @@ export class PlayerServer {
             }
 
             if (parsed.type == 'leaveRoom') {
-                const status = this.gameLogic.leavePlayer(this.user.name);
-                this.onLeave?.();
+                //const status = this.gameLogic.leavePlayer(this.user.name);
+                //this.onLeave?.();
+                const status = this.leaveRoom();
                 this.user.connection.sendUTF(JSON.stringify({
                     type: 'privateMessage',
                     requestId: parsed.requestId,
                     data: {status: status}
                 }));
-                this.gameLogic.onGameState.remove(this.handleState);
+                /*this.gameLogic.onGameState.remove(this.handleState);
                 this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
-                this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);
+                this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);*/
             }
 
             if (parsed.type == 'submitWord') {
@@ -101,5 +110,14 @@ export class PlayerServer {
                 }))*/
             }
         }
+    }
+
+    leaveRoom(){
+        const status = this.gameLogic.leavePlayer(this.user.name);
+        this.onLeave?.();
+        this.gameLogic.onGameState.remove(this.handleState);
+        this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
+        this.gameLogic.onSelectLetter.remove(this.handleSelectLetter); 
+        return status;   
     }
 }

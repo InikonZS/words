@@ -7,13 +7,17 @@ class Room{
     name: string;
     logic: GameLogic;
     players: Array<PlayerServer> = [];
+    lastActivity: number;
+    onRemove: ()=>void;
 
     constructor(name: string){
         this.logic = new GameLogic(enGen);
         this.name = name;
+        this.lastActivity = Date.now();
     }
 
     join(user: LobbyUser){
+        this.lastActivity = Date.now();
         const existingPlayer = this.players.find(player => player.user == user)
         if (existingPlayer){
             existingPlayer.updateConnection(user);
@@ -28,17 +32,28 @@ class Room{
             console.log('new player');
         }
     }
+
+    remove(){
+        this.onRemove();
+    }
 }
 
 export class Rooms{
     private rooms: Array<Room> = [];
-
+    static counter = 0;
     constructor(){
 
     }
 
     addRoom(){
-        const room = new Room('room' + this.rooms.length.toString());    
+        Rooms.counter++;
+        const room = new Room('room' + Rooms.counter);  
+        room.onRemove = ()=>{
+            const index = this.rooms.findIndex(it=> it.name == room.name);
+            if (index != -1){
+                this.rooms.splice(index, 1);
+            }
+        }  
         this.rooms.push(room);
         return room.name;
     }
