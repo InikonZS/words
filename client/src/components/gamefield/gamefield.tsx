@@ -8,7 +8,7 @@ import { PlayerClient } from '../../player_client';
 import '../../style.css';
 import './gamefield.css';
 
-export default function GameField({ player }: { player: PlayerClient }) {
+export default function GameField({player, onLeave}: {player: PlayerClient, onLeave: ()=>void}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
@@ -106,6 +106,14 @@ export default function GameField({ player }: { player: PlayerClient }) {
     return (
         letters && (
         <div className="game__wrapper">
+            <div>
+                <button onClick={()=>{
+                    client.leaveRoom().then(res=>{
+                        console.log(res);
+                        onLeave();
+                    })
+                }}>leave</button>
+            </div>
             <div className="game__center-container">
                 <div className="players">
                     {players.map((player, index) => {

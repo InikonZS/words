@@ -11,6 +11,7 @@ export function Player({playerData, isActive}: {playerData: IPlayerData, isActiv
             {name}
         </div>
         <div className="player__score">
+            <div>connected: {playerData.connected ? 'true' : 'false'}</div>
             <div className="player__points">score: {points}</div>
             <div className="player__crystals">crystals: {crystals}</div>
             <div className="player__word">word: {winWord}</div>
