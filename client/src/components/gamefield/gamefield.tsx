@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Socket from "../../socket";
 import { IBonus, ILetter, IPlayerData } from '../../gameLogic/interfaces';
 import { isClosest, traceField, traceOne } from '../../gameLogic/logicTools';
@@ -106,6 +106,25 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
         })*/
     }
 
+    useEffect(()=>{
+        if (selected.length){
+            const h = ()=>{
+                setPointer(null);
+                submitWord(selected);
+                /*socket.sendState({
+                    type: 'selectLetter',
+                    data: []
+                })*/
+                client.selectLetter([]);
+            };
+            window.addEventListener('mouseup', h, {once: true});
+            return ()=>{
+                window.removeEventListener('mouseup', h);
+            }
+        }
+        
+    }, [selected])
+
     return (
         letters && (
         <div className="game__wrapper">
@@ -129,6 +148,8 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                     if (fieldRef.current && selected && selected.length){
                         const {left, top} =fieldRef.current.getBoundingClientRect();
                         setPointer({x: e.clientX - left, y: e.clientY - top});
+                    } else {
+                        setPointer(null);
                     }
                 }}>
                     {
@@ -148,15 +169,6 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                                                     data: [letter]
                                                 })*/
                                                 client.selectLetter([letter]);
-                                                window.addEventListener('mouseup', ()=>{
-                                                    setPointer(null);
-                                                    submitWord(selected);
-                                                    /*socket.sendState({
-                                                        type: 'selectLetter',
-                                                        data: []
-                                                    })*/
-                                                    client.selectLetter([]);
-                                                }, {once: true});
                                             }}
                                             onMouseMove={(e) => {
                                                 //console.log(fieldRef.current.getBoundingClientRect())
