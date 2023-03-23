@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Socket from "../../socket";
 import { IBonus, ILetter, IPlayerData } from '../../gameLogic/interfaces';
 import { isClosest, traceField, traceOne } from '../../gameLogic/logicTools';
@@ -7,6 +7,7 @@ import { GameLogic } from '../../gameLogic/gameLogic';
 import { PlayerClient } from '../../player_client';
 import '../../style.css';
 import './gamefield.css';
+import { LineOverlay } from "../../animatedList";
 
 export default function GameField({player, onLeave}: {player: PlayerClient, onLeave: ()=>void}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
@@ -18,6 +19,8 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
     const [players, setPlayers] = useState<Array<IPlayerData>>([]);
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
     const [client, setClient] = useState<PlayerClient>(null);
+    const [pointer, setPointer] = useState<{x: number, y: number}>(null);
+    const fieldRef = useRef<HTMLDivElement>();
     //const [winWord, setWinWord] = useState('');
 
     useEffect(() => {
@@ -114,14 +117,20 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                     })
                 }}>leave</button>
             </div>
+            
             <div className="game__center-container">
                 <div className="players">
                     {players.map((player, index) => {
                         return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
                     })}
                 </div>
-                
-                <div className="field">
+                <div className="field__group">
+                <div className="field" ref={fieldRef} onMouseMove={(e)=>{
+                    if (fieldRef.current && selected && selected.length){
+                        const {left, top} =fieldRef.current.getBoundingClientRect();
+                        setPointer({x: e.clientX - left, y: e.clientY - top});
+                    }
+                }}>
                     {
                         letters.map(row => {
                             return <div className="row">
@@ -139,8 +148,19 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                                                     data: [letter]
                                                 })*/
                                                 client.selectLetter([letter]);
+                                                window.addEventListener('mouseup', ()=>{
+                                                    setPointer(null);
+                                                    submitWord(selected);
+                                                    /*socket.sendState({
+                                                        type: 'selectLetter',
+                                                        data: []
+                                                    })*/
+                                                    client.selectLetter([]);
+                                                }, {once: true});
                                             }}
-                                            onMouseMove={() => {
+                                            onMouseMove={(e) => {
+                                                //console.log(fieldRef.current.getBoundingClientRect())
+                                                
                                                 if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
                                                     //setSelected(last=> [...last, letter])
                                                     /*socket.sendState({
@@ -158,12 +178,13 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                                                 }
                                             }}
                                             onMouseUp={() => {
-                                                submitWord(selected);
+                                             //   setPointer(null);
+                                             //   submitWord(selected);
                                                 /*socket.sendState({
                                                     type: 'selectLetter',
                                                     data: []
                                                 })*/
-                                                client.selectLetter([]);
+                                              //  client.selectLetter([]);
                                                 //setSelected([]); 
                                             }}>
                                             {letter.bonus.find(it => it.name == 'crystal') && <div className="crystal"></div>}
@@ -173,6 +194,8 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                             </div>
                         })
                     }
+                </div>
+                <LineOverlay word={selected} pointer={pointer}></LineOverlay>
                 </div>
             </div>
         </div>

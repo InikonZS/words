@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './animatedList.css';
+import { ILetter } from "./gameLogic/interfaces";
 
 interface IAnimatedItemProps{
     data: Array<any>;
@@ -36,7 +37,7 @@ function AnimatedItem({data, status, onShow, onHide}:IAnimatedItemProps){
 }
 
 interface IAnimatedListProps{
-    
+
 }
 
 export function AnimatedList({}: IAnimatedListProps){
@@ -89,4 +90,15 @@ export function AnimatedList({}: IAnimatedListProps){
             </div>
         </div>
     )
+}
+
+export function LineOverlay({word, pointer}: {word: Array<ILetter>, pointer?: {x: number, y: number}}){
+    const lineData = word.map((it, i)=> ({l: i==0?'M' : 'L', x: it.x * (60 + 10)+ 35, y: it.y * (60 + 10) + 35}));//[{l: 'M', x: 10, y: 10}, {l: 'L', x: 30, y:30}];
+    const lineString = lineData.map(it=> `${it.l}${it.x} ${it.y}`).join(' ');
+    const pointerString = pointer ? `L${pointer.x} ${pointer.y}`: '';
+    return <div>
+        <svg width={100} height={100} className="overlay">
+            <path d={lineString + ' ' + pointerString}></path>
+        </svg>
+    </div>
 }
