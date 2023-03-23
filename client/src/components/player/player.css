@@ -9,6 +9,7 @@
   border: 1px solid #73d1ee;
   transition: all 0.5s ease;
   border-radius: 7px;
+  background-color: #100738;
 }
 
 .player:not(:last-child) {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./style.css";
 import GameField from './components/gamefield/gamefield';
-import { Lobby } from './lobby';
+import { Lobby } from './lobby/lobby';
 import Socket from "./socket";
 import { PlayerClient } from "./player_client";
 

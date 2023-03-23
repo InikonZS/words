@@ -2,13 +2,12 @@
   width: 950px;
   position: relative;
   margin: 0 auto;
-  /* height: calc(100vh - 85px); */
   height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(225 188 248 / 20%);
+  /* background-color: rgb(225 188 248 / 20%); */
 }
 
 .game__center-container {
@@ -29,4 +28,10 @@
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
+}
+
+.field {
+  background-color: rgb(237 222 246 / 35%);
+  padding: 30px;
+  border-radius: 10px;
 }
