@@ -17,6 +17,7 @@ export function Lobby({ socket, onRoomJoin }: ILobbyProps) {
         <div className="lobby">
             <div className="lobby__wrapper">
                 <div className="lobby__center-container">
+                    <div className="lobby__buttons-wrapper">
                     <button className="btn lobby__button lobby__button--create" onClick={() => {
                         socket.sendState({
                             type: 'createRoom',
@@ -47,6 +48,9 @@ export function Lobby({ socket, onRoomJoin }: ILobbyProps) {
                             }
                         })
                     }}>join room</button>
+
+                    </div>
+                    
                     {/* <AnimatedList></AnimatedList> */}
 
                 </div>

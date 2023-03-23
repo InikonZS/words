@@ -15,11 +15,19 @@
 
 .lobby__center-container {
   width: 100%;
+  margin: 0 auto;  
+}
+
+.lobby__buttons-wrapper {
+  width: 60%;
   margin: 0 auto;
+  padding: 15px 10px; 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: rgb(229 222 236 / 37%);
+  border-radius: 10px;
 }
 
 .lobby__button {
@@ -54,19 +62,19 @@
 }
 
 .lobby__button--create {
-  background-color: #40c9f3;
+  border-top: #40c9f3;
   background: linear-gradient(to bottom, #40c9f3 0%, #0d718f 100%);
   border-bottom: 1px solid #0d718f;
 }
 
 .lobby__button--get {
-  background-color: #f54b20;
+  border-top: #f54b20;
   background: linear-gradient(to bottom, #f54b20 0%, #d12c03 100%);
   border-bottom: 1px solid #d12c03;
 }
 
 .lobby__button--join {
-  background-color: #49e43b;
+  border-top: #49e43b;
   background: linear-gradient(to bottom, #3be43b 0%, #087508 100%);
   border-bottom: 1px solid #087508;
 }
@@ -90,12 +98,12 @@
 }
 
 .lobby__input--room-name {
-  color: #efe5fa;
-  background-color: #45078b;
+  color: #45078b;
+  background-color: #efe5fa;
   border: 1px solid #832de6;
 }
 
-.lobby__input--room-name:focus {
+.lobby__input--room-name:focus { 
   box-shadow: 0px 0px 10px #832de6;
 }
 
