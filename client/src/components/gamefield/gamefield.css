@@ -32,12 +32,13 @@
 
 .field {
   background-color: rgb(237 222 246 / 35%);
-  padding: 30px;
+  padding: var(--padding);
   border-radius: 10px;
 }
 
 .field__group{
   position: relative;
+  --padding: 30px;
 }
 
 .overlay{
@@ -51,6 +52,7 @@
   stroke: #0f09;
   stroke-width: 5px;
   stroke-linecap: round;
+  padding: var(--padding);
 }
 
 .word_overlay{
