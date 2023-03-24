@@ -8,6 +8,7 @@ import { PlayerClient } from '../../player_client';
 import '../../style.css';
 import './gamefield.css';
 import { LineOverlay, WordOverlay } from "../../animatedList";
+import { moveTime } from "../../consts";
 
 export default function GameField({player, onLeave}: {player: PlayerClient, onLeave: ()=>void}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
@@ -22,6 +23,16 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
     const [pointer, setPointer] = useState<{x: number, y: number}>(null);
     const fieldRef = useRef<HTMLDivElement>();
     const [winWord, setWinWord] = useState<Array<ILetter>>(null);
+    const [time, setTime] = useState(0);
+
+    useEffect(()=>{
+        const tm = setInterval(()=>{
+            setTime(last => last - 1000);
+        }, 1000);
+        return ()=>{
+            clearInterval(tm);
+        }
+    }, [time]);
 
     useEffect(() => {
         /*const logic = new GameLogic();
@@ -56,6 +67,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
             setLetters(logic.letters);
             setPlayers(logic.players);
             setCurrentPlayerIndex(logic.currentPlayerIndex);
+            setTime(res.time);
             //setLogic(logic);
         })
         client.onGameState = (state) => {
@@ -63,6 +75,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
             setPlayers(state.players);
             //if (currentPlayerIndex !== state.currentPlayerIndex){
             setCurrentPlayerIndex(state.currentPlayerIndex);
+            setTime(state.time);
             //}
         }
         client.onSelectLetter = (word) => {
@@ -153,6 +166,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                         return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
                     })}
                 </div>
+                <div>{Math.floor(Math.max(time / 1000, 0))}</div>
                 <div className="field__group">
                 <div className="field" ref={fieldRef} onMouseMove={(e)=>{
                     if (fieldRef.current && selected && selected.length){

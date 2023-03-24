@@ -24,4 +24,5 @@ export interface IGameState{
     letters: ILetter[][];
     players: Array<IPlayerData>;
     currentPlayerIndex: number;
+    time: number;
 }

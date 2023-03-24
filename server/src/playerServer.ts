@@ -72,6 +72,7 @@ export class PlayerServer {
             }
 
             if (parsed.type == 'getState') {
+                console.log('getState');
                 this.user.connection.sendUTF(JSON.stringify({
                     type: 'privateMessage',
                     requestId: parsed.requestId,
