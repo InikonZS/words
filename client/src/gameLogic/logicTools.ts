@@ -109,6 +109,67 @@ export function generateLetters(x: number, y: number, abc: string, sumFreq:Array
     }}));
 }
 
+export function placeWords(words: Array<string>):ILetter[][]{
+    const x = 10;
+    const y = 10;
+    const initial = new Array(y).fill(null).map((it, i)=> new Array(x).fill('').map((jt, j)=> {
+        return {
+            letter: '_',//abc[Math.floor(Math.random() * abc.length)],
+            x: j,
+            y: i,
+            id: `x${j}y${i}`,
+            bonus: []
+    }}));
+    
+    //const randX = Math.floor(Math.random() * x);
+    //const randY = Math.floor(Math.random() * x);
+    return initial;
+}
+
+export function placeWord(word: string, letters: ILetter[][], randomPoint:ILetter){
+    //const emptyList = field.flat().filter(it=> it.letter=='_');
+    //const randomPoint = emptyList[Math.floor(Math.random()* emptyList.length)];
+
+    const results: Array<Array<ILetter>> = [];
+    const placeLetter = (x: number, y: number, word: string, last: Array<ILetter>)=>{
+        if (word == ''){
+            if (last.length){
+                results.push(last);
+            }
+            return true;
+        }
+        //const letters = field;
+        //const x = randomPoint.x;
+        //const y = randomPoint.y;
+        const closeList = [
+            letters[y-1]?.[x],
+            letters[y+1]?.[x],
+            letters[y]?.[x+1],
+            letters[y]?.[x-1],
+            letters[y-1]?.[x-1],
+            letters[y+1]?.[x-1],
+            letters[y-1]?.[x+1],
+            letters[y+1]?.[x+1],
+        ].filter(it => (it && it.letter == '_') && (!last.find(jt=> it.x == jt.x && it.y == jt.y)));
+        if (closeList.length){
+            closeList.forEach(it=>{
+                //console.log(word);
+                placeLetter(it.x, it.y, word.slice(1), [...last, {...it, letter:word[0]}]);
+            });
+            //}).filter(it=> it.length);
+            //return results;
+        } else {
+            //console.log('nolen');
+        }
+        return false;
+    }
+    placeLetter(randomPoint.x, randomPoint.y, word, []);
+    if (results.length){
+        return results[Math.floor(Math.random() * results.length)];
+    }
+    return null;
+}
+
   //  return [generateLetters, freqRandom];
 //}
 

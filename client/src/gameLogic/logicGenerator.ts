@@ -1,5 +1,6 @@
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { abc, ru, formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
+import { abc, ru, formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, placeWords, placeWord } from "./logicTools";
+import {pl} from './pl_words';
 
 export interface ILangGen{
     randomLetter():string;
@@ -25,7 +26,23 @@ class UniGen implements ILangGen{
         return freqRandom(this.abc, this.sumFreq);
     }
     generateLetters(x: number, y: number): ILetter[][] {
-        return generateLetters(x, y, this.abc, this.sumFreq);
+        const pw = pl.split('\n');
+        const wds = placeWords(pw);
+        for (let i =0; i<200; i++){
+            const emptyList = wds.flat().filter(it=> it.letter=='_');
+            const randomPoint = emptyList[Math.floor(Math.random()* emptyList.length)];
+            const word = placeWord(pw[(i % pw.length)], wds, randomPoint);
+            if (word) {
+                console.log(word);
+                word.forEach(it=>{
+                    wds[it.y][it.x].letter = it.letter+ i;
+                })
+            } else {
+
+            }
+            //console.log(word);
+        }
+        return wds;//generateLetters(x, y, this.abc, this.sumFreq);
     }
     traceField(letters: ILetter[][]): ILetter[][][][] {
         return traceField(letters, (part)=> findWordsByPart(part, this.words));
