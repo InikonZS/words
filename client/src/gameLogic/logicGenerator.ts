@@ -1,5 +1,6 @@
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { abc, ru, formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
+import { abc, ru, formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, placeWords, placeWord, genPl } from "./logicTools";
+import {pl} from './pl_words';
 
 export interface ILangGen{
     randomLetter():string;
@@ -24,7 +25,8 @@ class UniGen implements ILangGen{
     randomLetter(): string {
         return freqRandom(this.abc, this.sumFreq);
     }
-    generateLetters(x: number, y: number): ILetter[][] {
+    generateLetters(x: number, y: number,): ILetter[][] {
+        //return genPl();
         return generateLetters(x, y, this.abc, this.sumFreq);
     }
     traceField(letters: ILetter[][]): ILetter[][][][] {

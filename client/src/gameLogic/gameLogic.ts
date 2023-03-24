@@ -2,6 +2,7 @@ import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
 import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
 import { ILangGen } from './logicGenerator'; 
+import { moveTime } from '../consts';
 /*const langSumFreq = getSumFreq(frequency);
 const langFreqRandom = ()=>freqRandom(langSumFreq);
 const langGenerateLetters = (x: number, y: number)=>generateLetters(x, y, langSumFreq);
@@ -20,6 +21,7 @@ export class GameLogic{
 
     private moveTimer: any = null;
     isStarted: boolean = false;
+    startMoveTime: number;
 
     constructor(gen: ILangGen){
         this.gen = gen;
@@ -40,6 +42,22 @@ export class GameLogic{
         ];
     }
 
+    getNextPlayerIndex(){
+        return this.players.length ? (this.currentPlayerIndex + 1) % this.players.length : -1;
+    }
+
+    nextPlayer(index: number){
+        console.log('next player', index)
+        this.currentPlayerIndex = index; 
+        this.startMoveTime = Date.now();
+        this.onGameState.emit(this.getState());
+        clearTimeout(this.moveTimer);
+        this.moveTimer = setTimeout(()=>{
+            this.nextPlayer(this.getNextPlayerIndex());
+            this.bot();
+        }, moveTime * 1000);
+    }
+
     joinPlayer(playerName:string){
         this.players.push({
             name: playerName,
@@ -48,6 +66,10 @@ export class GameLogic{
             winWord: '',
             connected: true
         });
+        if (this.currentPlayerIndex == -1){
+            //this.currentPlayerIndex = 0;
+            this.nextPlayer(0);
+        }
         this.onGameState.emit(this.getState());
     }
 
@@ -56,7 +78,8 @@ export class GameLogic{
         if (playerIndex != -1) {
             this.players.splice(playerIndex, 1);
             if (this.currentPlayerIndex >= this.players.length){
-                this.currentPlayerIndex = 0;
+                //this.currentPlayerIndex = 0;
+                this.nextPlayer(0);
             }
             this.onGameState.emit(this.getState());
             return true;
@@ -84,7 +107,8 @@ export class GameLogic{
         this.letters = this.gen.generateLetters(10, 10);
         this.addCrystals();
         this.isStarted = true;
-        this.onGameState.emit(this.getState());
+        this.nextPlayer(0);
+        //this.onGameState.emit(this.getState());    
     }
 
     private addCrystals(){
@@ -116,11 +140,11 @@ export class GameLogic{
             return;
         }
 
-        clearTimeout(this.moveTimer);
-        this.moveTimer = null;
         const [isCorrect, word] = this.gen.checkWord(selected);//selected.map(it=> it.letter).join('');
         if ( isCorrect || word == ''){
             console.log('correct ', word);
+            //clearTimeout(this.moveTimer);
+            //this.moveTimer = null;
             this.onCorrectWord.emit(selected);
             /*setPlayers(last=>{
                 const current = last[currentPlayerIndex];
@@ -142,9 +166,10 @@ export class GameLogic{
                 this.updateLetters(selected);
                 //setLetters
                 //setAnimate([]);
-                this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
-                this.onGameState.emit(this.getState());
-                this.bot();
+                //this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
+                this.nextPlayer(this.getNextPlayerIndex());
+                
+                //this.bot();
                 //setCurrentPlayerIndex(last => (last + 1) % players.length);
             }, 1000);
             
@@ -202,7 +227,8 @@ export class GameLogic{
             isStarted: this.isStarted,
             letters: this.letters,
             players: this.players,
-            currentPlayerIndex: this.currentPlayerIndex
+            currentPlayerIndex: this.currentPlayerIndex,
+            time: - Date.now() + this.startMoveTime + (moveTime * 1000),
         }
     }
 
@@ -250,9 +276,9 @@ export class GameLogic{
                 }, 1000);  
             }
         } else {
-            this.moveTimer = setTimeout(()=>{
+           /* this.moveTimer = setTimeout(()=>{
                 this.submitWord('bot', []);
-            }, 10000)
+            }, 10000)*/
         }
     }
 }

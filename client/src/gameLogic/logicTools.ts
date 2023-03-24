@@ -1,9 +1,11 @@
 import {words} from "../words";
 import {ruWords} from "../ru_words";
+import {pl} from "./pl_words";
 import { ILetter } from "./interfaces";
 
 export const formattedWordsRu = ruWords.split('\n').filter(it=> it.length>=2);
 export const formattedWordsEn = words.split('\n').filter(it=> it.length>=2);
+export const formattedWordsPl = pl.split('\n').filter(it=> it.length>=2);
 //console.log(formattedWords);
 
 export const abc = 'abcdefghijklmnopqrstuvwxyz';
@@ -107,6 +109,105 @@ export function generateLetters(x: number, y: number, abc: string, sumFreq:Array
             id: `x${j}y${i}`,
             bonus: []
     }}));
+}
+
+export function placeWords():ILetter[][]{
+    const x = 10;
+    const y = 10;
+    const initial = new Array(y).fill(null).map((it, i)=> new Array(x).fill('').map((jt, j)=> {
+        return {
+            letter: '_',//abc[Math.floor(Math.random() * abc.length)],
+            x: j,
+            y: i,
+            id: `x${j}y${i}`,
+            bonus: []
+    }}));
+
+    /*for (let i =0; i<200; i++){
+        const emptyList = initial.flat().filter(it=> it.letter=='_');
+        const randomPoint = emptyList[Math.floor(Math.random()* emptyList.length)];
+        const word = placeWord(formattedWordsPl[(i % formattedWordsPl.length)], initial, randomPoint);
+        if (word) {
+            console.log(word);
+            word.forEach(it=>{
+                initial[it.y][it.x].letter = it.letter+ i;
+            })
+        } else {
+
+        }
+        //console.log(word);
+    }*/
+    
+    return initial;
+}
+
+export function genPl(){
+    const pw = pl.split('\n');
+    const wds = placeWords();
+    //let emptyList: Array<ILetter> = []
+    for (let i =0; i<200; i++){
+        const emptyList = wds.flat().filter(it=> it.letter=='_');
+        //emptyList = [];
+        /*wds.forEach(it=> it.forEach(jt=>{
+            (jt.letter=='_') && emptyList.push(jt)
+        }))*/
+        const randomPoint = emptyList[Math.floor(Math.random()* emptyList.length)];
+        const word = placeWord(pw[(i % pw.length)], wds, randomPoint);
+        if (word) {
+            console.log(word);
+            word.forEach(it=>{
+                wds[it.y][it.x].letter = it.letter+ i;
+            })
+        } else {
+
+        }
+        //console.log(word);
+    }
+    return wds;
+}
+
+export function placeWord(word: string, letters: ILetter[][], randomPoint:ILetter){
+    //const emptyList = field.flat().filter(it=> it.letter=='_');
+    //const randomPoint = emptyList[Math.floor(Math.random()* emptyList.length)];
+
+    const results: Array<Array<ILetter>> = [];
+    const placeLetter = (x: number, y: number, word: string, last: Array<ILetter>)=>{
+        if (word == ''){
+            if (last.length){
+                results.push(last);
+            }
+            return true;
+        }
+        //const letters = field;
+        //const x = randomPoint.x;
+        //const y = randomPoint.y;
+        const closeList = [
+            letters[y-1]?.[x],
+            letters[y+1]?.[x],
+            letters[y]?.[x+1],
+            letters[y]?.[x-1],
+            letters[y-1]?.[x-1],
+            letters[y+1]?.[x-1],
+            letters[y-1]?.[x+1],
+            letters[y+1]?.[x+1],
+        ].filter(it => (it && it.letter == '_') && (!last.find(jt=> it.x == jt.x && it.y == jt.y)));
+        if (closeList.length){
+            closeList.forEach(it=>{
+                //console.log(word);
+                placeLetter(it.x, it.y, word.slice(1), [...last, {...it, letter:word[0]}]);
+            });
+            //}).filter(it=> it.length);
+            //return results;
+        } else {
+            //console.log('nolen');
+        }
+        return false;
+    }
+    placeLetter(randomPoint.x, randomPoint.y, word, []);
+    if (results.length){
+        return results[Math.floor(Math.random() * results.length)];
+    }
+    return null;
 }
 
   //  return [generateLetters, freqRandom];

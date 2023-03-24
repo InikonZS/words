@@ -66,12 +66,13 @@ export class PlayerServer {
     handleMessage(message: Message) {
         if (message.type == 'utf8') {
             const parsed = JSON.parse(message.utf8Data)
-            console.log("Message", parsed)
+            //console.log("Message", parsed)
             if (!('type' in parsed)) {
                 return;
             }
 
             if (parsed.type == 'getState') {
+                console.log('getState');
                 this.user.connection.sendUTF(JSON.stringify({
                     type: 'privateMessage',
                     requestId: parsed.requestId,

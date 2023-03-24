@@ -51,6 +51,7 @@ export class PlayerClient{
     }
 
     getState():Promise<IGameState>{
+        console.log('getState');
         return this.socket.sendState({
             type: 'getState',
             data: {}
