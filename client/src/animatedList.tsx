@@ -102,3 +102,19 @@ export function LineOverlay({word, pointer}: {word: Array<ILetter>, pointer?: {x
         </svg>
     </div>
 }
+
+export function WordOverlay({word}: {word: Array<ILetter>}){
+    const [shownLetters, setShownLetters] = useState(null);
+    useEffect(()=>{
+
+    }, []);
+    return <div className="word_overlay">
+        <div className="result_word">
+            {word.map(item=>{
+                return <div className="result_letter">
+                    {item.letter}
+                </div>
+            })}`
+        </div>
+    </div>
+}

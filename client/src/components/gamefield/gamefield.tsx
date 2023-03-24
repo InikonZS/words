@@ -7,7 +7,7 @@ import { GameLogic } from '../../gameLogic/gameLogic';
 import { PlayerClient } from '../../player_client';
 import '../../style.css';
 import './gamefield.css';
-import { LineOverlay } from "../../animatedList";
+import { LineOverlay, WordOverlay } from "../../animatedList";
 
 export default function GameField({player, onLeave}: {player: PlayerClient, onLeave: ()=>void}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
@@ -21,7 +21,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
     const [client, setClient] = useState<PlayerClient>(null);
     const [pointer, setPointer] = useState<{x: number, y: number}>(null);
     const fieldRef = useRef<HTMLDivElement>();
-    //const [winWord, setWinWord] = useState('');
+    const [winWord, setWinWord] = useState<Array<ILetter>>(null);
 
     useEffect(() => {
         /*const logic = new GameLogic();
@@ -111,6 +111,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
             const h = ()=>{
                 setPointer(null);
                 submitWord(selected);
+                setWinWord(selected);
                 /*socket.sendState({
                     type: 'selectLetter',
                     data: []
@@ -124,6 +125,15 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
         }
         
     }, [selected])
+
+    useEffect(()=>{
+        if (winWord){
+            const tm = setTimeout(()=>{
+                setWinWord(null);
+            }, 2000);
+            return ()=>clearTimeout(tm);
+        }
+    }, [winWord])
 
     return (
         letters && (
@@ -208,6 +218,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
                     }
                 </div>
                 <LineOverlay word={selected} pointer={pointer}></LineOverlay>
+                {winWord && <WordOverlay word={winWord}></WordOverlay>}
                 </div>
             </div>
         </div>
