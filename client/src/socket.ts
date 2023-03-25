@@ -21,8 +21,15 @@ export default class Socket {
     session: string;
   
     constructor() {
-      this.privateMessageSignal = new Signal()
-      this.webSocket = new WebSocket(socketUrl+'?session='+ localStorage.getItem('words_session'))
+      this.privateMessageSignal = new Signal();
+      let session:string = '';
+      //fix for incognito mode
+      try{
+        session=localStorage.getItem('words_session');
+      } catch(e) {
+        console.log('failed access localStorage');
+      }
+      this.webSocket = new WebSocket(socketUrl+'?session='+ session)
       // this.webSocket.binaryType = "arraybuffer"
       this.webSocket.binaryType = "blob"
       this.webSocket.onopen = () => {
@@ -40,7 +47,11 @@ export default class Socket {
             this.privateMessageSignal.emit(parsedData)
         }
         if (parsedData.type === "newSession") {
-          localStorage.setItem('words_session', parsedData.data.session);
+          try{
+            localStorage.setItem('words_session', parsedData.data.session);
+          } catch(e){
+            console.log('cannot save session to localstorage, cause of private policy or incognito mode')
+          }
           console.log('new session ', parsedData.data.session);
           this.name = parsedData.data.name;
           this.session = parsedData.data.session;

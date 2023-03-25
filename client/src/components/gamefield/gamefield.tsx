@@ -173,7 +173,8 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                 <div className="field" ref={fieldRef} onMouseMove={(e)=>{
                     if (fieldRef.current && selected && selected.length){
                         const {left, top} =fieldRef.current.getBoundingClientRect();
-                        setPointer({x: e.clientX - left, y: e.clientY - top});
+                        const paddingOffset = 30;
+                        setPointer({x: e.clientX - left - paddingOffset, y: e.clientY - top - paddingOffset});
                     } else {
                         setPointer(null);
                     }

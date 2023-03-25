@@ -30,11 +30,13 @@ export default function App() {
       socket.onClose = ()=>{
         socket.destroy();
         setSocket(null);
-        setPlayer(null);
-        setPageName('lobby');
+        //think how to reconnect only for multiplayer
+        //setPlayer(null);
+        //setPageName('lobby');
         setTimeout(()=>{
           console.log('try connect');
-          connect();
+          //recursive reconnect attempt
+          //connect();
         }, 3000);
       }
     }
@@ -65,7 +67,7 @@ export default function App() {
           setPageName('gameField');
         }}></Lobby>}
 
-        {pageName == 'gameField' && socket && <GameField player={player} onLeave={()=>{
+        {pageName == 'gameField' && <GameField player={player} onLeave={()=>{
           setPlayer(null);
           setPageName('lobby');
         }}/>}  
