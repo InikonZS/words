@@ -5,14 +5,23 @@ import { Lobby } from './lobby/lobby';
 import Socket from "./socket";
 import { PlayerClient } from "./player_client";
 import { PlayerLocal } from './player_local';
+import { YandexPlatform } from './platforms/yandex/yandex';
 
 export default function App() {
   const [socket, setSocket] = useState<Socket>(null);
   const [pageName, setPageName] = useState('lobby');
   //const [roomName, setRoomName] = useState('');
   const [player, setPlayer] = useState<PlayerClient | PlayerLocal>(null);
+  const [platform, setPlatform] = useState<YandexPlatform>(null);
 
   useEffect(()=>{
+    const _platform = new YandexPlatform();
+    _platform.init().then(()=>{ 
+      return _platform.initPlayer();  
+    }).then(()=>{
+      setPlatform(platform);
+      console.log('successful yandex auth');
+    });
     const connect = ()=>{
       const socket = new Socket();
       socket.onConnect = ()=>{
