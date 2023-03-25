@@ -7,17 +7,21 @@ import './lobby.css';
 interface ILobbyProps {
     socket: Socket;
     onRoomJoin: (name: string) => void;
+    onLocal: ()=>void;
 }
 
-export function Lobby({ socket, onRoomJoin }: ILobbyProps) {
+export function Lobby({ socket, onRoomJoin, onLocal }: ILobbyProps) {
     const [roomName, setRoomName] = useState('');
     //const [items, setItems] = useState([]);
     return (
         <div className="lobby">
             <div className="lobby__wrapper">
-                <div>userName: {socket.name}</div>
+                {socket ? <div>userName: {socket.name}</div> : <div>connecting...</div>}
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
+                    <button className="btn lobby__button lobby__button--create" onClick={()=>{
+                        onLocal();
+                    }}>single player</button>
                     <button className="btn lobby__button lobby__button--create" onClick={() => {
                         socket.sendState({
                             type: 'createRoom',

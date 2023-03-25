@@ -4,12 +4,13 @@ import GameField from './components/gamefield/gamefield';
 import { Lobby } from './lobby/lobby';
 import Socket from "./socket";
 import { PlayerClient } from "./player_client";
+import { PlayerLocal } from './player_local';
 
 export default function App() {
   const [socket, setSocket] = useState<Socket>(null);
   const [pageName, setPageName] = useState('lobby');
   //const [roomName, setRoomName] = useState('');
-  const [player, setPlayer] = useState<PlayerClient>(null);
+  const [player, setPlayer] = useState<PlayerClient | PlayerLocal>(null);
 
   useEffect(()=>{
     const connect = ()=>{
@@ -44,10 +45,14 @@ export default function App() {
 
   return (
       <div>
-        {socket == null && 'connecting...'}
-        {pageName == 'lobby' && socket && <Lobby socket={socket} onRoomJoin={(name)=>{
+        {/*socket == null && 'connecting...'*/}
+        {pageName == 'lobby' && <Lobby socket={socket} onRoomJoin={(name)=>{
           //setRoomName(roomName);
           setPlayer(new PlayerClient(socket, name));
+          setPageName('gameField');
+        }}
+        onLocal={()=>{
+          setPlayer(new PlayerLocal());
           setPageName('gameField');
         }}></Lobby>}
 

@@ -13,7 +13,7 @@ export class GameLogic{
     gen: ILangGen;
     letters: ILetter[][];
     players: Array<IPlayerData>;
-    currentPlayerIndex: number = 0;
+    currentPlayerIndex: number = -1;
 
     onGameState: Signal<IGameState> = new Signal();//(state:IGameState)=>void;
     onCorrectWord: Signal<ILetter[]> = new Signal();//(word: ILetter[])=>void;
@@ -178,9 +178,9 @@ export class GameLogic{
         }
     }
 
-    selectLetter(){
+    /*selectLetter(){
 
-    }
+    }*/
 
     updateLetters(selected: Array<ILetter>){
         const last = this.letters;

@@ -9,8 +9,9 @@ import '../../style.css';
 import './gamefield.css';
 import { LineOverlay, WordOverlay } from "../../animatedList";
 import { moveTime } from "../../consts";
+import { PlayerLocal } from "../../player_local";
 
-export default function GameField({player, onLeave}: {player: PlayerClient, onLeave: ()=>void}){
+export default function GameField({player, onLeave}: {player: PlayerClient | PlayerLocal, onLeave: ()=>void}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
@@ -19,7 +20,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
     //const [crystals, setCrystals] = useState(0);
     const [players, setPlayers] = useState<Array<IPlayerData>>([]);
     const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
-    const [client, setClient] = useState<PlayerClient>(null);
+    const [client, setClient] = useState<PlayerClient | PlayerLocal>(null);
     const [pointer, setPointer] = useState<{x: number, y: number}>(null);
     const fieldRef = useRef<HTMLDivElement>();
     const [winWord, setWinWord] = useState<Array<ILetter>>(null);
