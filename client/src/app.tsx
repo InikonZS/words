@@ -32,12 +32,22 @@ export default function App() {
     connect();
   }, []);
 
+  useEffect(()=>{
+    const h = ()=>{
+      //window.location.hash
+    }
+    window.addEventListener('popstate', h);
+    return ()=>{
+      window.removeEventListener('popstate', h);
+    }
+  });
+
   return (
       <div>
         {socket == null && 'connecting...'}
         {pageName == 'lobby' && socket && <Lobby socket={socket} onRoomJoin={(name)=>{
           //setRoomName(roomName);
-          setPlayer(new PlayerClient(socket));
+          setPlayer(new PlayerClient(socket, name));
           setPageName('gameField');
         }}></Lobby>}
 

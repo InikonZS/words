@@ -152,6 +152,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient, onLe
         letters && (
         <div className="game__wrapper">
             <div>
+                <span> room: {player.roomName}</span>
                 <button onClick={()=>{
                     client.leaveRoom().then(res=>{
                         console.log(res);
