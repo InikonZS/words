@@ -63,11 +63,12 @@ export default function App() {
           setPageName('gameField');
         }}
         onLocal={(lang)=>{
-          setPlayer(new PlayerLocal(lang));
+          setPlayer(new PlayerLocal(lang, false));
           setPageName('gameField');
         }}
-        onBot = {()=>{
-
+        onBot = {(lang)=>{
+          setPlayer(new PlayerLocal(lang, true));
+          setPageName('gameField');
         }}
         ></Lobby>}
 

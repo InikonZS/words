@@ -51,10 +51,10 @@ export class GameLogic{
         this.currentPlayerIndex = index; 
         this.startMoveTime = Date.now();
         this.onGameState.emit(this.getState());
+        this.bot();
         clearTimeout(this.moveTimer);
         this.moveTimer = setTimeout(()=>{
             this.nextPlayer(this.getNextPlayerIndex());
-            this.bot();
         }, moveTime * 1000);
     }
 

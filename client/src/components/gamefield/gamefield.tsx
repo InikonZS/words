@@ -25,11 +25,12 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
     const fieldRef = useRef<HTMLDivElement>();
     const [winWord, setWinWord] = useState<Array<ILetter>>(null);
     const [time, setTime] = useState(0);
+    const [cTime, setCTime] = useState(Date.now());
 
     useEffect(()=>{
         const tm = setInterval(()=>{
-            setTime(last => last - 1000);
-        }, 1000);
+            setCTime(Date.now());
+        }, 200);
         return ()=>{
             clearInterval(tm);
         }
@@ -68,7 +69,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
             setLetters(logic.letters);
             setPlayers(logic.players);
             setCurrentPlayerIndex(logic.currentPlayerIndex);
-            setTime(res.time);
+            setTime(Date.now() + res.time);
             //setLogic(logic);
         })
         client.onGameState = (state) => {
@@ -76,7 +77,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
             setPlayers(state.players);
             //if (currentPlayerIndex !== state.currentPlayerIndex){
             setCurrentPlayerIndex(state.currentPlayerIndex);
-            setTime(state.time);
+            setTime(Date.now() + state.time);
             //}
         }
         client.onSelectLetter = (word) => {
@@ -123,6 +124,9 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
     useEffect(()=>{
         if (selected.length){
             const h = ()=>{
+                if (player.playerName != players[currentPlayerIndex]?.name){
+                    return;
+                }
                 setPointer(null);
                 submitWord(selected);
                 setWinWord(selected);
@@ -138,7 +142,12 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
             }
         }
         
-    }, [selected])
+    }, [selected, currentPlayerIndex]);
+
+    useEffect(()=>{
+        setPointer(null); 
+        setSelected([])
+    }, [currentPlayerIndex])
 
     useEffect(()=>{
         if (winWord){
@@ -168,9 +177,12 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                         return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
                     })}
                 </div>
-                <div>{Math.floor(Math.max(time / 1000, 0))}</div>
+                <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
                 <div className="field__group">
                 <div className="field" ref={fieldRef} onMouseMove={(e)=>{
+                    if (player.playerName != players[currentPlayerIndex]?.name){
+                        return;
+                    }
                     if (fieldRef.current && selected && selected.length){
                         const {left, top} =fieldRef.current.getBoundingClientRect();
                         const paddingOffset = 30;
@@ -186,6 +198,9 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                                     row.map(letter => {
                                         return <div className={`letter ${selected.find(it => it.id == letter.id) ? "letter_selected" : ""} ${animate.find(it => it.id == letter.id) ? "letter_hide" : ""}`}
                                             onMouseDown={() => {
+                                                if (player.playerName != players[currentPlayerIndex]?.name){
+                                                    return;
+                                                }
                                                 //const list = traceOne(letters, letter.x, letter.y, [letter]);
                                                 //console.log(list);
                                                 //const all = traceField(letters);
@@ -199,7 +214,9 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                                             }}
                                             onMouseMove={(e) => {
                                                 //console.log(fieldRef.current.getBoundingClientRect())
-                                                
+                                                if (player.playerName != players[currentPlayerIndex]?.name){
+                                                    return;
+                                                }
                                                 if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
                                                     //setSelected(last=> [...last, letter])
                                                     /*socket.sendState({

@@ -8,10 +8,13 @@ export class PlayerLocal{
     onCorrectWord: (word: ILetter[])=>void;
     onSelectLetter: (word: ILetter[])=>void;
     roomName: string = 'local';
-    name: string;
+    private name: string;
+    get playerName(){
+        return this.name;
+    }
     //onLeave: ()=>void;
 
-    constructor(lang: number) { 
+    constructor(lang: number, bot: boolean) { 
         this.name = 'local';
         this.gameLogic = new GameLogic([enGen, ruGen][lang]);
         this.gameLogic.onGameState.add(this.handleGameState);
@@ -19,7 +22,9 @@ export class PlayerLocal{
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
         setTimeout(()=>{
             this.gameLogic.joinPlayer(this.name);
-            
+            if (bot){
+                this.gameLogic.joinPlayer('bot');
+            }    
         }, 0);
     }
 
