@@ -62,10 +62,14 @@ export default function App() {
           setPlayer(new PlayerClient(socket, name));
           setPageName('gameField');
         }}
-        onLocal={()=>{
-          setPlayer(new PlayerLocal());
+        onLocal={(lang)=>{
+          setPlayer(new PlayerLocal(lang));
           setPageName('gameField');
-        }}></Lobby>}
+        }}
+        onBot = {()=>{
+
+        }}
+        ></Lobby>}
 
         {pageName == 'gameField' && <GameField player={player} onLeave={()=>{
           setPlayer(null);

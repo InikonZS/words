@@ -1,6 +1,6 @@
 import { GameLogic } from "./gameLogic/gameLogic";
 import { IGameState, ILetter } from "./gameLogic/interfaces";
-import { enGen } from "./gameLogic/logicGenerator";
+import { enGen, ruGen } from "./gameLogic/logicGenerator";
 
 export class PlayerLocal{
     private gameLogic: GameLogic;
@@ -11,9 +11,9 @@ export class PlayerLocal{
     name: string;
     //onLeave: ()=>void;
 
-    constructor() { 
+    constructor(lang: number) { 
         this.name = 'local';
-        this.gameLogic = new GameLogic(enGen);
+        this.gameLogic = new GameLogic([enGen, ruGen][lang]);
         this.gameLogic.onGameState.add(this.handleGameState);
         this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
