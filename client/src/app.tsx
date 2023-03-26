@@ -15,13 +15,21 @@ export default function App() {
   const [platform, setPlatform] = useState<YandexPlatform>(null);
 
   useEffect(()=>{
-    const _platform = new YandexPlatform();
-    _platform.init().then(()=>{ 
-      return _platform.initPlayer();  
-    }).then(()=>{
-      setPlatform(platform);
-      console.log('successful yandex auth');
-    });
+    const yandex = 'yandex';
+    if (window.location.host.slice(0, yandex.length) == yandex){
+      console.log('Yandex environment');
+      const _platform = new YandexPlatform();
+      _platform.init().then(()=>{ 
+        return _platform.initPlayer();  
+      }).then((player)=>{
+        const language = _platform.getLang();
+        setPlatform(_platform);
+        console.log('successful yandex auth');
+      });
+    } else {
+      console.log('Local environment');
+    }
+
     const connect = ()=>{
       const socket = new Socket();
       socket.onConnect = ()=>{

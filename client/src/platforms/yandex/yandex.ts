@@ -63,4 +63,22 @@ export class YandexPlatform {
             return _player;
         });
     }
+
+    getUrlProps(){
+        const props = window.location.search.split('&');
+        const result: Record<string, string> = {};
+        props.forEach(it=> {
+            try {
+            const [key, value] = it.split('=');
+            result[key] = value;
+            } catch(e){
+
+            }
+        });
+        return result;
+    }
+
+    getLang(){
+        return this.getUrlProps()['lang'] || 'en';
+    }
 }
