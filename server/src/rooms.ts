@@ -11,7 +11,7 @@ class Room{
     onRemove: ()=>void;
 
     constructor(name: string){
-        this.logic = new GameLogic(enGen);
+        this.logic = new GameLogic(ruGen);
         this.name = name;
         this.lastActivity = Date.now();
     }

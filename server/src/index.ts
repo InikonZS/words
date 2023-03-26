@@ -60,7 +60,8 @@ socket.on('request', (request) => {
       connection.sendUTF(JSON.stringify({
         type: 'restoreSession',
         data: {
-          session: user.session
+          session: user.session,
+          name: user.name
         }
       }))  
     }
@@ -71,7 +72,8 @@ socket.on('request', (request) => {
     connection.sendUTF(JSON.stringify({
       type: 'newSession',
       data: {
-        session: user.session
+        session: user.session,
+        name: user.name
       }
     }))
   }

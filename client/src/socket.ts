@@ -17,14 +17,23 @@ export default class Socket {
     onConnect: () => void
     onClose: () => void;
     onMessage: (message: any) => void;
+    name: string;
+    session: string;
   
     constructor() {
-      this.privateMessageSignal = new Signal()
-      this.webSocket = new WebSocket(socketUrl+'?session='+ localStorage.getItem('words_session'))
+      this.privateMessageSignal = new Signal();
+      let session:string = '';
+      //fix for incognito mode
+      try{
+        session=localStorage.getItem('words_session');
+      } catch(e) {
+        console.log('failed access localStorage');
+      }
+      this.webSocket = new WebSocket(socketUrl+'?session='+ session)
       // this.webSocket.binaryType = "arraybuffer"
       this.webSocket.binaryType = "blob"
       this.webSocket.onopen = () => {
-        this.onConnect?.()
+        //this.onConnect?.()
       }
       this.webSocket.onerror = () => {
         console.log('Socket Error');
@@ -38,12 +47,22 @@ export default class Socket {
             this.privateMessageSignal.emit(parsedData)
         }
         if (parsedData.type === "newSession") {
-          localStorage.setItem('words_session', parsedData.data.session);
+          try{
+            localStorage.setItem('words_session', parsedData.data.session);
+          } catch(e){
+            console.log('cannot save session to localstorage, cause of private policy or incognito mode')
+          }
           console.log('new session ', parsedData.data.session);
+          this.name = parsedData.data.name;
+          this.session = parsedData.data.session;
+          this.onConnect?.()
           //this.privateMessageSignal.emit(parsedData)
         }
         if (parsedData.type === "restoreSession") {
           console.log('restore session ', parsedData.data.session);
+          this.name = parsedData.data.name;
+          this.session = parsedData.data.session;
+          this.onConnect?.()
           //this.privateMessageSignal.emit(parsedData)
         }
         this.onMessage?.(parsedData);

@@ -7,8 +7,13 @@ export class PlayerClient{
     onGameState: (state:IGameState)=>void;
     onCorrectWord: (word: ILetter[])=>void;
     onSelectLetter: (word: ILetter[])=>void;
+    roomName: string;
+    get playerName(){
+        return this.socket.name;
+    }
 
-    constructor(socket:Socket){
+    constructor(socket:Socket, roomName: string){
+        this.roomName = roomName;
         this.socket = socket;
         socket.onMessage = (message)=>{
             if (message.type == 'state'){
