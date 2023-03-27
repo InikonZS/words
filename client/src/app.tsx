@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, createContext, useContext} from "react";
 import "./style.css";
 import GameField from './components/gamefield/gamefield';
 import { Lobby } from './lobby/lobby';
@@ -6,6 +6,10 @@ import Socket from "./socket";
 import { PlayerClient } from "./player_client";
 import { PlayerLocal } from './player_local';
 import { YandexPlatform } from './platforms/yandex/yandex';
+import { Localization } from './localization/localization';
+import { LangContext } from './context';
+
+const langModel = new Localization();
 
 export default function App() {
   const [socket, setSocket] = useState<Socket>(null);
@@ -13,6 +17,12 @@ export default function App() {
   //const [roomName, setRoomName] = useState('');
   const [player, setPlayer] = useState<PlayerClient | PlayerLocal>(null);
   const [platform, setPlatform] = useState<YandexPlatform>(null);
+  const [fix, setFix] = useState(0);
+  useEffect(()=>{
+    langModel.onChange = ()=>{
+      setFix(last=> last + 1); //react render fix;
+    }
+  }, []);
 
   useEffect(()=>{
     const yandex = 'yandex';
@@ -63,6 +73,7 @@ export default function App() {
   });
 
   return (
+    <LangContext.Provider value={langModel}>
       <div>
         {/*socket == null && 'connecting...'*/}
         {pageName == 'lobby' && <Lobby socket={socket} onRoomJoin={(name)=>{
@@ -86,5 +97,6 @@ export default function App() {
         }}/>}  
         {/*<GameField />*/}
       </div>
+    </LangContext.Provider>
   )
 }

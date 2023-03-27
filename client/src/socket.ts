@@ -1,6 +1,6 @@
 import { Signal } from "./common/signal"
-
-const socketUrl = 'ws://localhost:4002';
+//const socketUrl = 'ws://localhost:4002';
+const socketUrl = 'wss://words.inikon.online/ws';
 
 const createIdGenerator = (pref: string) => {
     let id = 0;
