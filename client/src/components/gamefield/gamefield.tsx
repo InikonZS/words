@@ -26,6 +26,8 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
     const [winWord, setWinWord] = useState<Array<ILetter>>(null);
     const [time, setTime] = useState(0);
     const [cTime, setCTime] = useState(Date.now());
+    const [size, setSize] = useState(0);
+    const aspect = 100/80;
 
     useEffect(()=>{
         const tm = setInterval(()=>{
@@ -158,10 +160,30 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
         }
     }, [winWord])
 
+    useEffect(()=>{
+        const resize = ()=>{
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            //const aspect = 100/80;
+            const size = Math.min(height / aspect, width);
+            setSize(size);
+           // wr.style.width = size + 'px';
+           // wr.style.height = size * aspect + 'px';
+          }
+          window.addEventListener('resize', resize);
+          //window.onresize = resize;
+          resize();
+        return ()=>{
+            window.removeEventListener('resize', resize);
+        }
+    }, []);
+
     return (
         letters && (
         <div className="game__wrapper">
-            <div>
+    
+            <div className="game__center-container" style={{width: size + 'px', height: size * aspect + 'px'}}>
+                <div className="top">
                 <span> room: {player.roomName}</span>
                 <button onClick={()=>{
                     client.leaveRoom().then(res=>{
@@ -170,14 +192,13 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                     })
                 }}>leave</button>
             </div>
-            
-            <div className="game__center-container">
                 <div className="players">
                     {players.map((player, index) => {
                         return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
                     })}
+                    <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
                 </div>
-                <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
+                
                 <div className="field__group">
                 <div className="field" ref={fieldRef} onMouseMove={(e)=>{
                     if (player.playerName != players[currentPlayerIndex]?.name){

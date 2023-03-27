@@ -1,5 +1,4 @@
 .game__wrapper {
-  width: 950px;
   position: relative;
   margin: 0 auto;
   height: 100vh;
@@ -20,6 +19,9 @@
   align-items: center;
 }
 
+.top{
+  height: calc(100% * 5 / 100);
+}
 .players {
   width: 100%;
   padding: 20px 10px;
@@ -28,17 +30,22 @@
   justify-content: center;
   align-items: flex-start;
   flex-wrap: wrap;
+  height: calc(100% * 15 / 100);
 }
 
 .field {
   background-color: rgb(237 222 246 / 35%);
   padding: var(--padding);
   border-radius: 10px;
+  height: 100%;
 }
 
 .field__group{
   position: relative;
   --padding: 30px;
+  height: calc(100% * 80 / 100);
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .overlay{
