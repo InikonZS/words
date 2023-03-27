@@ -182,7 +182,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
         letters && (
         <div className="game__wrapper">
     
-            <div className="game__center-container" style={{width: size + 'px', height: size * aspect + 'px'}}>
+            <div className="game__center-container" style={{width: size + 'px', height: size * aspect + 'px', '--base': size +'px'}}>
                 <div className="top">
                 <span> room: {player.roomName}</span>
                 <button onClick={()=>{
@@ -206,7 +206,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                     }
                     if (fieldRef.current && selected && selected.length){
                         const {left, top} =fieldRef.current.getBoundingClientRect();
-                        const paddingOffset = 30;
+                        const paddingOffset = size / 30;
                         setPointer({x: e.clientX - left - paddingOffset, y: e.clientY - top - paddingOffset});
                     } else {
                         setPointer(null);
@@ -272,7 +272,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                         })
                     }
                 </div>
-                <LineOverlay word={selected} pointer={pointer}></LineOverlay>
+                <LineOverlay word={selected} pointer={pointer} base={size}></LineOverlay>
                 {winWord && <WordOverlay word={winWord}></WordOverlay>}
                 </div>
             </div>

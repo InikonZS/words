@@ -42,7 +42,7 @@
 
 .field__group{
   position: relative;
-  --padding: 30px;
+  --padding: calc(var(--base) / 30);
   height: calc(100% * 80 / 100);
   flex-shrink: 0;
   width: 100%;
@@ -57,7 +57,7 @@
   pointer-events: none;
   top: 0;
   stroke: #0f09;
-  stroke-width: 5px;
+  /*stroke-width: 5px;*/
   stroke-linecap: round;
   padding: var(--padding);
 }

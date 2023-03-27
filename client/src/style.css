@@ -26,23 +26,24 @@ body {
 
 .letter {
     position: relative;
-    width: calc(100% / 10 - 2 * 5px);
+    width: calc(100% / 10 - 2 * var(--marg));
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
-    font-size: 26px;
+    font-size: calc(var(--base) / 26);
     font-weight: bold;
     color: #ccc;
     cursor: default;
-    margin: 5px;
+    --marg: calc(var(--base) / 110);
+    margin: var(--marg);
     transform: scale(1, 1);
     transition-duration: 1s;
     transition-property: transform;
     border: 1px solid #be37f3;
-    border-radius: 5px;
-    box-shadow: 0px 0px 5px #8904bd;
-    /* background-color:rgb(14, 14, 14); */
+    border-radius: var(--marg);;
+    box-shadow: 0px 0px var(--marg) #8904bd;
+    /* background-color: rgb(14, 14, 14); */
     background-color: #0c0626;
 }
 
