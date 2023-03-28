@@ -11,6 +11,8 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
     background-position: bottom;
+    --base: 1px;
+    font-size: calc(var(--base) * 16);
 }
 
 .btn {
@@ -25,22 +27,22 @@ body {
 
 .letter {
     position: relative;
-    width: 60px;
-    height: 60px;
+    width: calc(var(--base) * 60);/*60px*/
+    height: calc(var(--base) * 60);
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
-    font-size: 26px;
+    font-size: calc(var(--base) * 26);
     font-weight: bold;
     color: #ccc;
     cursor: default;
-    margin: 5px;
+    margin: calc(var(--base) * 5);
     transform: scale(1, 1);
     transition-duration: 1s;
     transition-property: transform;
     border: 1px solid #be37f3;
-    border-radius: 5px;
+    border-radius: calc(var(--base) * 5);
     box-shadow: 0px 0px 5px #8904bd;
     /* background-color:rgb(14, 14, 14); */
     background-color: #0c0626;
@@ -59,9 +61,9 @@ body {
 .crystal {
     position: absolute;
     top: 0;
-    left: -6px;
-    width: 30px;
-    height: 40px;
+    left: calc(var(--base) * -6);
+    width: calc(var(--base) * 30);
+    height: calc(var(--base) * 40);
     background-image: url('../src/assets/crystal.png');
     background-size: contain;
     background-repeat: no-repeat;

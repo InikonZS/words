@@ -1,19 +1,19 @@
 .player {
-  width: 190px;
-  margin-bottom: 15px;
-  padding: 10px;
+  width: calc(var(--base) * 190);
+  margin-bottom: calc(var(--base) * 15);
+  padding: calc(var(--base) * 10);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   border: 1px solid #73d1ee;
   transition: all 0.5s ease;
-  border-radius: 7px;
+  border-radius: calc(var(--base) * 7);
   background-color: #100738;
 }
 
 .player:not(:last-child) {
-  margin-right: 25px;
+  margin-right: calc(var(--base) * 25);
 }
 
 .player--active{
@@ -27,6 +27,6 @@
 
 .player__name {
   color: #73d1ee;
-  font-size: 24px;
+  font-size: calc(var(--base) * 24);
   font-weight: bold;
 }
