@@ -11,7 +11,7 @@ import { LineOverlay, WordOverlay } from "../../animatedList";
 import { moveTime } from "../../consts";
 import { PlayerLocal } from "../../player_local";
 
-export default function GameField({player, onLeave}: {player: PlayerClient | PlayerLocal, onLeave: ()=>void}){
+export default function GameField({player, onLeave, scale}: {player: PlayerClient | PlayerLocal, onLeave: ()=>void, scale: number}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
@@ -26,7 +26,6 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
     const [winWord, setWinWord] = useState<Array<ILetter>>(null);
     const [time, setTime] = useState(0);
     const [cTime, setCTime] = useState(Date.now());
-    const [scale, setScale] = useState(0);
 
     useEffect(()=>{
         const tm = setInterval(()=>{
@@ -158,32 +157,6 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
             return ()=>clearTimeout(tm);
         }
     }, [winWord])
-
-    useEffect(()=>{
-        const resize = ()=>{
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-            let w = 780;
-            let h = 1130;
-            /*if (matchMedia('(min-aspect-ratio: 1/1)').matches){
-                w = 600;
-                h = 400;
-            }*/
-            const aspect = h / w;
-            const size = Math.min(height / aspect, width);
-            setScale(size / w);
-          }
-          window.addEventListener('resize', resize);
-          //window.onresize = resize;
-          resize();
-        return ()=>{
-            window.removeEventListener('resize', resize);
-        }
-    }, []);
-
-    useEffect(()=>{
-        document.body.style.setProperty('--base', scale.toString()+'px');
-    }, [scale]);
 
     return (
         letters && (

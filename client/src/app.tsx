@@ -18,6 +18,8 @@ export default function App() {
   const [player, setPlayer] = useState<PlayerClient | PlayerLocal>(null);
   const [platform, setPlatform] = useState<YandexPlatform>(null);
   const [fix, setFix] = useState(0);
+  const [scale, setScale] = useState(0);
+
   useEffect(()=>{
     langModel.onChange = ()=>{
       setFix(last=> last + 1); //react render fix;
@@ -72,6 +74,33 @@ export default function App() {
     }
   });
 
+  useEffect(() => {
+    const resize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      let w = 780;
+      let h = 1130;
+      /*if (matchMedia('(min-aspect-ratio: 1/1)').matches){
+          w = 600;
+          h = 400;
+      }*/
+      const aspect = h / w;
+      const size = Math.min(height / aspect, width);
+      setScale(size / w);
+    }
+    window.addEventListener('resize', resize);
+    //window.onresize = resize;
+    resize();
+    return () => {
+      window.removeEventListener('resize', resize);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.body.style.setProperty('--base', scale.toString() + 'px');
+  }, [scale]);
+
+
   return (
     <LangContext.Provider value={langModel}>
       <div>
@@ -94,7 +123,7 @@ export default function App() {
         {pageName == 'gameField' && <GameField player={player} onLeave={()=>{
           setPlayer(null);
           setPageName('lobby');
-        }}/>}  
+        }} scale={scale}/>}  
         {/*<GameField />*/}
       </div>
     </LangContext.Provider>
