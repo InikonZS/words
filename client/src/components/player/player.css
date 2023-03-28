@@ -1,7 +1,9 @@
 .player {
-  width: 190px;
-  margin-bottom: 15px;
-  padding: 10px;
+  --base-font: calc((var(--base) * 15 / 100) / 4);
+  /*width: 190px;*/
+  height: 100%;
+  /*margin-bottom: var(--base-font);
+  padding: var(--base-font);*/
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -10,6 +12,7 @@
   transition: all 0.5s ease;
   border-radius: 7px;
   background-color: #100738;
+  font-size: calc(var(--base-font) / 2);
 }
 
 .player:not(:last-child) {
@@ -27,6 +30,6 @@
 
 .player__name {
   color: #73d1ee;
-  font-size: 24px;
+  font-size: calc(var(--base-font));
   font-weight: bold;
 }
