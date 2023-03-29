@@ -92,8 +92,8 @@ export function AnimatedList({}: IAnimatedListProps){
     )
 }
 
-export function LineOverlay({word, pointer}: {word: Array<ILetter>, pointer?: {x: number, y: number}}){
-    const lineData = word.map((it, i)=> ({l: i==0?'M' : 'L', x: it.x * (60 + 10)+ 35, y: it.y * (60 + 10) + 35}));//[{l: 'M', x: 10, y: 10}, {l: 'L', x: 30, y:30}];
+export function LineOverlay({word, pointer, base}: {word: Array<ILetter>, pointer?: {x: number, y: number}, base: number}){
+    const lineData = word.map((it, i)=> ({l: i==0?'M' : 'L', x: it.x * (60 + 10) * base + 35*base, y: it.y * (60 + 10) * base + 35 * base}));//[{l: 'M', x: 10, y: 10}, {l: 'L', x: 30, y:30}];
     const lineString = lineData.map(it=> `${it.l}${it.x} ${it.y}`).join(' ');
     const pointerString = pointer ? `L${pointer.x} ${pointer.y}`: '';
     return <div>

@@ -11,7 +11,7 @@ import { LineOverlay, WordOverlay } from "../../animatedList";
 import { moveTime } from "../../consts";
 import { PlayerLocal } from "../../player_local";
 
-export default function GameField({player, onLeave}: {player: PlayerClient | PlayerLocal, onLeave: ()=>void}){
+export default function GameField({player, onLeave, scale}: {player: PlayerClient | PlayerLocal, onLeave: ()=>void, scale: number}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
@@ -169,6 +169,9 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                         onLeave();
                     })
                 }}>leave</button>
+                <button onClick={()=>{
+                    document.body.requestFullscreen();
+                }}>fullscreen</button>
             </div>
             
             <div className="game__center-container">
@@ -185,12 +188,43 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                     }
                     if (fieldRef.current && selected && selected.length){
                         const {left, top} =fieldRef.current.getBoundingClientRect();
-                        const paddingOffset = 30;
+                        const paddingOffset = scale * 30;
                         setPointer({x: e.clientX - left - paddingOffset, y: e.clientY - top - paddingOffset});
+                        //setPointer({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
                     } else {
                         setPointer(null);
                     }
-                }}>
+                }}
+                
+                onTouchMove = {(e)=>{ 
+                    e.preventDefault();
+                    if (player.playerName != players[currentPlayerIndex]?.name){
+                        return;
+                    }
+                    
+                    if (fieldRef.current && selected && selected.length){
+                        const {left, top} =fieldRef.current.getBoundingClientRect();
+                        const paddingOffset = scale * 30;
+                        const point = {x: e.touches[0].clientX - left - paddingOffset, y: e.touches[0].clientY - top - paddingOffset};
+                        setPointer(point);
+                        if (Math.hypot(point.x % (70 * scale)-35*scale, point.x % (70 * scale)-35*scale) < 20* scale){
+                        const letter = letters[Math.floor(point.y/((60 + 10) * scale))]?.[Math.floor(point.x/((60 + 10) * scale))];
+                        //console.log(letter);
+                        if (letter){
+                            if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
+                                client.selectLetter([...selected, letter]);
+                            } else if (selected.length > 1 && selected[selected.length - 2].id == letter.id) {
+                                client.selectLetter([...selected.slice(0, selected.length - 1)]);
+                            }
+                        }
+                        }
+                    } else {
+                        setPointer(null);
+                    }
+                    
+                    
+                }}
+                >
                     {
                         letters.map(row => {
                             return <div className="row">
@@ -242,7 +276,25 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                                                 })*/
                                               //  client.selectLetter([]);
                                                 //setSelected([]); 
-                                            }}>
+                                            }}
+                                            onTouchStart = {(e)=>{ 
+                                                    e.preventDefault();
+                                                    if (player.playerName != players[currentPlayerIndex]?.name){
+                                                        return;
+                                                    }
+                                                    client.selectLetter([letter]);
+                                                }
+                                            }
+                                            onTouchEnd = {(e)=>{
+                                                if (player.playerName != players[currentPlayerIndex]?.name){
+                                                    return;
+                                                }
+                                                setPointer(null);
+                                                submitWord(selected);
+                                                setWinWord(selected);
+                                                client.selectLetter([]);
+                                            }}
+                                            >
                                             {letter.bonus.find(it => it.name == 'crystal') && <div className="crystal"></div>}
                                             {letter.letter}
                                         </div>
@@ -251,7 +303,7 @@ export default function GameField({player, onLeave}: {player: PlayerClient | Pla
                         })
                     }
                 </div>
-                <LineOverlay word={selected} pointer={pointer}></LineOverlay>
+                <LineOverlay word={selected} pointer={pointer} base={scale}></LineOverlay>
                 {winWord && <WordOverlay word={winWord}></WordOverlay>}
                 </div>
             </div>

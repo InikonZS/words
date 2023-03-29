@@ -1,5 +1,5 @@
 .game__wrapper {
-  width: 950px;
+  /*width: 950px;*/
   position: relative;
   margin: 0 auto;
   height: 100vh;
@@ -22,7 +22,7 @@
 
 .players {
   width: 100%;
-  padding: 20px 10px;
+  padding: calc(var(--base) * 20) calc(var(--base) * 10);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -33,12 +33,12 @@
 .field {
   background-color: rgb(237 222 246 / 35%);
   padding: var(--padding);
-  border-radius: 10px;
+  border-radius: calc(var(--base) * 10);
 }
 
 .field__group{
   position: relative;
-  --padding: 30px;
+  --padding: calc(var(--base) * 30);
 }
 
 .overlay{
@@ -50,7 +50,7 @@
   pointer-events: none;
   top: 0;
   stroke: #0f09;
-  stroke-width: 5px;
+  stroke-width: calc(var(--base) * 5);
   stroke-linecap: round;
   padding: var(--padding);
 }
@@ -65,13 +65,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  --item-width: 100px;
+  --item-width: calc(var(--base) * 100);
 }
 
 .result_word{
   display: flex;
   background-color: #0005;
-  padding: 10px;
+  padding: calc(var(--base) * 10);
 }
 
 .result_letter{
@@ -81,5 +81,5 @@
   justify-content: center;
   align-items: center;
   background-color: #00f7;
-  margin: 5px;
+  margin: calc(var(--base) * 5);
 }
