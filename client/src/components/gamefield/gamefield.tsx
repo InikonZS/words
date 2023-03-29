@@ -169,6 +169,9 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                         onLeave();
                     })
                 }}>leave</button>
+                <button onClick={()=>{
+                    document.body.requestFullscreen();
+                }}>fullscreen</button>
             </div>
             
             <div className="game__center-container">
@@ -194,6 +197,7 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                 }}
                 
                 onTouchMove = {(e)=>{ 
+                    e.preventDefault();
                     if (player.playerName != players[currentPlayerIndex]?.name){
                         return;
                     }
@@ -273,7 +277,8 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                                               //  client.selectLetter([]);
                                                 //setSelected([]); 
                                             }}
-                                            onTouchStart = {()=>{ 
+                                            onTouchStart = {(e)=>{ 
+                                                    e.preventDefault();
                                                     if (player.playerName != players[currentPlayerIndex]?.name){
                                                         return;
                                                     }
