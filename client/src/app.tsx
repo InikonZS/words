@@ -117,6 +117,9 @@ export default function App() {
           }}
         ></Lobby>}
         {pageName == 'multi' && <Multi socket={socket}
+        onBack = {()=>{
+          setPageName('lobby');
+        }}
         onRoomJoin = {(name)=>{
           //setRoomName(roomName);
           setPlayer(new PlayerClient(socket, name));
@@ -124,6 +127,9 @@ export default function App() {
         }}        
         />}
         {pageName == 'single' && <Single 
+          onBack = {()=>{
+            setPageName('lobby');
+          }}
           onLocal={(lang)=>{
             setPlayer(new PlayerLocal(lang, false));
             setPageName('gameField');

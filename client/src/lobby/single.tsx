@@ -6,9 +6,10 @@ import { useLangContext } from "../context";
 interface ISingleProps {
     onLocal: (lang: number)=>void;
     onBot: (lang: number)=>void;
+    onBack: ()=>void;
 }
 
-export function Single({ onLocal, onBot }: ISingleProps) {
+export function Single({ onLocal, onBot, onBack }: ISingleProps) {
     const [langIndex, setLangIndex] = useState(0);
     const langs = ['en', 'ru'];
     const {setLang, currentLang} = useLangContext();
@@ -17,6 +18,9 @@ export function Single({ onLocal, onBot }: ISingleProps) {
     return (
         <div className="lobby">
             <div className="lobby__wrapper">
+                <button onClick={()=>{
+                    onBack();
+                }}>back</button>
                 <button onClick={()=>{
                     setLang();
                     console.log(currentLang);

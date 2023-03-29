@@ -7,9 +7,10 @@ import { useLangContext } from "../context";
 interface IMultiProps {
     socket: Socket;
     onRoomJoin: (name: string) => void;
+    onBack: ()=>void;
 }
 
-export function Multi({ socket, onRoomJoin }: IMultiProps) {
+export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
     const [roomName, setRoomName] = useState('');
     const [langIndex, setLangIndex] = useState(0);
     const langs = ['en', 'ru'];
@@ -20,6 +21,9 @@ export function Multi({ socket, onRoomJoin }: IMultiProps) {
         <div className="lobby">
             <div className="lobby__wrapper">
                 {socket ? <div>userName: {socket.name}</div> : <div>connecting...</div>}
+                <button onClick={()=>{
+                    onBack();
+                }}>back</button>
                 <button onClick={()=>{
                     setLang();
                     console.log(currentLang);
