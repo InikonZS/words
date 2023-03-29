@@ -187,10 +187,40 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                         const {left, top} =fieldRef.current.getBoundingClientRect();
                         const paddingOffset = scale * 30;
                         setPointer({x: e.clientX - left - paddingOffset, y: e.clientY - top - paddingOffset});
+                        //setPointer({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
                     } else {
                         setPointer(null);
                     }
-                }}>
+                }}
+                
+                onTouchMove = {(e)=>{ 
+                    if (player.playerName != players[currentPlayerIndex]?.name){
+                        return;
+                    }
+                    
+                    if (fieldRef.current && selected && selected.length){
+                        const {left, top} =fieldRef.current.getBoundingClientRect();
+                        const paddingOffset = scale * 30;
+                        const point = {x: e.touches[0].clientX - left - paddingOffset, y: e.touches[0].clientY - top - paddingOffset};
+                        setPointer(point);
+                        if (Math.hypot(point.x % (70 * scale)-35*scale, point.x % (70 * scale)-35*scale) < 20* scale){
+                        const letter = letters[Math.floor(point.y/((60 + 10) * scale))]?.[Math.floor(point.x/((60 + 10) * scale))];
+                        //console.log(letter);
+                        if (letter){
+                            if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
+                                client.selectLetter([...selected, letter]);
+                            } else if (selected.length > 1 && selected[selected.length - 2].id == letter.id) {
+                                client.selectLetter([...selected.slice(0, selected.length - 1)]);
+                            }
+                        }
+                        }
+                    } else {
+                        setPointer(null);
+                    }
+                    
+                    
+                }}
+                >
                     {
                         letters.map(row => {
                             return <div className="row">
@@ -242,7 +272,24 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                                                 })*/
                                               //  client.selectLetter([]);
                                                 //setSelected([]); 
-                                            }}>
+                                            }}
+                                            onTouchStart = {()=>{ 
+                                                    if (player.playerName != players[currentPlayerIndex]?.name){
+                                                        return;
+                                                    }
+                                                    client.selectLetter([letter]);
+                                                }
+                                            }
+                                            onTouchEnd = {(e)=>{
+                                                if (player.playerName != players[currentPlayerIndex]?.name){
+                                                    return;
+                                                }
+                                                setPointer(null);
+                                                submitWord(selected);
+                                                setWinWord(selected);
+                                                client.selectLetter([]);
+                                            }}
+                                            >
                                             {letter.bonus.find(it => it.name == 'crystal') && <div className="crystal"></div>}
                                             {letter.letter}
                                         </div>
