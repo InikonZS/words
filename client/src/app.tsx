@@ -2,6 +2,8 @@ import React, { useEffect, useState, createContext, useContext} from "react";
 import "./style.css";
 import GameField from './components/gamefield/gamefield';
 import { Lobby } from './lobby/lobby';
+import { Single } from './lobby/single';
+import { Multi } from './lobby/multi';
 import Socket from "./socket";
 import { PlayerClient } from "./player_client";
 import { PlayerLocal } from './player_local';
@@ -105,21 +107,38 @@ export default function App() {
     <LangContext.Provider value={langModel}>
       <div>
         {/*socket == null && 'connecting...'*/}
-        {pageName == 'lobby' && <Lobby socket={socket} onRoomJoin={(name)=>{
+        {pageName == 'lobby' && <Lobby socket={socket} 
+          onMulti = {()=>{
+            setPageName('multi');
+          }}
+
+          onSingle = {()=>{
+            setPageName('single');
+          }}
+        ></Lobby>}
+        {pageName == 'multi' && <Multi socket={socket}
+        onBack = {()=>{
+          setPageName('lobby');
+        }}
+        onRoomJoin = {(name)=>{
           //setRoomName(roomName);
           setPlayer(new PlayerClient(socket, name));
           setPageName('gameField');
-        }}
-        onLocal={(lang)=>{
-          setPlayer(new PlayerLocal(lang, false));
-          setPageName('gameField');
-        }}
-        onBot = {(lang)=>{
-          setPlayer(new PlayerLocal(lang, true));
-          setPageName('gameField');
-        }}
-        ></Lobby>}
-
+        }}        
+        />}
+        {pageName == 'single' && <Single 
+          onBack = {()=>{
+            setPageName('lobby');
+          }}
+          onLocal={(lang)=>{
+            setPlayer(new PlayerLocal(lang, false));
+            setPageName('gameField');
+          }}
+          onBot = {(lang)=>{
+            setPlayer(new PlayerLocal(lang, true));
+            setPageName('gameField');
+          }}
+        />}
         {pageName == 'gameField' && <GameField player={player} onLeave={()=>{
           setPlayer(null);
           setPageName('lobby');
