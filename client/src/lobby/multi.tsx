@@ -3,6 +3,7 @@ import Socket from "../socket";
 import '../style.css';
 import './lobby.css';
 import { useLangContext } from "../context";
+import { ChangeWordsLang } from '../components/words-lang/words-lang';
 
 interface IMultiProps {
     socket: Socket;
@@ -21,25 +22,20 @@ export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
         <div className="lobby">
             <div className="lobby__wrapper">
                 {socket ? <div>userName: {socket.name}</div> : <div>connecting...</div>}
+
                 <button onClick={()=>{
                     onBack();
                 }}>back</button>
+                
                 <button onClick={()=>{
                     setLang();
                     console.log(currentLang);
                 }}>change lang</button>
+
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
-                    <div>
-                        <div>words language: </div>
-                        <button onClick={()=>{
-                            setLangIndex(last=> (last + 1) % langs.length)
-                        }}>left</button>
-                        <span>{langs[langIndex]}</span>
-                        <button onClick={()=>{
-                            setLangIndex(last=> ((last + langs.length) - 1) % langs.length) 
-                        }}>right</button>
-                    </div>
+
+                        <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />
 
                     <button className="btn lobby__button lobby__button--create" onClick={() => {
                         socket.sendState({
@@ -75,9 +71,6 @@ export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
                     }}>join room</button>
 
                     </div>
-                    
-                    {/* <AnimatedList></AnimatedList> */}
-
                 </div>
             </div>
 
