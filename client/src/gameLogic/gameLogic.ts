@@ -281,4 +281,8 @@ export class GameLogic{
             }, 10000)*/
         }
     }
+
+    shuffle(name: string) {
+        
+    }
 }

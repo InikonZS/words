@@ -10,6 +10,7 @@ import './gamefield.css';
 import { LineOverlay, WordOverlay } from "../../animatedList";
 import { moveTime } from "../../consts";
 import { PlayerLocal } from "../../player_local";
+import { Hints } from '../hints/hints';
 
 export default function GameField({player, onLeave, scale}: {player: PlayerClient | PlayerLocal, onLeave: ()=>void, scale: number}){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
@@ -180,6 +181,9 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                         return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
                     })}
                 </div>
+                <Hints onShuffle={() => {
+                    player.shuffle();
+                }} />
                 <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
                 <div className="field__group">
                 <div className="field" ref={fieldRef} onMouseMove={(e)=>{
