@@ -12,6 +12,19 @@ import { Localization } from './localization/localization';
 import { LangContext } from './context';
 
 const langModel = new Localization();
+const getUrlHashProps = ()=>{
+  const props = window.location.hash.slice(1).split('&');
+  const result: Record<string, string> = {};
+  props.forEach(it=> {
+      try {
+      const [key, value] = it.split('=');
+      result[key] = value;
+      } catch(e){
+
+      }
+  });
+  return result;
+}
 
 export default function App() {
   const [socket, setSocket] = useState<Socket>(null);
@@ -21,6 +34,20 @@ export default function App() {
   const [platform, setPlatform] = useState<YandexPlatform>(null);
   const [fix, setFix] = useState(0);
   const [scale, setScale] = useState(0);
+
+  const joinRoom = (name:string)=>{
+    socket.sendState({
+      type: 'joinRoom',
+      data: { roomName: name }
+    }).then(res => {
+      console.log(res);
+      if (res === true) {
+          //onRoomJoin(roomName);
+          setPlayer(new PlayerClient(socket, name));
+          setPageName('gameField');
+      }
+    })
+  }
 
   useEffect(()=>{
     langModel.onChange = ()=>{
@@ -67,14 +94,24 @@ export default function App() {
   }, []);
 
   useEffect(()=>{
+    if (!socket) return ()=>{}
     const h = ()=>{
-      //window.location.hash
+      const hash = getUrlHashProps();
+      //console.log(hash);
+      const inviteRoomId = hash['id'];
+      if (inviteRoomId){
+        console.log(inviteRoomId);
+        setTimeout(()=>{
+          joinRoom(inviteRoomId);
+        }, 3000);
+      }
     }
     window.addEventListener('popstate', h);
+    h();
     return ()=>{
       window.removeEventListener('popstate', h);
     }
-  });
+  }, [socket]);
 
   useEffect(() => {
     const resize = () => {
@@ -102,7 +139,6 @@ export default function App() {
     document.body.style.setProperty('--base', scale.toString() + 'px');
   }, [scale]);
 
-
   return (
     <LangContext.Provider value={langModel}>
       <div>
@@ -121,9 +157,9 @@ export default function App() {
           setPageName('lobby');
         }}
         onRoomJoin = {(name)=>{
+          
           //setRoomName(roomName);
-          setPlayer(new PlayerClient(socket, name));
-          setPageName('gameField');
+          joinRoom(name);
         }}        
         />}
         {pageName == 'single' && <Single 

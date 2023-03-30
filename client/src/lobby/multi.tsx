@@ -59,15 +59,7 @@ export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
                     }}></input>
 
                     <button className="btn lobby__button lobby__button--join" onClick={() => {
-                        socket.sendState({
-                            type: 'joinRoom',
-                            data: { roomName: roomName }
-                        }).then(res => {
-                            console.log(res);
-                            if (res === true) {
-                                onRoomJoin(roomName);
-                            }
-                        })
+                        onRoomJoin(roomName);
                     }}>join room</button>
 
                     </div>
