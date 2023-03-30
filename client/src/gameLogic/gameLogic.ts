@@ -1,6 +1,6 @@
 import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq } from "./logicTools";
+import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, shuffle } from "./logicTools";
 import { ILangGen } from './logicGenerator'; 
 import { moveTime } from '../consts';
 /*const langSumFreq = getSumFreq(frequency);
@@ -26,6 +26,7 @@ export class GameLogic{
     constructor(gen: ILangGen){
         this.gen = gen;
         this.letters = this.gen.generateLetters(10, 10);
+        this.addCrystals();
         this.players = [
         /*    {
                 name: 'player',
@@ -283,6 +284,16 @@ export class GameLogic{
     }
 
     shuffle(name: string) {
-        
+        const player = this.players.find(it=> name == it.name);
+        const current = this.players[this.currentPlayerIndex];
+        if (!player || player.name !== current.name) {
+            return;
+        }
+        if(current.crystals < 1) return;
+        current.crystals -= 1;
+
+        shuffle(this.letters);
+        this.letters.forEach(item => shuffle(item));
+        this.onGameState.emit(this.getState());
     }
 }
