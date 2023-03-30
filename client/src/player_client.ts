@@ -69,4 +69,11 @@ export class PlayerClient{
             data: {}
         })
     }
+
+    shuffle() {
+        return this.socket.sendState({
+            type: 'shuffle',
+            data: {}
+        })
+    }
 }

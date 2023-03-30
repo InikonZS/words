@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import '../style.css';
 import './lobby.css';
 import { useLangContext } from "../context";
+import { ChangeWordsLang } from '../components/words-lang/words-lang';
 
 interface ISingleProps {
     onLocal: (lang: number)=>void;
@@ -27,16 +28,9 @@ export function Single({ onLocal, onBot, onBack }: ISingleProps) {
                 }}>change lang</button>
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
-                    <div>
-                        <div>words language: </div>
-                        <button onClick={()=>{
-                            setLangIndex(last=> (last + 1) % langs.length)
-                        }}>left</button>
-                        <span>{langs[langIndex]}</span>
-                        <button onClick={()=>{
-                            setLangIndex(last=> ((last + langs.length) - 1) % langs.length) 
-                        }}>right</button>
-                    </div>
+
+                    <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />
+
                     <button className="btn lobby__button lobby__button--create" onClick={()=>{
                         onBot(langIndex);
                     }}>with bot</button>

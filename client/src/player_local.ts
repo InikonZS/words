@@ -59,5 +59,9 @@ export class PlayerLocal{
         this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);
         return Promise.resolve(true);
     }
+
+    shuffle() {
+        return Promise.resolve(this.gameLogic.shuffle(this.name));
+    }
     
 }

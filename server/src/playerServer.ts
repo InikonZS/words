@@ -110,6 +110,10 @@ export class PlayerServer {
                   data: gameLogic.getState()
                 }))*/
             }
+
+            if (parsed.type == 'leaveRoom') {
+                this.gameLogic.shuffle(this.user.name);
+            }
         }
     }
 

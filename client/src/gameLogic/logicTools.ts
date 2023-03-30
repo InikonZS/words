@@ -280,3 +280,13 @@ export function getPoints(word: Array<ILetter>){
     }, 0);
     return result;
 }
+
+export const shuffle = <T>(arr: Array<T>) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const swap = arr[j];
+      arr[j] = arr[i];
+      arr[i] = swap;
+    }
+    return arr;
+  };
