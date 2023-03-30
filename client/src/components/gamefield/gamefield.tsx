@@ -181,7 +181,7 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                         return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
                     })}
                 </div>
-                <Hints onShuffle={() => {
+                <Hints  crystals={players.find(it => it.name == player.playerName)?.crystals} onShuffle={() => {
                     player.shuffle();
                 }} />
                 <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
