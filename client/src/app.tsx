@@ -10,6 +10,7 @@ import { PlayerLocal } from './player_local';
 import { YandexPlatform } from './platforms/yandex/yandex';
 import { Localization } from './localization/localization';
 import { LangContext } from './context';
+import { WinScreen } from './components/winScreen/winScreen';
 
 const langModel = new Localization();
 const getUrlHashProps = ()=>{
@@ -175,10 +176,23 @@ export default function App() {
             setPageName('gameField');
           }}
         />}
-        {pageName == 'gameField' && <GameField player={player} onLeave={()=>{
-          setPlayer(null);
-          setPageName('lobby');
-        }} scale={scale}/>}  
+        {pageName == 'gameField' && <GameField 
+          player={player} 
+          onLeave={()=>{
+            setPlayer(null);
+            setPageName('lobby');
+          }} 
+          onWin={()=>{
+            setPageName('winScreen');
+          }} 
+          scale={scale}
+        />}  
+        {pageName == 'winScreen' && <WinScreen
+          winData = {{}}
+          onClose = {()=>{
+            setPageName('gameField');
+          }}
+        />}
         {/*<GameField />*/}
       </div>
     </LangContext.Provider>

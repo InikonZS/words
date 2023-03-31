@@ -25,4 +25,6 @@ export interface IGameState{
     players: Array<IPlayerData>;
     currentPlayerIndex: number;
     time: number;
+    currentRound: number;
+    totalRounds: number;
 }

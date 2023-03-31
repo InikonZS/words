@@ -12,7 +12,14 @@ import { moveTime } from "../../consts";
 import { PlayerLocal } from "../../player_local";
 import { Hints } from '../hints/hints';
 
-export default function GameField({player, onLeave, scale}: {player: PlayerClient | PlayerLocal, onLeave: ()=>void, scale: number}){
+interface IGameFieldProps {
+   player: PlayerClient | PlayerLocal;
+   onLeave: ()=>void;
+   onWin: ()=>void;
+   scale: number;
+}
+
+export default function GameField({player, onLeave, onWin, scale}: IGameFieldProps){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
@@ -27,6 +34,7 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
     const [winWord, setWinWord] = useState<Array<ILetter>>(null);
     const [time, setTime] = useState(0);
     const [cTime, setCTime] = useState(Date.now());
+    const [round, setRound] = useState<{current: number, total: number}>({current: 0, total: 0});
 
     useEffect(()=>{
         const tm = setInterval(()=>{
@@ -71,6 +79,7 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
             setPlayers(logic.players);
             setCurrentPlayerIndex(logic.currentPlayerIndex);
             setTime(Date.now() + res.time);
+            setRound({current: res.currentRound, total: res.totalRounds});
             //setLogic(logic);
         })
         client.onGameState = (state) => {
@@ -79,6 +88,10 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
             //if (currentPlayerIndex !== state.currentPlayerIndex){
             setCurrentPlayerIndex(state.currentPlayerIndex);
             setTime(Date.now() + state.time);
+            setRound({current: state.currentRound, total: state.totalRounds});
+            if (state.currentRound > state.totalRounds){
+                onWin();
+            }
             //}
         }
         client.onSelectLetter = (word) => {
@@ -185,6 +198,7 @@ export default function GameField({player, onLeave, scale}: {player: PlayerClien
                     player.shuffle();
                 }} />
                 <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
+                <div>round: {round.current} / {round.total}</div>
                 <div className="field__group">
                 <div className="field" ref={fieldRef} onMouseMove={(e)=>{
                     if (player.playerName != players[currentPlayerIndex]?.name){

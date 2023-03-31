@@ -22,6 +22,8 @@ export class GameLogic{
     private moveTimer: any = null;
     isStarted: boolean = false;
     startMoveTime: number;
+    roundCounter: number = 0;
+    maxRound: number = 3;
 
     constructor(gen: ILangGen){
         this.gen = gen;
@@ -47,8 +49,20 @@ export class GameLogic{
         return this.players.length ? (this.currentPlayerIndex + 1) % this.players.length : -1;
     }
 
+    nextRound(){
+        if ((this.roundCounter + 1)>=this.maxRound){
+            console.log('finish game');
+        } else {
+            console.log('next round');   
+        }
+        this.roundCounter += 1; 
+    }
+
     nextPlayer(index: number){
         console.log('next player', index)
+        if (this.currentPlayerIndex>=index){
+            this.nextRound();
+        }
         this.currentPlayerIndex = index; 
         this.startMoveTime = Date.now();
         this.onGameState.emit(this.getState());
@@ -230,6 +244,8 @@ export class GameLogic{
             players: this.players,
             currentPlayerIndex: this.currentPlayerIndex,
             time: - Date.now() + this.startMoveTime + (moveTime * 1000),
+            currentRound: this.roundCounter + 1,
+            totalRounds: this.maxRound
         }
     }
 
