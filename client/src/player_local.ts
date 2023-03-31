@@ -64,4 +64,7 @@ export class PlayerLocal{
         return Promise.resolve(this.gameLogic.shuffle(this.name));
     }
     
+    startGame() {
+        this.gameLogic.start();
+    }
 }

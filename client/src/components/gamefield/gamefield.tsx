@@ -35,6 +35,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
     const [time, setTime] = useState(0);
     const [cTime, setCTime] = useState(Date.now());
     const [round, setRound] = useState<{current: number, total: number}>({current: 0, total: 0});
+    const [isStarted, setStarted] = useState<boolean>(false);
 
     useEffect(()=>{
         const tm = setInterval(()=>{
@@ -80,6 +81,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setCurrentPlayerIndex(logic.currentPlayerIndex);
             setTime(Date.now() + res.time);
             setRound({current: res.currentRound, total: res.totalRounds});
+            setStarted(res.isStarted);
             //setLogic(logic);
         })
         client.onGameState = (state) => {
@@ -89,6 +91,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setCurrentPlayerIndex(state.currentPlayerIndex);
             setTime(Date.now() + state.time);
             setRound({current: state.currentRound, total: state.totalRounds});
+            setStarted(state.isStarted);
             if (state.currentRound > state.totalRounds){
                 onWin();
             }
@@ -177,6 +180,9 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
         <div className="game__wrapper">
             <div>
                 <span> room: {player.roomName}</span>
+                <button onClick={()=>{
+                    player.startGame();
+                }}>{isStarted? 'started': 'click to start'} </button>
                 <button onClick={()=>{
                     client.leaveRoom().then(res=>{
                         console.log(res);

@@ -76,4 +76,8 @@ export class PlayerClient{
             data: {}
         })
     }
+
+    startGame() {
+        //this.gameLogic.start();
+    }
 }

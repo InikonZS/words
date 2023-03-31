@@ -22,7 +22,7 @@ export class GameLogic{
     private moveTimer: any = null;
     isStarted: boolean = false;
     startMoveTime: number;
-    roundCounter: number = 0;
+    roundCounter: number = 1;
     maxRound: number = 3;
 
     constructor(gen: ILangGen){
@@ -52,6 +52,7 @@ export class GameLogic{
     nextRound(){
         if ((this.roundCounter + 1)>=this.maxRound){
             console.log('finish game');
+            this.isStarted = false;
         } else {
             console.log('next round');   
         }
@@ -120,10 +121,16 @@ export class GameLogic{
 
     start(){
         this.letters = this.gen.generateLetters(10, 10);
+        this.players.map(it=> {
+            it.crystals = 0;
+            it.points = 0;
+            it.winWord = '';
+        })
         this.addCrystals();
         this.isStarted = true;
+        this.roundCounter = 0;
         this.nextPlayer(0);
-        //this.onGameState.emit(this.getState());    
+        this.onGameState.emit(this.getState());    
     }
 
     private addCrystals(){
@@ -244,7 +251,7 @@ export class GameLogic{
             players: this.players,
             currentPlayerIndex: this.currentPlayerIndex,
             time: - Date.now() + this.startMoveTime + (moveTime * 1000),
-            currentRound: this.roundCounter + 1,
+            currentRound: this.roundCounter ,
             totalRounds: this.maxRound
         }
     }
