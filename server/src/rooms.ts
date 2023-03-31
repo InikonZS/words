@@ -1,5 +1,5 @@
 import { GameLogic } from "../../client/src/gameLogic/gameLogic";
-import { enGen, ruGen } from "../../client/src/gameLogic/logicGenerator";
+import { byGen, enGen, ruGen } from "../../client/src/gameLogic/logicGenerator";
 import { LobbyUser } from "./lobbyUser";
 import { PlayerServer } from './playerServer';
 
@@ -10,8 +10,8 @@ class Room{
     lastActivity: number;
     onRemove: ()=>void;
 
-    constructor(name: string){
-        this.logic = new GameLogic(ruGen);
+    constructor(name: string, lang: number){
+        this.logic = new GameLogic([enGen, ruGen, byGen][lang]);
         this.name = name;
         this.lastActivity = Date.now();
     }
@@ -45,9 +45,9 @@ export class Rooms{
 
     }
 
-    addRoom(){
+    addRoom(lang: number){
         Rooms.counter++;
-        const room = new Room('room' + Rooms.counter);  
+        const room = new Room('room' + Rooms.counter, lang);  
         room.onRemove = ()=>{
             const index = this.rooms.findIndex(it=> it.name == room.name);
             if (index != -1){
