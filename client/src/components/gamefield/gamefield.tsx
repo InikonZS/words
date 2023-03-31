@@ -36,6 +36,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
     const [cTime, setCTime] = useState(Date.now());
     const [round, setRound] = useState<{current: number, total: number}>({current: 0, total: 0});
     const [isStarted, setStarted] = useState<boolean>(false);
+    const [spectators, setSpectators] = useState<Array<string>>(null);
 
     useEffect(()=>{
         const tm = setInterval(()=>{
@@ -82,6 +83,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setTime(Date.now() + res.time);
             setRound({current: res.currentRound, total: res.totalRounds});
             setStarted(res.isStarted);
+            setSpectators(res.spectators);
             //setLogic(logic);
         })
         client.onGameState = (state) => {
@@ -92,6 +94,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setTime(Date.now() + state.time);
             setRound({current: state.currentRound, total: state.totalRounds});
             setStarted(state.isStarted);
+            setSpectators(state.spectators);
             if (state.currentRound > state.totalRounds){
                 onWin();
             }
@@ -195,6 +198,11 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             </div>
             
             <div className="game__center-container">
+                <div className="players">
+                    {spectators.map((player, index) => {
+                        return <div>{player}</div>
+                    })}
+                </div>
                 <div className="players">
                     {players.map((player, index) => {
                         return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>

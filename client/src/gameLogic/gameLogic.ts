@@ -13,6 +13,7 @@ export class GameLogic{
     gen: ILangGen;
     letters: ILetter[][];
     players: Array<IPlayerData>;
+    spectators: Array<string> = [];
     currentPlayerIndex: number = -1;
 
     onGameState: Signal<IGameState> = new Signal();//(state:IGameState)=>void;
@@ -75,7 +76,8 @@ export class GameLogic{
     }
 
     joinPlayer(playerName:string){
-        this.players.push({
+        this.spectators.push(playerName);
+        /*this.players.push({
             name: playerName,
             points: 0,
             crystals: 0,
@@ -85,11 +87,19 @@ export class GameLogic{
         if (this.currentPlayerIndex == -1){
             //this.currentPlayerIndex = 0;
             this.nextPlayer(0);
-        }
+        }*/
         this.onGameState.emit(this.getState());
     }
 
+    leaveSpectator(name: string){
+        const playerIndex = this.spectators.findIndex(it=> name == it);
+        if (playerIndex != -1) {
+            this.players.splice(playerIndex, 1);
+        }
+    }
+
     leavePlayer(playerName:string){
+        this.leaveSpectator(playerName);
         const playerIndex = this.players.findIndex(it=> playerName == it.name);
         if (playerIndex != -1) {
             this.players.splice(playerIndex, 1);
@@ -121,11 +131,18 @@ export class GameLogic{
 
     start(){
         this.letters = this.gen.generateLetters(10, 10);
-        this.players.map(it=> {
+        /*this.players.map(it=> {
             it.crystals = 0;
             it.points = 0;
             it.winWord = '';
-        })
+        })*/
+        this.players = this.spectators.map(it=> ({
+            name: it,
+            points: 0,
+            crystals: 0,
+            winWord: '',
+            connected: true
+        }));
         this.addCrystals();
         this.isStarted = true;
         this.roundCounter = 0;
@@ -249,6 +266,7 @@ export class GameLogic{
             isStarted: this.isStarted,
             letters: this.letters,
             players: this.players,
+            spectators: this.spectators,
             currentPlayerIndex: this.currentPlayerIndex,
             time: - Date.now() + this.startMoveTime + (moveTime * 1000),
             currentRound: this.roundCounter ,

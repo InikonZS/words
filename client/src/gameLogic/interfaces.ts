@@ -27,4 +27,5 @@ export interface IGameState{
     time: number;
     currentRound: number;
     totalRounds: number;
+    spectators: Array<string>;
 }
