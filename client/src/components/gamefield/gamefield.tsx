@@ -37,6 +37,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
     const [round, setRound] = useState<{current: number, total: number}>({current: 0, total: 0});
     const [isStarted, setStarted] = useState<boolean>(false);
     const [spectators, setSpectators] = useState<Array<string>>(null);
+    const [startRequestTime, setStartRequestTime] = useState(null);
 
     useEffect(()=>{
         const tm = setInterval(()=>{
@@ -45,7 +46,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
         return ()=>{
             clearInterval(tm);
         }
-    }, [time]);
+    }, [time, startRequestTime]);
 
     useEffect(() => {
         /*const logic = new GameLogic();
@@ -84,6 +85,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setRound({current: res.currentRound, total: res.totalRounds});
             setStarted(res.isStarted);
             setSpectators(res.spectators);
+            setStartRequestTime(res.isStartRequested ? res.startRequestTime + Date.now() : null);
             //setLogic(logic);
         })
         client.onGameState = (state) => {
@@ -95,6 +97,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setRound({current: state.currentRound, total: state.totalRounds});
             setStarted(state.isStarted);
             setSpectators(state.spectators);
+            setStartRequestTime(state.isStartRequested ? state.startRequestTime + Date.now() : null);
             if (state.currentRound > state.totalRounds){
                 onWin();
             }
@@ -178,14 +181,27 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
         }
     }, [winWord])
 
+    const getStartButtonText = ()=>{
+        if (isStarted){
+            return 'started';
+        } else {
+            if (startRequestTime != null){
+                return 'wait for players ' + Math.floor((Math.max((startRequestTime - cTime) / 1000, 0)))
+            } else {
+                return 'click to start'
+            }
+        }
+    }
+
     return (
         letters && (
         <div className="game__wrapper">
             <div>
                 <span> room: {player.roomName}</span>
+                {startRequestTime}
                 <button onClick={()=>{
                     player.startGame();
-                }}>{isStarted? 'started': 'click to start'} </button>
+                }}>{getStartButtonText()} </button>
                 <button onClick={()=>{
                     client.leaveRoom().then(res=>{
                         console.log(res);

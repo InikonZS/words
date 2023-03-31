@@ -26,6 +26,9 @@ export class GameLogic{
     roundCounter: number = 1;
     maxRound: number = 3;
 
+    gameStartTimer: any = null;
+    gameStartRequestTime: number;
+
     constructor(gen: ILangGen){
         this.gen = gen;
         this.letters = this.gen.generateLetters(10, 10);
@@ -150,6 +153,17 @@ export class GameLogic{
         this.onGameState.emit(this.getState());    
     }
 
+    requestStart(name: string){
+        if (!this.gameStartTimer){
+            this.gameStartRequestTime = Date.now();
+            this.gameStartTimer = setTimeout(()=>{
+                this.gameStartTimer = null;
+                this.start();
+            }, 10000);
+            this.onGameState.emit(this.getState());
+        }
+    }
+
     private addCrystals(){
         this.letters.map(row=> row.map(letter=>{
             if (Math.random() < 0.1){
@@ -264,6 +278,8 @@ export class GameLogic{
     getState(): IGameState{
         return {
             isStarted: this.isStarted,
+            isStartRequested: !!this.gameStartTimer,
+            startRequestTime: - Date.now() + this.gameStartRequestTime + (10000),
             letters: this.letters,
             players: this.players,
             spectators: this.spectators,

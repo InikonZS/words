@@ -65,6 +65,7 @@ export class PlayerLocal{
     }
     
     startGame() {
-        this.gameLogic.start();
+        //this.gameLogic.start();
+        this.gameLogic.requestStart(this.playerName);
     }
 }

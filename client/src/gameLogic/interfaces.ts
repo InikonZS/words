@@ -28,4 +28,6 @@ export interface IGameState{
     currentRound: number;
     totalRounds: number;
     spectators: Array<string>;
+    isStartRequested: boolean;
+    startRequestTime: number;
 }
