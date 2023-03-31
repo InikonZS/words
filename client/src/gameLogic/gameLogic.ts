@@ -23,7 +23,7 @@ export class GameLogic{
     private moveTimer: any = null;
     isStarted: boolean = false;
     startMoveTime: number;
-    roundCounter: number = 1;
+    roundCounter: number = 0;
     maxRound: number = 3;
 
     gameStartTimer: any = null;
@@ -56,11 +56,21 @@ export class GameLogic{
     nextRound(){
         if ((this.roundCounter + 1)>=this.maxRound){
             console.log('finish game');
-            this.isStarted = false;
+            this.roundCounter += 1; 
+            this.stopGame();
         } else {
-            console.log('next round');   
+            console.log('next round'); 
+            this.roundCounter += 1;    
         }
-        this.roundCounter += 1; 
+       
+    }
+
+    stopGame(){
+        this.isStarted = false;
+        clearTimeout(this.moveTimer);
+        this.moveTimer = null;
+        this.players = [];
+        this.currentPlayerIndex = -1;
     }
 
     nextPlayer(index: number){
@@ -73,9 +83,11 @@ export class GameLogic{
         this.onGameState.emit(this.getState());
         this.bot();
         clearTimeout(this.moveTimer);
-        this.moveTimer = setTimeout(()=>{
-            this.nextPlayer(this.getNextPlayerIndex());
-        }, moveTime * 1000);
+        if (this.isStarted){
+            this.moveTimer = setTimeout(()=>{
+                this.nextPlayer(this.getNextPlayerIndex());
+            }, moveTime * 1000);
+        }
     }
 
     joinPlayer(playerName:string){
@@ -133,6 +145,7 @@ export class GameLogic{
     }
 
     start(){
+        this.currentPlayerIndex = -1;
         this.letters = this.gen.generateLetters(10, 10);
         /*this.players.map(it=> {
             it.crystals = 0;
@@ -155,6 +168,7 @@ export class GameLogic{
 
     requestStart(name: string){
         if (!this.gameStartTimer){
+            this.roundCounter = 0;
             this.gameStartRequestTime = Date.now();
             this.gameStartTimer = setTimeout(()=>{
                 this.gameStartTimer = null;

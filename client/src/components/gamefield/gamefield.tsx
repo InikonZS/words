@@ -98,7 +98,8 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setStarted(state.isStarted);
             setSpectators(state.spectators);
             setStartRequestTime(state.isStartRequested ? state.startRequestTime + Date.now() : null);
-            if (state.currentRound > state.totalRounds){
+            //console.log(isStarted, state.currentRound);
+            if ((state.currentRound >= state.totalRounds)){
                 onWin();
             }
             //}
