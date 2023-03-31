@@ -1,6 +1,6 @@
 import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, shuffle } from "./logicTools";
+import { getPoints, shuffle } from "./logicTools";
 import { ILangGen } from './logicGenerator'; 
 import { moveTime } from '../consts';
 /*const langSumFreq = getSumFreq(frequency);

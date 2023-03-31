@@ -1,5 +1,5 @@
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { abc, ru, formattedWordsRu, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, placeWords, placeWord, genPl } from "./logicTools";
+import { abc, ru, bel, formattedWordsRu, formattedWordsBy, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, placeWords, placeWord, genPl } from "./logicTools";
 import {pl} from './pl_words';
 
 export interface ILangGen{
@@ -38,4 +38,5 @@ class UniGen implements ILangGen{
 }
 
 export const enGen = new UniGen(abc, frequency, formattedWordsEn);
-export const ruGen = new UniGen(ru, ru_freq, formattedWordsRu)
+export const ruGen = new UniGen(ru, ru_freq, formattedWordsRu);
+export const byGen = new UniGen(bel, ru_freq, formattedWordsBy);

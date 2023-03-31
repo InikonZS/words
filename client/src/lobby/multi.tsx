@@ -14,7 +14,7 @@ interface IMultiProps {
 export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
     const [roomName, setRoomName] = useState('');
     const [langIndex, setLangIndex] = useState(0);
-    const langs = ['en', 'ru'];
+    const langs = ['en', 'ru', 'by'];
     const {setLang, currentLang} = useLangContext();
 
     //const [items, setItems] = useState([]);

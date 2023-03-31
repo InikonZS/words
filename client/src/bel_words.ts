@@ -1,4 +1,4 @@
-export const ruWords = `
+export const byWords = `
 аазiс
 абабак
 абабегаць

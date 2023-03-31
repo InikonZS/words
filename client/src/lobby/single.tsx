@@ -12,7 +12,7 @@ interface ISingleProps {
 
 export function Single({ onLocal, onBot, onBack }: ISingleProps) {
     const [langIndex, setLangIndex] = useState(0);
-    const langs = ['en', 'ru'];
+    const langs = ['en', 'ru', 'by'];
     const {setLang, currentLang} = useLangContext();
 
     //const [items, setItems] = useState([]);

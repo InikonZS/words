@@ -1,16 +1,20 @@
 import {words} from "../words";
 import {ruWords} from "../ru_words";
+import {byWords} from "../bel_words";
 import {pl} from "./pl_words";
 import { ILetter } from "./interfaces";
 
 export const formattedWordsRu = ruWords.split('\n').filter(it=> it.length>=2);
 export const formattedWordsEn = words.split('\n').filter(it=> it.length>=2);
 export const formattedWordsPl = pl.split('\n').filter(it=> it.length>=2);
+export const formattedWordsBy = byWords.split('\n').filter(it=> it.length>=2);
 //console.log(formattedWords);
-
+const belI = 'і';
+const belYShort = 'ў'; 
 export const abc = 'abcdefghijklmnopqrstuvwxyz';
 export const polish = 'aąbcćdeęfghijklłmnńoóprsśtuwyzźż';
 export const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+export const bel = 'абвгдеёжзiйклмнопрстуўфхцчш\'ыьэюя';
 export const frequency = [
     7.8,
     2,
