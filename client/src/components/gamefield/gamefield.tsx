@@ -39,6 +39,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
     const [isStarted, setStarted] = useState<boolean>(false);
     const [spectators, setSpectators] = useState<Array<string>>(null);
     const [startRequestTime, setStartRequestTime] = useState(null);
+    const [words, setWords] = useState<Array<string>>(null);
 
     useEffect(()=>{
         const tm = setInterval(()=>{
@@ -101,6 +102,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setSpectators(state.spectators);
             setStartRequestTime(state.isStartRequested ? state.startRequestTime + Date.now() : null);
             setHintMask(null);
+            setWords(null);
             //console.log(isStarted, state.currentRound);
             if ((state.currentRound >= state.totalRounds)){
                 onWin();
@@ -263,12 +265,17 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
                     player.shuffle();
                 }}
                 onShowWords = {()=>{
-                    player.showWords();
+                    setWords(player.showWords());
                 }}
                 onShowMask ={()=>{
                     setHintMask(player.showMask());
                 }}
                  />
+                {words && <div>
+                    {words.map(it=>{
+                        return <span>{it} </span>
+                    })}
+                </div>}
                 <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
                 <div>round: {round.current} / {round.total}</div>
                 <div className="field__group">

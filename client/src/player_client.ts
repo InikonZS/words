@@ -81,8 +81,8 @@ export class PlayerClient{
         //this.gameLogic.start();
     }
 
-    showWords(){
-
+    showWords():string[]{
+        return [];
     }
 
     showMask():number[][][]{

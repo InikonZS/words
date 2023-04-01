@@ -70,7 +70,7 @@ export class PlayerLocal{
     }
 
     showWords(){
-        this.gameLogic.showWords(this.playerName);
+        return this.gameLogic.showWords(this.playerName);
     }
 
     showMask(){

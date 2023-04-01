@@ -388,8 +388,8 @@ export class GameLogic{
             const word = it.map(jt => jt.letter).join('');
             uniq[word] = word;
         });
-
         console.log(Object.keys(uniq));
+        return Object.keys(uniq);  
     }
 
     showMask(name: string){
