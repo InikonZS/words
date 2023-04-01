@@ -80,4 +80,8 @@ export class PlayerClient{
     startGame() {
         //this.gameLogic.start();
     }
+
+    showWords(){
+        
+    }
 }

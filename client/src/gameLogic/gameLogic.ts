@@ -1,6 +1,6 @@
 import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { getPoints, shuffle } from "./logicTools";
+import { getPoints, shuffle, traceField } from "./logicTools";
 import { ILangGen } from './logicGenerator'; 
 import { moveTime } from '../consts';
 /*const langSumFreq = getSumFreq(frequency);
@@ -366,5 +366,29 @@ export class GameLogic{
         shuffle(this.letters);
         this.letters.forEach(item => shuffle(item));
         this.onGameState.emit(this.getState());
+    }
+
+    showWords(name: string){
+        const allWords = this.gen.traceField(this.letters);
+        const linearList: Array<Array<ILetter>> = [];
+        allWords.forEach(row=>{
+            row.forEach(words=>{
+                words.forEach(word=>{
+                    linearList.push(word);
+                })
+            })
+        });
+
+        linearList.sort((a, b)=>{
+            return b.length - a.length;
+        });
+
+        const uniq: Record<string, string> = {};
+        linearList.forEach(it=>{
+            const word = it.map(jt => jt.letter).join('');
+            uniq[word] = word;
+        });
+
+        console.log(Object.keys(uniq));
     }
 }

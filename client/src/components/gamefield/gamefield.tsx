@@ -227,7 +227,11 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
                 </div>
                 <Hints  crystals={players.find(it => it.name == player.playerName)?.crystals} onShuffle={() => {
                     player.shuffle();
-                }} />
+                }}
+                onShowWords = {()=>{
+                    player.showWords();
+                }}
+                 />
                 <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
                 <div>round: {round.current} / {round.total}</div>
                 <div className="field__group">

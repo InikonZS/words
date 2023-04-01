@@ -3,9 +3,10 @@ import React, { useContext, useEffect, useState } from "react";
 interface IHintsProps {
   crystals: number;
   onShuffle: () => void; 
+  onShowWords: () => void;
 }
 
-export function Hints({crystals, onShuffle} : IHintsProps) {
+export function Hints({crystals, onShuffle, onShowWords} : IHintsProps) {
 
   return (
     <div>
@@ -13,6 +14,11 @@ export function Hints({crystals, onShuffle} : IHintsProps) {
         onShuffle();
       }}>
         shuffle
+      </button>
+      <button disabled={crystals < 0} onClick={() => {
+        onShowWords();
+      }}>
+        show words
       </button>
     </div>
   )
