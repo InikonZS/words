@@ -391,4 +391,35 @@ export class GameLogic{
 
         console.log(Object.keys(uniq));
     }
+
+    showMask(name: string){
+        const allWords = this.gen.traceField(this.letters);
+        let linearList: Array<Array<ILetter>> = [];
+        allWords.forEach(row=>{
+            row.forEach(words=>{
+                words.forEach(word=>{
+                    linearList.push(word);
+                })
+            })
+        });
+
+        linearList.sort((a, b)=>{
+            return b.length - a.length;
+        })
+        linearList = linearList.slice(0, 12);
+        const uniq: Record<string, Array<ILetter>> = {};
+        linearList.forEach(it=>{
+            const word = it.map(jt => jt.letter).join('');
+            uniq[word] = it;
+        });
+
+        const res: Array<Array<Array<number>>> = this.letters.map(it=>{
+            return it.map(jt=>{
+                return [];
+            })
+        });
+        Object.values(uniq).forEach((it, i)=> it.forEach(jt=>{res[jt.y][jt.x].push(i)}));
+        console.log(Object.keys(uniq));
+        return res;
+    }
 }

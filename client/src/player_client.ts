@@ -82,6 +82,11 @@ export class PlayerClient{
     }
 
     showWords(){
-        
+
+    }
+
+    showMask():number[][][]{
+        //this.gameLogic.showWords(this.playerName);
+        return [[[]]]
     }
 }

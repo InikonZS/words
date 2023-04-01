@@ -21,6 +21,7 @@ interface IGameFieldProps {
 
 export default function GameField({player, onLeave, onWin, scale}: IGameFieldProps){
     const [letters, setLetters] = useState<Array<Array<ILetter>>>(null);
+    const [hintMask, setHintMask] = useState<Array<Array<Array<number>>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
     const [logic, setLogic] = useState<GameLogic>(null);
@@ -86,6 +87,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setStarted(res.isStarted);
             setSpectators(res.spectators);
             setStartRequestTime(res.isStartRequested ? res.startRequestTime + Date.now() : null);
+            setHintMask(null);
             //setLogic(logic);
         })
         client.onGameState = (state) => {
@@ -98,6 +100,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setStarted(state.isStarted);
             setSpectators(state.spectators);
             setStartRequestTime(state.isStartRequested ? state.startRequestTime + Date.now() : null);
+            setHintMask(null);
             //console.log(isStarted, state.currentRound);
             if ((state.currentRound >= state.totalRounds)){
                 onWin();
@@ -194,6 +197,37 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
         }
     }
 
+    const numbersToGradient = (arr: Array<number>)=>{
+        const full = 360;
+        const colors = ['#f00', '#f90', '#ff0', '#9f0', '#0f0', '#090', '#099', '#09f','#0ff', '#f99', '#ff9', '#9f9', '#999', '#99f','#9ff'];
+        if (!arr.length){
+            return null;
+        }
+        if (arr.length == 1){
+            return `conic-gradient(${colors[arr[0]]}7 0deg, ${colors[arr[0]]}7 360deg)`;
+        }
+        
+        const ang = full/arr.length;
+        const initial = [0, 45, 0, 45][arr.length-1] || 0;
+        const pairs = arr.map((it, i)=>{
+            return {
+                angle: ang * i + initial,
+                color: colors[it % colors.length]
+            }
+        })
+        const records:Array<string> = [];
+        pairs.forEach(it=>{
+            records.push(`${it.color}7 ${it.angle}deg`);
+            records.push(`${it.color}7 ${it.angle + ang}deg`);
+        });
+        const last = records.pop();
+        records.unshift(`${pairs[pairs.length-1].color}7 ${initial}deg`);
+        return `conic-gradient(${records.join(', ')})`;
+        //console.log(`conic-gradient(${pairs.map(it=> `${it.color}7 ${it.angle}deg`).join(', ')})`)
+        //return `conic-gradient(${pairs.map(it=> `${it.color}7 ${it.angle}deg, ${it.color}7 ${it.angle + ang}deg`).join(', ')})`
+        //conic-gradient(#ff06 45deg, #f006,45deg, #f006 225deg, #ff06 225deg)
+    }
+
     return (
         letters && (
         <div className="game__wrapper">
@@ -230,6 +264,9 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
                 }}
                 onShowWords = {()=>{
                     player.showWords();
+                }}
+                onShowMask ={()=>{
+                    setHintMask(player.showMask());
                 }}
                  />
                 <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
@@ -279,11 +316,14 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
                 }}
                 >
                     {
-                        letters.map(row => {
+                        letters.map((row, ri) => {
                             return <div className="row">
                                 {
-                                    row.map(letter => {
+                                    row.map((letter, li) => {
                                         return <div className={`letter ${selected.find(it => it.id == letter.id) ? "letter_selected" : ""} ${animate.find(it => it.id == letter.id) ? "letter_hide" : ""}`}
+                                            style={{
+                                                'background-image': hintMask && numbersToGradient(hintMask[ri][li])
+                                            }}
                                             onMouseDown={() => {
                                                 if (player.playerName != players[currentPlayerIndex]?.name){
                                                     return;
@@ -350,6 +390,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
                                             >
                                             {letter.bonus.find(it => it.name == 'crystal') && <div className="crystal"></div>}
                                             {letter.letter}
+                                            {false && hintMask && hintMask[ri]?.[li] && <div style={{fontSize: '8px'}}>{hintMask[ri][li].join('/')}</div>}
                                         </div>
                                     })}
                             </div>
