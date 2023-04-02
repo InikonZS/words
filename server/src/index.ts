@@ -41,7 +41,40 @@ const rooms = new Rooms();
 const users: Array<LobbyUser> = [];
 
 socket.on('request', (request) => {
-  const connection = request.accept(undefined, request.origin)
+  const connection = request.accept(undefined, request.origin);
+  connection.on('message', (message)=>{
+    if (message.type == 'utf8'){
+      const parsed = JSON.parse(message.utf8Data)
+      console.log("Message", parsed)
+      if (!('type' in parsed)) {
+          return;
+      }
+
+      if (parsed.type == 'getUsers') {
+        const names = parsed.data.names;
+        if (names instanceof Array){
+          connection.sendUTF(JSON.stringify({
+            type: 'privateMessage',
+            requestId: parsed.requestId,
+            data: names.map(it => {
+              const found = users.find(user=> user.name == it);
+              if (found){
+                return {
+                  name: found.name,
+                  nick: found.nick,
+                  ava: found.ava
+                }
+              } else {
+                return {
+                  name: found.name
+                };
+              }
+            })
+          }))
+        }
+      }
+    }
+  })
   console.log(request.httpRequest.url);
   const params: Record<string, string> = {};
   request.httpRequest.url.split('?')[1]?.split('&')?.forEach(it=>{
@@ -61,7 +94,9 @@ socket.on('request', (request) => {
         type: 'restoreSession',
         data: {
           session: user.session,
-          name: user.name
+          name: user.name,
+          nick: user.nick,
+          ava: user.ava
         }
       }))  
     }
@@ -73,7 +108,9 @@ socket.on('request', (request) => {
       type: 'newSession',
       data: {
         session: user.session,
-        name: user.name
+        name: user.name,
+        nick: user.nick,
+        ava: user.ava
       }
     }))
   }
