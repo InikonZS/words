@@ -230,6 +230,69 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
         //conic-gradient(#ff06 45deg, #f006,45deg, #f006 225deg, #ff06 225deg)
     }
 
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>)=>{
+        e.preventDefault();
+        if (player.playerName != players[currentPlayerIndex]?.name){
+            return;
+        }
+        
+        if (fieldRef.current && selected && selected.length){
+            const {left, top} =fieldRef.current.getBoundingClientRect();
+            const paddingOffset = scale * 30;
+            const point = {x: e.touches[0].clientX - left - paddingOffset, y: e.touches[0].clientY - top - paddingOffset};
+            setPointer(point);
+            if (Math.hypot(point.x % (70 * scale)-35*scale, point.x % (70 * scale)-35*scale) < 20* scale){
+            const letter = letters[Math.floor(point.y/((60 + 10) * scale))]?.[Math.floor(point.x/((60 + 10) * scale))];
+            //console.log(letter);
+            if (letter){
+                if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
+                    client.selectLetter([...selected, letter]);
+                } else if (selected.length > 1 && selected[selected.length - 2].id == letter.id) {
+                    client.selectLetter([...selected.slice(0, selected.length - 1)]);
+                }
+            }
+            }
+        } else {
+            setPointer(null);
+        }
+    }
+
+    const handleWrapperMouseMove = (e: React.MouseEvent<HTMLDivElement>)=>{
+        if (player.playerName != players[currentPlayerIndex]?.name){
+            return;
+        }
+        if (fieldRef.current && selected && selected.length){
+            const {left, top} =fieldRef.current.getBoundingClientRect();
+            const paddingOffset = scale * 30;
+            setPointer({x: e.clientX - left - paddingOffset, y: e.clientY - top - paddingOffset});
+            //setPointer({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
+        } else {
+            setPointer(null);
+        }
+    }
+
+    const getLetterClassName = (letter: ILetter)=>{
+        return `letter ${selected.find(it => it.id == letter.id) ? "letter_selected" : ""} ${animate.find(it => it.id == letter.id) ? "letter_hide" : ""}`
+    }
+
+    const handleMouseDown = (letter:ILetter)=>{
+        if (player.playerName != players[currentPlayerIndex]?.name){
+            return;
+        }
+        client.selectLetter([letter]);
+    }
+
+    const handleMouseMove = (letter: ILetter) => {
+        if (player.playerName != players[currentPlayerIndex]?.name){
+            return;
+        }
+        if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
+            client.selectLetter([...selected, letter]);
+        } else if (selected.length > 1 && selected[selected.length - 2].id == letter.id) {
+            client.selectLetter([...selected.slice(0, selected.length - 1)]);
+        }
+    }
+
     return (
         letters && (
         <div className="game__wrapper">
@@ -279,104 +342,27 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
                 <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
                 <div>round: {round.current} / {round.total}</div>
                 <div className="field__group">
-                <div className="field" ref={fieldRef} onMouseMove={(e)=>{
-                    if (player.playerName != players[currentPlayerIndex]?.name){
-                        return;
-                    }
-                    if (fieldRef.current && selected && selected.length){
-                        const {left, top} =fieldRef.current.getBoundingClientRect();
-                        const paddingOffset = scale * 30;
-                        setPointer({x: e.clientX - left - paddingOffset, y: e.clientY - top - paddingOffset});
-                        //setPointer({x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY});
-                    } else {
-                        setPointer(null);
-                    }
-                }}
-                
-                onTouchMove = {(e)=>{ 
-                    e.preventDefault();
-                    if (player.playerName != players[currentPlayerIndex]?.name){
-                        return;
-                    }
-                    
-                    if (fieldRef.current && selected && selected.length){
-                        const {left, top} =fieldRef.current.getBoundingClientRect();
-                        const paddingOffset = scale * 30;
-                        const point = {x: e.touches[0].clientX - left - paddingOffset, y: e.touches[0].clientY - top - paddingOffset};
-                        setPointer(point);
-                        if (Math.hypot(point.x % (70 * scale)-35*scale, point.x % (70 * scale)-35*scale) < 20* scale){
-                        const letter = letters[Math.floor(point.y/((60 + 10) * scale))]?.[Math.floor(point.x/((60 + 10) * scale))];
-                        //console.log(letter);
-                        if (letter){
-                            if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
-                                client.selectLetter([...selected, letter]);
-                            } else if (selected.length > 1 && selected[selected.length - 2].id == letter.id) {
-                                client.selectLetter([...selected.slice(0, selected.length - 1)]);
-                            }
-                        }
-                        }
-                    } else {
-                        setPointer(null);
-                    }
-                    
-                    
-                }}
+                <div className="field" 
+                    ref = {fieldRef} 
+                    onMouseMove = {handleWrapperMouseMove}
+                    onTouchMove = {handleTouchMove}
                 >
                     {
                         letters.map((row, ri) => {
                             return <div className="row">
                                 {
                                     row.map((letter, li) => {
-                                        return <div className={`letter ${selected.find(it => it.id == letter.id) ? "letter_selected" : ""} ${animate.find(it => it.id == letter.id) ? "letter_hide" : ""}`}
+                                        return <div className={getLetterClassName(letter)}
                                             style={{
                                                 'background-image': hintMask && numbersToGradient(hintMask[ri][li])
                                             }}
-                                            onMouseDown={() => {
-                                                if (player.playerName != players[currentPlayerIndex]?.name){
-                                                    return;
-                                                }
-                                                //const list = traceOne(letters, letter.x, letter.y, [letter]);
-                                                //console.log(list);
-                                                //const all = traceField(letters);
-                                                //console.log(all);
-                                                //setSelected([letter]);
-                                                /*socket.sendState({
-                                                    type: 'selectLetter',
-                                                    data: [letter]
-                                                })*/
-                                                client.selectLetter([letter]);
+                                            onMouseDown={()=>{
+                                                handleMouseDown(letter);
                                             }}
-                                            onMouseMove={(e) => {
-                                                //console.log(fieldRef.current.getBoundingClientRect())
-                                                if (player.playerName != players[currentPlayerIndex]?.name){
-                                                    return;
-                                                }
-                                                if (selected.length && !selected.find(it => it.id == letter.id) && isClosest(selected[selected.length - 1].x, selected[selected.length - 1].y, letter.x, letter.y)) {
-                                                    //setSelected(last=> [...last, letter])
-                                                    /*socket.sendState({
-                                                        type: 'selectLetter',
-                                                        data: [...selected, letter]
-                                                    })*/
-                                                    client.selectLetter([...selected, letter]);
-                                                } else if (selected.length > 1 && selected[selected.length - 2].id == letter.id) {
-                                                    //setSelected(last=> [...last.slice(0, last.length-1)])
-                                                    /*socket.sendState({
-                                                        type: 'selectLetter',
-                                                        data: [...selected.slice(0, selected.length-1)]
-                                                    })*/
-                                                    client.selectLetter([...selected.slice(0, selected.length - 1)]);
-                                                }
+                                            onMouseMove={() => {
+                                                handleMouseMove(letter);
                                             }}
-                                            onMouseUp={() => {
-                                             //   setPointer(null);
-                                             //   submitWord(selected);
-                                                /*socket.sendState({
-                                                    type: 'selectLetter',
-                                                    data: []
-                                                })*/
-                                              //  client.selectLetter([]);
-                                                //setSelected([]); 
-                                            }}
+
                                             onTouchStart = {(e)=>{ 
                                                     e.preventDefault();
                                                     if (player.playerName != players[currentPlayerIndex]?.name){
@@ -385,6 +371,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
                                                     client.selectLetter([letter]);
                                                 }
                                             }
+
                                             onTouchEnd = {(e)=>{
                                                 if (player.playerName != players[currentPlayerIndex]?.name){
                                                     return;
