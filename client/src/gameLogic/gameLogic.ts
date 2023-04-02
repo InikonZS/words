@@ -378,6 +378,10 @@ export class GameLogic{
 
         shuffle(this.letters);
         this.letters.forEach(item => shuffle(item));
+        this.letters.forEach((row, i) => row.forEach((letter, j) => {
+            letter.x = j;
+            letter.y = i;
+        }) )
         this.onGameState.emit(this.getState());
     }
 
