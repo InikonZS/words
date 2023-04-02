@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Socket from "../../socket";
-import { IBonus, ILetter, IPlayerData } from '../../gameLogic/interfaces';
+import { IBonus, ILetter, IPlayerData, IWinData } from '../../gameLogic/interfaces';
 import { isClosest, traceField, traceOne } from '../../gameLogic/logicTools';
 import { Player } from '../player/player';
 import { GameLogic } from '../../gameLogic/gameLogic';
@@ -15,7 +15,7 @@ import { Hints } from '../hints/hints';
 interface IGameFieldProps {
    player: PlayerClient | PlayerLocal;
    onLeave: ()=>void;
-   onWin: ()=>void;
+   onWin: (data: IWinData)=>void;
    scale: number;
 }
 
@@ -105,7 +105,7 @@ export default function GameField({player, onLeave, onWin, scale}: IGameFieldPro
             setWords(null);
             //console.log(isStarted, state.currentRound);
             if ((state.currentRound >= state.totalRounds)){
-                onWin();
+                onWin({players: state.players});
             }
             //}
         }

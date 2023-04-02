@@ -70,7 +70,7 @@ export class GameLogic{
         this.isStarted = false;
         clearTimeout(this.moveTimer);
         this.moveTimer = null;
-        this.players = [];
+        //this.players = [];
         this.currentPlayerIndex = -1;
     }
 
@@ -161,7 +161,9 @@ export class GameLogic{
             points: 0,
             crystals: 0,
             winWord: '',
-            connected: true
+            connected: true,
+            correctWords: [],
+            incorrectWords: []
         }));
         this.addCrystals();
         this.isStarted = true;
@@ -215,6 +217,7 @@ export class GameLogic{
         const [isCorrect, word] = this.gen.checkWord(selected);//selected.map(it=> it.letter).join('');
         if ( isCorrect || word == ''){
             console.log('correct ', word);
+            current.correctWords.push(word);
             //clearTimeout(this.moveTimer);
             //this.moveTimer = null;
             this.onCorrectWord.emit(selected);
@@ -234,6 +237,9 @@ export class GameLogic{
             //setPoints(last=> last + getPoints(selected));
             selected.map(it=>this.letters[it.y][it.x].bonus.forEach(jt=> jt.apply()))
             //setAnimate(selected);
+            clearTimeout(this.moveTimer);
+            this.moveTimer = null;
+
             setTimeout(()=>{
                 this.updateLetters(selected);
                 //setLetters
@@ -247,6 +253,7 @@ export class GameLogic{
             
         } else {
             console.log('incorrect ', word);
+            current.incorrectWords.push(word);
         }
     }
 

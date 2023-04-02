@@ -11,6 +11,7 @@ import { YandexPlatform } from './platforms/yandex/yandex';
 import { Localization } from './localization/localization';
 import { LangContext } from './context';
 import { WinScreen } from './components/winScreen/winScreen';
+import { IWinData } from "./gameLogic/interfaces";
 
 const langModel = new Localization();
 const getUrlHashProps = ()=>{
@@ -35,6 +36,7 @@ export default function App() {
   const [platform, setPlatform] = useState<YandexPlatform>(null);
   const [fix, setFix] = useState(0);
   const [scale, setScale] = useState(0);
+  const [winData, setWinData] = useState<IWinData>(null);
 
   const joinRoom = (name:string)=>{
     socket.sendState({
@@ -182,13 +184,14 @@ export default function App() {
             setPlayer(null);
             setPageName('lobby');
           }} 
-          onWin={()=>{
+          onWin={(data)=>{
             setPageName('winScreen');
+            setWinData(data);
           }} 
           scale={scale}
         />}  
         {pageName == 'winScreen' && <WinScreen
-          winData = {{}}
+          winData = {winData}
           onClose = {()=>{
             setPageName('gameField');
           }}
