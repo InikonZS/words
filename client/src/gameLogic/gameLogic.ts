@@ -1,6 +1,6 @@
 import { Signal } from "../common/signal";
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { getPoints, shuffle } from "./logicTools";
+import { getPoints, shuffle, traceField } from "./logicTools";
 import { ILangGen } from './logicGenerator'; 
 import { moveTime } from '../consts';
 /*const langSumFreq = getSumFreq(frequency);
@@ -13,6 +13,7 @@ export class GameLogic{
     gen: ILangGen;
     letters: ILetter[][];
     players: Array<IPlayerData>;
+    spectators: Array<string> = [];
     currentPlayerIndex: number = -1;
 
     onGameState: Signal<IGameState> = new Signal();//(state:IGameState)=>void;
@@ -22,6 +23,12 @@ export class GameLogic{
     private moveTimer: any = null;
     isStarted: boolean = false;
     startMoveTime: number;
+    moveCounter: number = 0;
+    roundCounter: number = 0;
+    maxRound: number = 3;
+
+    gameStartTimer: any = null;
+    gameStartRequestTime: number;
 
     constructor(gen: ILangGen){
         this.gen = gen;
@@ -47,20 +54,49 @@ export class GameLogic{
         return this.players.length ? (this.currentPlayerIndex + 1) % this.players.length : -1;
     }
 
+    nextRound(){
+        if ((this.roundCounter + 1)>=this.maxRound){
+            console.log('finish game');
+            this.roundCounter += 1; 
+            this.stopGame();
+        } else {
+            console.log('next round'); 
+            this.roundCounter += 1;    
+        }
+       
+    }
+
+    stopGame(){
+        this.isStarted = false;
+        clearTimeout(this.moveTimer);
+        this.moveTimer = null;
+        //this.players = [];
+        this.currentPlayerIndex = -1;
+    }
+
     nextPlayer(index: number){
         console.log('next player', index)
+        this.moveCounter+=1;
+        if (this.currentPlayerIndex>=index){
+            this.nextRound();
+        }
         this.currentPlayerIndex = index; 
         this.startMoveTime = Date.now();
         this.onGameState.emit(this.getState());
         this.bot();
         clearTimeout(this.moveTimer);
-        this.moveTimer = setTimeout(()=>{
-            this.nextPlayer(this.getNextPlayerIndex());
-        }, moveTime * 1000);
+        if (this.isStarted){
+            this.moveTimer = setTimeout(()=>{
+                this.nextPlayer(this.getNextPlayerIndex());
+            }, moveTime * 1000);
+        }
     }
 
     joinPlayer(playerName:string){
-        this.players.push({
+        if (!this.spectators.includes(playerName)){
+            this.spectators.push(playerName);
+        }
+        /*this.players.push({
             name: playerName,
             points: 0,
             crystals: 0,
@@ -70,11 +106,19 @@ export class GameLogic{
         if (this.currentPlayerIndex == -1){
             //this.currentPlayerIndex = 0;
             this.nextPlayer(0);
-        }
+        }*/
         this.onGameState.emit(this.getState());
     }
 
+    leaveSpectator(name: string){
+        const playerIndex = this.spectators.findIndex(it=> name == it);
+        if (playerIndex != -1) {
+            this.players.splice(playerIndex, 1);
+        }
+    }
+
     leavePlayer(playerName:string){
+        this.leaveSpectator(playerName);
         const playerIndex = this.players.findIndex(it=> playerName == it.name);
         if (playerIndex != -1) {
             this.players.splice(playerIndex, 1);
@@ -105,11 +149,40 @@ export class GameLogic{
     }
 
     start(){
+        this.currentPlayerIndex = -1;
         this.letters = this.gen.generateLetters(10, 10);
+        /*this.players.map(it=> {
+            it.crystals = 0;
+            it.points = 0;
+            it.winWord = '';
+        })*/
+        this.players = this.spectators.map(it=> ({
+            name: it,
+            points: 0,
+            crystals: 0,
+            winWord: '',
+            connected: true,
+            correctWords: [],
+            incorrectWords: []
+        }));
         this.addCrystals();
         this.isStarted = true;
+        this.roundCounter = 0;
         this.nextPlayer(0);
-        //this.onGameState.emit(this.getState());    
+        this.onGameState.emit(this.getState());    
+    }
+
+    requestStart(name: string){
+        if (!this.gameStartTimer){
+            this.roundCounter = 0;
+            this.moveCounter = 0;
+            this.gameStartRequestTime = Date.now();
+            this.gameStartTimer = setTimeout(()=>{
+                this.gameStartTimer = null;
+                this.start();
+            }, 10000);
+            this.onGameState.emit(this.getState());
+        }
     }
 
     private addCrystals(){
@@ -144,6 +217,7 @@ export class GameLogic{
         const [isCorrect, word] = this.gen.checkWord(selected);//selected.map(it=> it.letter).join('');
         if ( isCorrect || word == ''){
             console.log('correct ', word);
+            current.correctWords.push(word);
             //clearTimeout(this.moveTimer);
             //this.moveTimer = null;
             this.onCorrectWord.emit(selected);
@@ -163,6 +237,9 @@ export class GameLogic{
             //setPoints(last=> last + getPoints(selected));
             selected.map(it=>this.letters[it.y][it.x].bonus.forEach(jt=> jt.apply()))
             //setAnimate(selected);
+            clearTimeout(this.moveTimer);
+            this.moveTimer = null;
+
             setTimeout(()=>{
                 this.updateLetters(selected);
                 //setLetters
@@ -176,6 +253,7 @@ export class GameLogic{
             
         } else {
             console.log('incorrect ', word);
+            current.incorrectWords.push(word);
         }
     }
 
@@ -226,10 +304,16 @@ export class GameLogic{
     getState(): IGameState{
         return {
             isStarted: this.isStarted,
+            isStartRequested: !!this.gameStartTimer,
+            startRequestTime: - Date.now() + this.gameStartRequestTime + (10000),
             letters: this.letters,
             players: this.players,
+            spectators: this.spectators,
             currentPlayerIndex: this.currentPlayerIndex,
             time: - Date.now() + this.startMoveTime + (moveTime * 1000),
+            currentRound: this.roundCounter ,
+            totalRounds: this.maxRound,
+            currentMove: this.moveCounter
         }
     }
 
@@ -295,5 +379,60 @@ export class GameLogic{
         shuffle(this.letters);
         this.letters.forEach(item => shuffle(item));
         this.onGameState.emit(this.getState());
+    }
+
+    showWords(name: string){
+        const allWords = this.gen.traceField(this.letters);
+        const linearList: Array<Array<ILetter>> = [];
+        allWords.forEach(row=>{
+            row.forEach(words=>{
+                words.forEach(word=>{
+                    linearList.push(word);
+                })
+            })
+        });
+
+        linearList.sort((a, b)=>{
+            return b.length - a.length;
+        });
+
+        const uniq: Record<string, string> = {};
+        linearList.forEach(it=>{
+            const word = it.map(jt => jt.letter).join('');
+            uniq[word] = word;
+        });
+        console.log(Object.keys(uniq));
+        return Object.keys(uniq);  
+    }
+
+    showMask(name: string){
+        const allWords = this.gen.traceField(this.letters);
+        let linearList: Array<Array<ILetter>> = [];
+        allWords.forEach(row=>{
+            row.forEach(words=>{
+                words.forEach(word=>{
+                    linearList.push(word);
+                })
+            })
+        });
+
+        linearList.sort((a, b)=>{
+            return b.length - a.length;
+        })
+        linearList = linearList.slice(0, 12);
+        const uniq: Record<string, Array<ILetter>> = {};
+        linearList.forEach(it=>{
+            const word = it.map(jt => jt.letter).join('');
+            uniq[word] = it;
+        });
+
+        const res: Array<Array<Array<number>>> = this.letters.map(it=>{
+            return it.map(jt=>{
+                return [];
+            })
+        });
+        Object.values(uniq).forEach((it, i)=> it.forEach(jt=>{res[jt.y][jt.x].push(i)}));
+        console.log(Object.keys(uniq));
+        return res;
     }
 }

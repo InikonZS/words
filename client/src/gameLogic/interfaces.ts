@@ -17,6 +17,8 @@ export interface IPlayerData{
     crystals: number;
     winWord: string;
     connected: boolean;
+    correctWords: Array<string>;
+    incorrectWords: Array<string>;
 }
 
 export interface IGameState{
@@ -25,4 +27,14 @@ export interface IGameState{
     players: Array<IPlayerData>;
     currentPlayerIndex: number;
     time: number;
+    currentRound: number;
+    totalRounds: number;
+    spectators: Array<string>;
+    isStartRequested: boolean;
+    startRequestTime: number;
+    currentMove: number;
+}
+
+export interface IWinData {
+    players: Array<IPlayerData>
 }

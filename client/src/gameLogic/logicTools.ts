@@ -80,6 +80,18 @@ export const ru_freq = [
     2.01,
 ]
 
+export function getFreqFromText(abc:string, text: string){
+    const stat:Record<string, number> = {};//new Array(abc.length).fill(0);
+    for(let i=0; i< text.length; i++){
+        stat[text[i]] = stat[text[i]] ? stat[text[i]] + 1 : 1;
+    }
+
+    const res = abc.split('').map(it=> stat[it] || 0);
+    const sum = res.reduce((ac, it)=> ac + it, 0);
+    console.log('res', res.map((it, i)=> abc[i] + (it / sum * 100)));
+    return res.map(it=> it / sum * 100);
+}
+
 //function getLetterGenerator(frequency: Array<number>, abc:string){
 export function getSumFreq(frequency:Array<number>){
     let sum = 0;

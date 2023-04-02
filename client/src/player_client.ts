@@ -76,4 +76,17 @@ export class PlayerClient{
             data: {}
         })
     }
+
+    startGame() {
+        //this.gameLogic.start();
+    }
+
+    showWords():string[]{
+        return [];
+    }
+
+    showMask():number[][][]{
+        //this.gameLogic.showWords(this.playerName);
+        return [[[]]]
+    }
 }

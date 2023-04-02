@@ -1,6 +1,5 @@
 import { IBonus, IGameState, ILetter, IPlayerData } from "./interfaces";
-import { abc, ru, bel, formattedWordsRu, formattedWordsBy, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, placeWords, placeWord, genPl } from "./logicTools";
-import {pl} from './pl_words';
+import { abc, ru, bel, formattedWordsRu, formattedWordsBy, formattedWordsEn, freqRandom, generateLetters, getPoints, traceField, checkWord, findWordsByPart, getSumFreq, frequency, ru_freq, placeWords, placeWord, genPl, formattedWordsPl, polish, getFreqFromText } from "./logicTools";
 
 export interface ILangGen{
     randomLetter():string;
@@ -38,5 +37,26 @@ class UniGen implements ILangGen{
 }
 
 export const enGen = new UniGen(abc, frequency, formattedWordsEn);
+//new Array(polish.length).fill(100/polish.length)
+export const plGen = new UniGen(polish, getFreqFromText(polish, formattedWordsPl.join('')), formattedWordsPl);
 export const ruGen = new UniGen(ru, ru_freq, formattedWordsRu);
 export const byGen = new UniGen(bel, ru_freq, formattedWordsBy);
+
+export const langList = [
+    {
+        name: 'en',
+        gen: enGen,
+    },
+    {
+        name: 'ru',
+        gen: ruGen,
+    },
+    {
+        name: 'by',
+        gen: byGen,
+    },
+    {
+        name: 'pl',
+        gen: plGen,
+    }
+]

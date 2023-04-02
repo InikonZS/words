@@ -1,6 +1,6 @@
 import { GameLogic } from "./gameLogic/gameLogic";
 import { IGameState, ILetter } from "./gameLogic/interfaces";
-import { enGen, ruGen, byGen } from "./gameLogic/logicGenerator";
+import { langList } from "./gameLogic/logicGenerator";
 
 export class PlayerLocal{
     private gameLogic: GameLogic;
@@ -16,7 +16,7 @@ export class PlayerLocal{
 
     constructor(lang: number, bot: boolean) { 
         this.name = 'local';
-        this.gameLogic = new GameLogic([enGen, ruGen, byGen][lang]);
+        this.gameLogic = new GameLogic(langList.map(it=> it.gen)[lang]);
         this.gameLogic.onGameState.add(this.handleGameState);
         this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
@@ -64,4 +64,16 @@ export class PlayerLocal{
         return Promise.resolve(this.gameLogic.shuffle(this.name));
     }
     
+    startGame() {
+        //this.gameLogic.start();
+        this.gameLogic.requestStart(this.playerName);
+    }
+
+    showWords(){
+        return this.gameLogic.showWords(this.playerName);
+    }
+
+    showMask(){
+        return this.gameLogic.showMask(this.playerName);
+    }
 }

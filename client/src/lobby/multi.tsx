@@ -4,6 +4,7 @@ import '../style.css';
 import './lobby.css';
 import { useLangContext } from "../context";
 import { ChangeWordsLang } from '../components/words-lang/words-lang';
+import { langList } from '../gameLogic/logicGenerator';
 
 interface IMultiProps {
     socket: Socket;
@@ -14,7 +15,7 @@ interface IMultiProps {
 export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
     const [roomName, setRoomName] = useState('');
     const [langIndex, setLangIndex] = useState(0);
-    const langs = ['en', 'ru', 'by'];
+    const langs = langList.map(it=> it.name);
     const {setLang, currentLang} = useLangContext();
 
     //const [items, setItems] = useState([]);
