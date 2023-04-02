@@ -1,5 +1,5 @@
 import { GameLogic } from "../../client/src/gameLogic/gameLogic";
-import { byGen, enGen, ruGen } from "../../client/src/gameLogic/logicGenerator";
+import { langList} from "../../client/src/gameLogic/logicGenerator";
 import { LobbyUser } from "./lobbyUser";
 import { PlayerServer } from './playerServer';
 
@@ -11,7 +11,7 @@ class Room{
     onRemove: ()=>void;
 
     constructor(name: string, lang: number){
-        this.logic = new GameLogic([enGen, ruGen, byGen][lang]);
+        this.logic = new GameLogic(langList.map(it=> it.gen)[lang]);
         this.name = name;
         this.lastActivity = Date.now();
     }

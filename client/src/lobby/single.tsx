@@ -3,6 +3,7 @@ import '../style.css';
 import './lobby.css';
 import { useLangContext } from "../context";
 import { ChangeWordsLang } from '../components/words-lang/words-lang';
+import { langList } from "../gameLogic/logicGenerator";
 
 interface ISingleProps {
     onLocal: (lang: number)=>void;
@@ -12,7 +13,8 @@ interface ISingleProps {
 
 export function Single({ onLocal, onBot, onBack }: ISingleProps) {
     const [langIndex, setLangIndex] = useState(0);
-    const langs = ['en', 'ru', 'by'];
+    const langs = langList.map(it=> it.name);
+    console.log(langList);
     const {setLang, currentLang} = useLangContext();
 
     //const [items, setItems] = useState([]);
