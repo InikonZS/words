@@ -23,6 +23,7 @@ export class GameLogic{
     private moveTimer: any = null;
     isStarted: boolean = false;
     startMoveTime: number;
+    moveCounter: number = 0;
     roundCounter: number = 0;
     maxRound: number = 3;
 
@@ -75,6 +76,7 @@ export class GameLogic{
 
     nextPlayer(index: number){
         console.log('next player', index)
+        this.moveCounter+=1;
         if (this.currentPlayerIndex>=index){
             this.nextRound();
         }
@@ -91,7 +93,9 @@ export class GameLogic{
     }
 
     joinPlayer(playerName:string){
-        this.spectators.push(playerName);
+        if (!this.spectators.includes(playerName)){
+            this.spectators.push(playerName);
+        }
         /*this.players.push({
             name: playerName,
             points: 0,
@@ -169,6 +173,7 @@ export class GameLogic{
     requestStart(name: string){
         if (!this.gameStartTimer){
             this.roundCounter = 0;
+            this.moveCounter = 0;
             this.gameStartRequestTime = Date.now();
             this.gameStartTimer = setTimeout(()=>{
                 this.gameStartTimer = null;
@@ -300,7 +305,8 @@ export class GameLogic{
             currentPlayerIndex: this.currentPlayerIndex,
             time: - Date.now() + this.startMoveTime + (moveTime * 1000),
             currentRound: this.roundCounter ,
-            totalRounds: this.maxRound
+            totalRounds: this.maxRound,
+            currentMove: this.moveCounter
         }
     }
 

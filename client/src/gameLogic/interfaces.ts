@@ -30,4 +30,5 @@ export interface IGameState{
     spectators: Array<string>;
     isStartRequested: boolean;
     startRequestTime: number;
+    currentMove: number;
 }
