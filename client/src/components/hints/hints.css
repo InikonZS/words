@@ -1,0 +1,107 @@
+.hints {
+  position: absolute;
+  top: 116px;
+  right: 90px;
+  width: 210px;
+  padding: 20px;
+  padding-bottom: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #be37f3;
+  border-radius: calc(var(--base) * 7);
+  box-shadow: 0px 0px 12px #8904bd;
+}
+
+.hints__title {
+  font-size: 22px;
+  color: #be37f3;
+  text-shadow: 0px 0px 5px #8904bd;
+  margin-bottom: 20px;
+}
+
+.hints__button {
+  position: relative;
+  min-width: 150px;
+  padding: 10px;
+  font-size: 18px;
+  color: #fff;
+  border-radius: 7px;
+  transition: all 0.5s;
+  overflow: hidden;
+}
+
+.hints__button:not(:last-child) {
+  margin-bottom: 15px;
+}
+
+.hints__button--shuffle {
+  border-top: #49e43b;
+  background: linear-gradient(to bottom, #3be43b 0%, #087508 100%);
+  border-bottom: 1px solid #087508;
+}
+
+.hints__button--show-words {
+  border-top: #f72ff7;
+  background: linear-gradient(to bottom, #f72ff7 0%, #6e0469 100%);
+  border-bottom: 1px solid #6e0469;
+}
+
+.hints__button--show-mask {
+  border-top: #40c9f3;
+  background: linear-gradient(to bottom, #40c9f3 0%, #0d718f 100%);
+  border-bottom: 1px solid #0d718f;
+}
+
+.hints__button:before {
+  content: '';
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--base) * 20);
+  position: absolute;
+  transform: translateX(-100%) rotate(45deg);
+  transition: all 0.5s;
+  filter: blur(8px);
+  background: linear-gradient(to left, transparent 0%, #fff 40%, #fff 60%, transparent 100%);
+}
+
+.hints__button:hover:before {
+  transform: translateX(100%) rotate(45deg);
+}
+
+@media (max-width: 1200px) {
+  .hints {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: calc(var(--base) * 650);
+    padding: calc(var(--base) * 10);
+    padding-bottom: calc(var(--base) * 15);
+    margin-bottom: calc(var(--base) * 20);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;   
+  }
+
+  .hints__title {
+    flex-grow: 3;
+    flex-basis: 100%;
+    font-size: calc(var(--base) * 18);   
+    margin-bottom: calc(var(--base) * 15);
+    text-align: center;
+  }
+
+  .hints__button {
+    flex-grow: 0;
+    flex-basis: 28%;
+    min-width: calc(var(--base) * 100);
+    padding: calc(var(--base) * 10);
+    font-size: calc(var(--base) * 16);
+  }
+
+  .hints__button:not(:last-child) {
+    margin-bottom: 0;
+  }  
+}
