@@ -122,10 +122,10 @@ export default function App() {
       const height = window.innerHeight;
       let w = 780;
       let h = 1130;
-      /*if (matchMedia('(min-aspect-ratio: 1/1)').matches){
-          w = 600;
-          h = 400;
-      }*/
+      if (matchMedia('(min-aspect-ratio: 1/1)').matches){
+          w = 1130 / 3 * 4;
+          h = 1130;
+      }
       const aspect = h / w;
       const size = Math.min(height / aspect, width);
       setScale(size / w);
@@ -144,7 +144,7 @@ export default function App() {
 
   return (
     <LangContext.Provider value={langModel}>
-      <div>
+      <div className="game">
         {/*socket == null && 'connecting...'*/}
         {pageName == 'lobby' && <Lobby socket={socket} 
           onMulti = {()=>{
