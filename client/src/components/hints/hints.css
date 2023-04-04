@@ -1,8 +1,5 @@
 .hints {
-  /* position: absolute; */
-  /* top: calc(var(--base) * 116);
-  right: calc(var(--base) * 90); */
-  width: calc(var(--base) * 210);
+  width: calc(var(--base) * 270);
   padding: calc(var(--base) * 20);
   padding-bottom: calc(var(--base) * 25);
   margin: 0 auto;
@@ -15,25 +12,25 @@
 }
 
 .hints__title {
-  font-size: 22px;
+  font-size: calc(var(--base) * 22);
   color: #be37f3;
   text-shadow: 0px 0px 5px #8904bd;
-  margin-bottom: 20px;
+  margin-bottom: calc(var(--base) * 20);
 }
 
 .hints__button {
   position: relative;
-  min-width: 150px;
-  padding: 10px;
-  font-size: 18px;
+  width: 100%;
+  padding: calc(var(--base) * 15);
+  font-size: calc(var(--base) * 18);
   color: #fff;
-  border-radius: 7px;
+  border-radius: calc(var(--base) * 7);
   transition: all 0.5s;
   overflow: hidden;
 }
 
 .hints__button:not(:last-child) {
-  margin-bottom: 15px;
+  margin-bottom: calc(var(--base) * 25);
 }
 
 .hints__button--shuffle {
@@ -63,7 +60,7 @@
   position: absolute;
   transform: translateX(-100%) rotate(45deg);
   transition: all 0.5s;
-  filter: blur(8px);
+  filter: blur(calc(var(--base) * 8));
   background: linear-gradient(to left, transparent 0%, #fff 40%, #fff 60%, transparent 100%);
 }
 
