@@ -296,7 +296,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
     return (
         letters && (
             <div className="game__wrapper">
-                <div>
+                <div className="game__nav">
                     <span> room: {player.roomName}</span>
                     {startRequestTime}
                     <button onClick={() => {
@@ -325,15 +325,18 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                         })}
                     </div>
 
-                    {words && <div>
-                        {words.map(it => {
-                            return <span>{it} </span>
-                        })}
-                    </div>}
+
                     <div>{Math.floor(Math.max((time - cTime) / 1000, 0))}</div>
-                    <div>round: {round.current} / {round.total}</div>
+                    <div className="game__rounds">round: {round.current} / {round.total}</div>
                     <div className="field__wrapper">
-                        <div className="field__item field__item--left"></div>
+
+                        <div className="field__item field__item--left">
+                            {words && <div className="hint-words">
+                                {words.slice(0, 20).map(it => {
+                                    return <span>{it} </span>
+                                })}
+                            </div>}
+                        </div>
 
                         <div className="field__item field__item--center">
                             <div className="field__group">

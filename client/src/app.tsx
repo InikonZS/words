@@ -144,7 +144,7 @@ export default function App() {
 
   return (
     <LangContext.Provider value={langModel}>
-      <div>
+      <div className="game">
         {/*socket == null && 'connecting...'*/}
         {pageName == 'lobby' && <Lobby socket={socket} 
           onMulti = {()=>{

@@ -70,9 +70,6 @@
 
 @media (max-aspect-ratio: 1/1) {
   .hints {
-    position: relative;
-    top: 0;
-    right: 0;
     width: calc(var(--base) * 650);
     padding: calc(var(--base) * 10);
     padding-bottom: calc(var(--base) * 15);

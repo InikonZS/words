@@ -33,7 +33,7 @@ body {
     justify-content: center;
     align-items: center;
     user-select: none;
-    font-size: calc(var(--base) * 26);
+    font-size: calc(var(--base) * 34);
     font-weight: bold;
     color: #ccc;
     cursor: default;

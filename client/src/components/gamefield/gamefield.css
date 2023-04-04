@@ -1,5 +1,4 @@
 .game__wrapper {
-  /*width: 950px;*/
   position: relative;
   margin: 0 auto;
   height: 100vh;
@@ -7,7 +6,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* background-color: rgb(225 188 248 / 20%); */
 }
 
 .game__center-container {
@@ -107,11 +105,51 @@
   margin: calc(var(--base) * 5);
 }
 
+.hint-words {
+  width: calc(var(--base) * 270);
+  padding: calc(var(--base) * 20);
+  padding-bottom: calc(var(--base) * 25);
+  margin: 0 auto;
+  font-size: calc(var(--base) * 26);
+  line-height: 140%;
+  border: 1px solid #be37f3;
+  border-radius: calc(var(--base) * 7);
+  box-shadow: 0px 0px 12px #8904bd;
+  animation: show-left 1s;
+ }
+
+ @keyframes show-left {
+  0% {
+    transform: translateX(-2000px);
+  }
+
+  70% {
+    transform: translateX(20px);
+  }
+
+  90% {
+    transform: translateX(-10px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
 @media (max-aspect-ratio: 1/1) {
   .field__wrapper {
     display: grid;
-    grid-template-areas: 'left' 'right' 'center';
+    grid-template-areas: 'right' 'left' 'center';
     grid-template-rows: auto auto 1fr;
     grid-template-columns: 1fr;
+  }
+
+  .hint-words {
+    width: calc(var(--base) * 650);
+    padding: calc(var(--base) * 10);
+    padding-bottom: calc(var(--base) * 15);
+    margin-bottom: calc(var(--base) * 20);
+    font-size: calc(var(--base) * 20);
   }
  }
