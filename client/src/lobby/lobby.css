@@ -61,13 +61,17 @@
   transform: translateX(100%) rotate(45deg);
 }
 
-.lobby__button--create {
+.lobby__button--create,
+.lobby__button--single-bot,
+.lobby__button--single-local {
   border-top: #40c9f3;
   background: linear-gradient(to bottom, #40c9f3 0%, #0d718f 100%);
   border-bottom: 1px solid #0d718f;
 }
 
-.lobby__button--get {
+.lobby__button--get,
+.lobby__button--single,
+.lobby__button--multi {
   border-top: #f54b20;
   background: linear-gradient(to bottom, #f54b20 0%, #d12c03 100%);
   border-bottom: 1px solid #d12c03;

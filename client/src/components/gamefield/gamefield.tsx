@@ -40,6 +40,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
     const [spectators, setSpectators] = useState<Array<string>>(null);
     const [startRequestTime, setStartRequestTime] = useState(null);
     const [words, setWords] = useState<Array<string>>(null);
+    const [showStartGame, setShowStartGame] = useState(true);
 
     useEffect(() => {
         const tm = setInterval(() => {
@@ -296,18 +297,29 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
     return (
         letters && (
             <div className="game__wrapper">
+
+                <div className={`start-block ${showStartGame ? "start-block--show" : "start-block--hide"}`}>
+                    <button className="btn start-block__button" onClick={() => {
+                        player.startGame();
+                        setShowStartGame(false);
+                    }}> click to start</button>
+                </div>
+
                 <div className="game__nav">
                     <span> room: {player.roomName}</span>
                     {startRequestTime}
+
                     <button onClick={() => {
                         player.startGame();
                     }}>{getStartButtonText()} </button>
+
                     <button onClick={() => {
                         client.leaveRoom().then(res => {
                             console.log(res);
                             onLeave();
                         })
                     }}>leave</button>
+
                     <button onClick={() => {
                         document.body.requestFullscreen();
                     }}>fullscreen</button>
