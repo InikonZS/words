@@ -114,6 +114,42 @@ export class PlayerServer {
             if (parsed.type == 'leaveRoom') {
                 this.gameLogic.shuffle(this.user.name);
             }
+
+            if (parsed.type == 'requestStart') {
+                const res = this.gameLogic.requestStart(this.user.name);
+                this.user.connection.sendUTF(JSON.stringify({
+                    type: 'privateMessage',
+                    requestId: parsed.requestId,
+                    data: res
+                }))
+            }
+
+            if (parsed.type == 'shuffle') {
+                const res = this.gameLogic.shuffle(this.user.name);
+                this.user.connection.sendUTF(JSON.stringify({
+                    type: 'privateMessage',
+                    requestId: parsed.requestId,
+                    data: res
+                }));
+            }
+
+            if (parsed.type == 'showWords') {
+                const res = this.gameLogic.showWords(this.user.name);
+                this.user.connection.sendUTF(JSON.stringify({
+                    type: 'privateMessage',
+                    requestId: parsed.requestId,
+                    data: res
+                }));
+            }
+
+            if (parsed.type == 'showMask') {
+                const res = this.gameLogic.showMask(this.user.name);
+                this.user.connection.sendUTF(JSON.stringify({
+                    type: 'privateMessage',
+                    requestId: parsed.requestId,
+                    data: res
+                }))
+            }
         }
     }
 

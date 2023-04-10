@@ -79,14 +79,24 @@ export class PlayerClient{
 
     startGame() {
         //this.gameLogic.start();
+        return this.socket.sendState({
+            type: 'requestStart',
+            data: {}
+        })
     }
 
-    showWords():string[]{
-        return [];
+    showWords():Promise<string[]>{
+        return this.socket.sendState({
+            type: 'showWords',
+            data: {}
+        })
+        //return [];
     }
 
-    showMask():number[][][]{
-        //this.gameLogic.showWords(this.playerName);
-        return [[[]]]
+    showMask():Promise<number[][][]>{
+        return this.socket.sendState({
+            type: 'showMask',
+            data: {}
+        })
     }
 }

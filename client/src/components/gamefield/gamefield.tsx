@@ -233,10 +233,14 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                                 player.shuffle();
                             }}
                                 onShowWords={() => {
-                                    setWords(player.showWords());
+                                    player.showWords().then(res=>{
+                                         setWords(res);
+                                    })
                                 }}
                                 onShowMask={() => {
-                                    setHintMask(player.showMask());
+                                    player.showMask().then(res=>{
+                                        setHintMask(res);
+                                    })  
                                 }}
                             />
                         </div>
