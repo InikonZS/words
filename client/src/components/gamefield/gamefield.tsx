@@ -165,7 +165,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
     }   
 
     return (
-        letters && (
+        (
             <div className="game__wrapper">
 
                 <div className={`start-block ${showStartGame ? "start-block--show" : "start-block--hide"}`}>
@@ -197,7 +197,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
 
                 <div className="game__center-container">
                     <div className="players">
-                        {spectators.map((player, index) => {
+                        {spectators && spectators.map((player, index) => {
                             return <div>{player}</div>
                         })}
                     </div>
@@ -220,13 +220,13 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                             </div>}
                         </div>
 
-                        <div className="field__item field__item--center">
+                        {letters && <div className="field__item field__item--center">
                             <Letters onSubmit={(selected) => {
                                 submitWord(selected);
                             } } 
                             client={player} players={players} currentPlayerIndex={currentPlayerIndex} selected={selected} 
                             scale={scale} letters={letters} animate={animate} hintMask={hintMask} />
-                        </div>
+                        </div>}
 
                         <div className="field__item field__item--right">
                             <Hints crystals={players.find(it => it.name == player.playerName)?.crystals} onShuffle={() => {
