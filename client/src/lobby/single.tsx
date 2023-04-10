@@ -33,10 +33,10 @@ export function Single({ onLocal, onBot, onBack }: ISingleProps) {
 
                     <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />
 
-                    <button className="btn lobby__button lobby__button--create" onClick={()=>{
+                    <button className="btn lobby__button lobby__button--single-bot" onClick={()=>{
                         onBot(langIndex);
                     }}>with bot</button>
-                    <button className="btn lobby__button lobby__button--create" onClick={()=>{
+                    <button className="btn lobby__button lobby__button--single-local" onClick={()=>{
                         onLocal(langIndex);
                     }}>{currentLang['singlePlayerButton']}</button>
 

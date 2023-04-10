@@ -57,10 +57,10 @@ export function Lobby({ socket, onSingle, onMulti }: ILobbyProps) {
                 }}>change lang</button>
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
-                        <button className="btn lobby__button lobby__button--get" onClick={() => {
+                        <button className="btn lobby__button lobby__button--single" onClick={() => {
                             onSingle();
                         }}>single</button>
-                         <button className="btn lobby__button lobby__button--get" onClick={() => {
+                         <button className="btn lobby__button lobby__button--multi" onClick={() => {
                             onMulti();
                         }}>multiplayer</button>
                     </div>
