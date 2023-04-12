@@ -162,7 +162,7 @@ export function Letters({ client, players, currentPlayerIndex, selected, scale, 
                 row.map((letter, li) => {
                   return <div className={getLetterClassName(letter)}
                     style={{
-                      'background-image': hintMask && numbersToGradient(hintMask[ri][li])
+                      'backgroundImage': hintMask && numbersToGradient(hintMask[ri][li])
                     }}
                     onMouseDown={() => {
                       handleMouseDown(letter);
