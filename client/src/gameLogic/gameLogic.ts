@@ -32,8 +32,8 @@ export class GameLogic{
 
     constructor(gen: ILangGen){
         this.gen = gen;
-        this.letters = this.gen.generateLetters(10, 10);
-        this.addCrystals();
+        //this.letters = this.gen.generateLetters(10, 10);
+        //this.addCrystals();
         this.players = [
         /*    {
                 name: 'player',
@@ -173,7 +173,12 @@ export class GameLogic{
     }
 
     requestStart(name: string){
+        if (this.isStarted){
+            console.log('game already started');
+            return;
+        }
         if (!this.gameStartTimer){
+            console.log('started timer for start game');
             this.roundCounter = 0;
             this.moveCounter = 0;
             this.gameStartRequestTime = Date.now();
@@ -182,6 +187,8 @@ export class GameLogic{
                 this.start();
             }, 10000);
             this.onGameState.emit(this.getState());
+        } else {
+            console.log('timer already started'); 
         }
     }
 

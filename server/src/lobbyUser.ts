@@ -6,6 +6,8 @@ export class LobbyUser{
     session: string;
     rooms: Rooms;
     name: string = Math.random().toFixed(5);
+    nick: string;
+    ava: string;
 
     constructor(rooms: Rooms, _connection: connection){
         this.session = Math.random().toString() + Date.now().toString();
@@ -51,7 +53,39 @@ export class LobbyUser{
                         data: result
                     }))
                 }
+
+                if (parsed.type == 'updateNick') {
+                    console.log('updateNick');
+                    const nick = parsed.data.nick;
+                    const result = this.updateNick(nick);
+                    _connection.sendUTF(JSON.stringify({
+                        type: 'privateMessage',
+                        requestId: parsed.requestId,
+                        data: result
+                    }))
+                }
+
+                if (parsed.type == 'updateAva') {
+                    console.log('updateAva');
+                    const ava = parsed.data.ava;
+                    const result = this.updateAva(ava);
+                    _connection.sendUTF(JSON.stringify({
+                        type: 'privateMessage',
+                        requestId: parsed.requestId,
+                        data: result
+                    }))
+                }
             }
         })
+    }
+
+    updateNick(nick: string){
+        this.nick = nick;
+        return true;
+    }
+
+    updateAva(ava: string){
+        this.ava = ava;
+        return true;
     }
 }
