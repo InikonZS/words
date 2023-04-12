@@ -52,7 +52,6 @@ export class RoomLogic{
     }
 
     startGame(){
-        
         const game = new GameLogic(langList.map(it=> it.gen)[this.lang], this.generatePlayers());
         game.onGameState.add((state)=>{
             this.onGameState.emit(state);
@@ -62,6 +61,10 @@ export class RoomLogic{
         })
         game.onSelectLetter.add((word)=>{
             this.onSelectLetter.emit(word);   
+        })
+        game.onFinish.add((state)=>{
+            this.game = null;
+            this.sendState();
         })
         this.game = game;
         this.sendState();

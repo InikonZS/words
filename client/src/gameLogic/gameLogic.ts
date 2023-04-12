@@ -18,6 +18,7 @@ export class GameLogic{
     onGameState: Signal<IGameState> = new Signal();//(state:IGameState)=>void;
     onCorrectWord: Signal<ILetter[]> = new Signal();//(word: ILetter[])=>void;
     onSelectLetter: Signal<ILetter[]> = new Signal();//(word: ILetter[])=>void;
+    onFinish: Signal<IGameState> = new Signal();//(word: ILetter[])=>void;
 
     private moveTimer: any = null;
     isStarted: boolean = false;
@@ -62,6 +63,7 @@ export class GameLogic{
         this.moveTimer = null;
         //this.players = [];
         this.currentPlayerIndex = -1;
+        this.onFinish.emit(this.getState());
     }
 
     nextPlayer(index: number){
