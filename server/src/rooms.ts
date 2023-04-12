@@ -1,17 +1,18 @@
-import { GameLogic } from "../../client/src/gameLogic/gameLogic";
+//import { GameLogic } from "../../client/src/gameLogic/gameLogic1";
 import { langList} from "../../client/src/gameLogic/logicGenerator";
+import { RoomLogic } from "../../client/src/gameLogic/roomLogic";
 import { LobbyUser } from "./lobbyUser";
 import { PlayerServer } from './playerServer';
 
 class Room{
     name: string;
-    logic: GameLogic;
+    logic: RoomLogic;
     players: Array<PlayerServer> = [];
     lastActivity: number;
     onRemove: ()=>void;
 
     constructor(name: string, lang: number){
-        this.logic = new GameLogic(langList.map(it=> it.gen)[lang]);
+        this.logic = new RoomLogic(name, lang/*langList.map(it=> it.gen)[lang]*/);
         this.name = name;
         this.lastActivity = Date.now();
     }
@@ -28,7 +29,7 @@ class Room{
             playerServer.onLeave = ()=>{
                 this.players.splice(this.players.length-1, 1);
             }
-            this.logic.joinPlayer(user.name);
+            this.logic.join(user.name);
             console.log('new player');
         }
     }

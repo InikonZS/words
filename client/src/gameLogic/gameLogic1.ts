@@ -13,6 +13,7 @@ export class GameLogic{
     gen: ILangGen;
     letters: ILetter[][];
     players: Array<IPlayerData>;
+    spectators: Array<string> = [];
     currentPlayerIndex: number = -1;
 
     onGameState: Signal<IGameState> = new Signal();//(state:IGameState)=>void;
@@ -26,18 +27,27 @@ export class GameLogic{
     roundCounter: number = 0;
     maxRound: number = 3;
 
-    constructor(gen: ILangGen, players: IPlayerData[]){
-        this.gen = gen;
-        this.players = players;
-        this.currentPlayerIndex = -1;
-        this.letters = this.gen.generateLetters(10, 10);
+    gameStartTimer: any = null;
+    gameStartRequestTime: number;
 
-        this.addCrystals();
-        this.isStarted = true;
-        this.roundCounter = 0;
-        this.nextPlayer(0);
-        //????
-        //this.onGameState.emit(this.getState());  
+    constructor(gen: ILangGen){
+        this.gen = gen;
+        //this.letters = this.gen.generateLetters(10, 10);
+        //this.addCrystals();
+        this.players = [
+        /*    {
+                name: 'player',
+                points: 0,
+                crystals: 0,
+                winWord: ''
+            },
+            {
+                name: 'bot',
+                points: 0,
+                crystals: 0,
+                winWord: ''
+            }*/
+        ];
     }
 
     getNextPlayerIndex(){
@@ -82,8 +92,33 @@ export class GameLogic{
         }
     }
 
+    joinPlayer(playerName:string){
+        if (!this.spectators.includes(playerName)){
+            this.spectators.push(playerName);
+        }
+        /*this.players.push({
+            name: playerName,
+            points: 0,
+            crystals: 0,
+            winWord: '',
+            connected: true
+        });
+        if (this.currentPlayerIndex == -1){
+            //this.currentPlayerIndex = 0;
+            this.nextPlayer(0);
+        }*/
+        this.onGameState.emit(this.getState());
+    }
+
+    leaveSpectator(name: string){
+        const playerIndex = this.spectators.findIndex(it=> name == it);
+        if (playerIndex != -1) {
+            this.players.splice(playerIndex, 1);
+        }
+    }
+
     leavePlayer(playerName:string){
-        //this.leaveSpectator(playerName);
+        this.leaveSpectator(playerName);
         const playerIndex = this.players.findIndex(it=> playerName == it.name);
         if (playerIndex != -1) {
             this.players.splice(playerIndex, 1);
@@ -113,15 +148,15 @@ export class GameLogic{
         }
     }
 
-    //start(){
-      //  this.currentPlayerIndex = -1;
-       // this.letters = this.gen.generateLetters(10, 10);
+    start(){
+        this.currentPlayerIndex = -1;
+        this.letters = this.gen.generateLetters(10, 10);
         /*this.players.map(it=> {
             it.crystals = 0;
             it.points = 0;
             it.winWord = '';
         })*/
-       /* this.players = this.spectators.map(it=> ({
+        this.players = this.spectators.map(it=> ({
             name: it,
             points: 0,
             crystals: 0,
@@ -134,10 +169,10 @@ export class GameLogic{
         this.isStarted = true;
         this.roundCounter = 0;
         this.nextPlayer(0);
-        this.onGameState.emit(this.getState());   */ 
-    //}
+        this.onGameState.emit(this.getState());    
+    }
 
-    /*requestStart(name: string){
+    requestStart(name: string){
         if (this.isStarted){
             console.log('game already started');
             return;
@@ -155,7 +190,7 @@ export class GameLogic{
         } else {
             console.log('timer already started'); 
         }
-    }*/
+    }
 
     private addCrystals(){
         this.letters.map(row=> row.map(letter=>{
@@ -275,12 +310,12 @@ export class GameLogic{
 
     getState(): IGameState{
         return {
-         //   isStarted: this.isStarted,
-         //   isStartRequested: null,
-         //   startRequestTime: null,
+            isStarted: this.isStarted,
+            isStartRequested: !!this.gameStartTimer,
+            startRequestTime: - Date.now() + this.gameStartRequestTime + (10000),
             letters: this.letters,
             players: this.players,
-         //   spectators: null,
+            spectators: this.spectators,
             currentPlayerIndex: this.currentPlayerIndex,
             time: - Date.now() + this.startMoveTime + (moveTime * 1000),
             currentRound: this.roundCounter ,

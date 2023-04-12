@@ -1,12 +1,15 @@
-import { GameLogic } from "./gameLogic/gameLogic";
+//import { GameLogic } from "./gameLogic/gameLogic1";
 import { IGameState, ILetter } from "./gameLogic/interfaces";
 import { langList } from "./gameLogic/logicGenerator";
+import { IRoomState, RoomLogic } from "./gameLogic/roomLogic";
 
 export class PlayerLocal{
-    private gameLogic: GameLogic;
+    private gameLogic: RoomLogic;
     onGameState: (state:IGameState)=>void;
     onCorrectWord: (word: ILetter[])=>void;
     onSelectLetter: (word: ILetter[])=>void;
+
+    onRoomState: (state: IRoomState)=>void;
     roomName: string = 'local';
     private name: string;
     get playerName(){
@@ -16,20 +19,25 @@ export class PlayerLocal{
 
     constructor(lang: number, bot: boolean) { 
         this.name = 'local';
-        this.gameLogic = new GameLogic(langList.map(it=> it.gen)[lang]);
+        this.gameLogic = new RoomLogic('local_room', lang);
         this.gameLogic.onGameState.add(this.handleGameState);
         this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
+        this.gameLogic.onRoomState.add(this.handleRoomState);
         setTimeout(()=>{
-            this.gameLogic.joinPlayer(this.name);
+            this.gameLogic.join(this.name);
             if (bot){
-                this.gameLogic.joinPlayer('bot');
+                this.gameLogic.join('bot');
             }    
         }, 0);
     }
 
     handleGameState=(state: IGameState)=>{
         this.onGameState(state);
+    }
+
+    handleRoomState=(state: IRoomState)=>{
+        this.onRoomState(state);
     }
 
     handleCorrectWord=(word:ILetter[])=>{
@@ -48,7 +56,7 @@ export class PlayerLocal{
         return Promise.resolve(this.gameLogic.select(this.name, selected));
     }
 
-    getState():Promise<IGameState>{
+    getState():Promise<IRoomState>{
         console.log('getState');
         return Promise.resolve(this.gameLogic.getState());
     }
@@ -57,6 +65,7 @@ export class PlayerLocal{
         this.gameLogic.onGameState.remove(this.handleGameState);
         this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
         this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);
+        this.gameLogic.onRoomState.remove(this.handleRoomState);
         return Promise.resolve(true);
     }
 
