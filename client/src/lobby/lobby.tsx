@@ -19,17 +19,22 @@ export function Lobby({ socket, onSingle, onMulti }: ILobbyProps) {
     const {setLang, currentLang} = useLangContext();
 
     const changeAvatar = (str: string) => {
+        const httpMode = true; 
         setUserEditMode(false)
         if (!str) {
           console.log('image is not selected')
           return
         }
-        socket.sendState({
-          type: "userAvatar",
-          data: {
-            img: str.slice(str.indexOf(",") + 1)
-          }
-        })
+        if (httpMode){
+          fetch('http://localhost:4002/uploadAvatar', {body: JSON.stringify({avatar: str.slice(str.indexOf(",") + 1)}), method: 'POST'});
+        } else {
+          socket.sendState({
+            type: "userAvatar",
+            data: {
+              img: str.slice(str.indexOf(",") + 1)
+            }
+          })
+        }
       }
 
     //const [items, setItems] = useState([]);

@@ -12,15 +12,72 @@ import { LobbyUser } from './lobbyUser';
 const WebSocketServer = webSocket.server
 const port = process.env.PORT || 4002
 
-const server = http.createServer((req, res) => {
-  res.writeHead(404, {
-    'Content-Type': 'text/plain',
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'X-PINGOTHER, Content-Type',
-  })
+const cors = {
+  'Content-Type': 'text/plain',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+  'Access-Control-Allow-Headers': 'X-PINGOTHER, Content-Type',
+}
 
-  res.end("not found")
+function processAvatar(req:http.IncomingMessage, res: http.ServerResponse){
+  const avatarPath = "/avatar";
+  if (req.url.startsWith(avatarPath)) {
+    try {
+      const { pathname } = url.parse(req.url)
+      const avatar = pathname.slice(avatarPath.length + 1)
+      const stream = fs.createReadStream(path.join(__dirname, "public", `${avatar}.png`))
+
+      res.writeHead(200, {
+        ...cors,
+        'Content-Type': 'image/png',
+      })
+
+      stream.pipe(res)
+      return true;
+    } catch (e){
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
+function uploadAvatar(req:http.IncomingMessage, res: http.ServerResponse){
+  const avatarPath = "/uploadAvatar";
+  console.log(req.url);
+  if (req.url.startsWith(avatarPath) && req.method == 'POST') {
+    let body: string = '';
+    const handleData = (chunk: Buffer)=>{
+      body+=chunk.toString('utf8');
+    }
+    req.on('data', handleData);
+    req.on('end', ()=>{
+      console.log('loaded');
+      const parsed = JSON.parse(body);
+      const fileData = Buffer.from((parsed.avatar as string), 'base64');
+      fs.promises.mkdir(path.join(__dirname, "public")).catch(()=>{}).then(()=>{
+        return fs.promises.writeFile(path.join(__dirname, "public", `${111}.png`), fileData).then(writeRes=>{
+            res.writeHead(200, cors);
+            res.end('loaded');
+        });
+      });
+
+    })
+   
+    return true;
+  } else {
+    return false;
+  }
+}
+
+const server = http.createServer((req, res) => {
+  let found = false;
+  found ||= processAvatar(req, res);
+  found ||= uploadAvatar(req, res);
+  if (!found){
+    res.writeHead(404, cors)
+    res.end("not found")
+  }
 })
 
 server.listen(port, () => {

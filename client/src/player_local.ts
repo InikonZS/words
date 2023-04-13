@@ -74,8 +74,8 @@ export class PlayerLocal{
     }
     
     startGame() {
-        //this.gameLogic.start();
-        this.gameLogic.requestStart(this.playerName);
+        this.gameLogic.startGame();
+        //this.gameLogic.requestStart(this.playerName);
     }
 
     showWords(){
