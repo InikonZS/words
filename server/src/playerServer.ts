@@ -1,21 +1,23 @@
 import { connection, Message } from "websocket";
-import { GameLogic } from "../../client/src/gameLogic/gameLogic";
+//import { GameLogic } from "../../client/src/gameLogic/gameLogic1";
 import { IGameState, ILetter } from "../../client/src/gameLogic/interfaces";
 import { LobbyUser } from "./lobbyUser";
+import { IRoomState, RoomLogic } from '../../client/src/gameLogic/roomLogic'
 
 export class PlayerServer {
-    private gameLogic: GameLogic;
+    private gameLogic: RoomLogic;//GameLogic;
     public user: LobbyUser;
     private connection: connection;
     onLeave: ()=>void;
     disconnectTimeout: NodeJS.Timeout;
 
-    constructor(gameLogic: GameLogic, user: LobbyUser) { 
+    constructor(gameLogic: RoomLogic, user: LobbyUser) { 
         this.user = user;
         this.gameLogic = gameLogic;
         this.gameLogic.onGameState.add(this.handleState);
         this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
+        this.gameLogic.onRoomState.add(this.handleRoomState);
         this.updateConnection(user);
     }
 
@@ -47,7 +49,14 @@ export class PlayerServer {
           type: 'state',
           data: state
         }))
-      }
+    }
+
+    handleRoomState = (state: IRoomState)=>{
+        this.user.connection.sendUTF(JSON.stringify({
+            type: 'roomState',
+            data: state
+        }))
+    }
 
     handleCorrectWord = (state: ILetter[])=>{
         this.user.connection.sendUTF(JSON.stringify({
@@ -154,7 +163,7 @@ export class PlayerServer {
     }
 
     leaveRoom(){
-        const status = this.gameLogic.leavePlayer(this.user.name);
+        const status = this.gameLogic.leave(this.user.name);
         this.onLeave?.();
         this.gameLogic.onGameState.remove(this.handleState);
         this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);

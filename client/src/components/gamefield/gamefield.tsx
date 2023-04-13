@@ -3,7 +3,7 @@ import Socket from "../../socket";
 import { IBonus, ILetter, IPlayerData, IWinData } from '../../gameLogic/interfaces';
 import { isClosest, traceField, traceOne } from '../../gameLogic/logicTools';
 import { Player } from '../player/player';
-import { GameLogic } from '../../gameLogic/gameLogic';
+//import { GameLogic } from '../../gameLogic/gameLogic1';
 import { PlayerClient } from '../../player_client';
 import '../../style.css';
 import './gamefield.css';
@@ -25,7 +25,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
     const [hintMask, setHintMask] = useState<Array<Array<Array<number>>>>(null);
     const [selected, setSelected] = useState<Array<ILetter>>([]);
     const [animate, setAnimate] = useState<Array<ILetter>>([]);
-    const [logic, setLogic] = useState<GameLogic>(null);
+    //const [logic, setLogic] = useState<GameLogic>(null);
     //const [points, setPoints] = useState(0);
     //const [crystals, setCrystals] = useState(0);
     const [players, setPlayers] = useState<Array<IPlayerData>>([]);
@@ -38,7 +38,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
     const [cTime, setCTime] = useState(Date.now());
     const [round, setRound] = useState<{ current: number, total: number }>({ current: 0, total: 0 });
     const [isStarted, setStarted] = useState<boolean>(false);
-    const [spectators, setSpectators] = useState<Array<string>>(null);
+    const [spectators, setSpectators] = useState<Array<{name: string}>>(null);
     const [startRequestTime, setStartRequestTime] = useState(null);
     const [words, setWords] = useState<Array<string>>(null);
     const [showStartGame, setShowStartGame] = useState(true);
@@ -81,18 +81,30 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
         }*/
         setClient(client);
         client.getState().then(res => {
-            const logic = res;
-            setLetters(logic.letters);
-            setPlayers(logic.players);
-            setCurrentPlayerIndex(logic.currentPlayerIndex);
-            setTime(Date.now() + res.time);
-            setRound({ current: res.currentRound, total: res.totalRounds });
+            const logic = res.game;
+            if (logic){
+                setLetters(logic.letters);
+                setPlayers(logic.players);
+                setCurrentPlayerIndex(logic.currentPlayerIndex);
+                setTime(Date.now() + logic.time);
+                setRound({ current: logic.currentRound, total: logic.totalRounds });
+            }
             setStarted(res.isStarted);
             setSpectators(res.spectators);
             setStartRequestTime(res.isStartRequested ? res.startRequestTime + Date.now() : null);
             setHintMask(null);
             //setLogic(logic);
         })
+
+        client.onRoomState = (state) =>{
+            setStarted(state.isStarted);
+            setSpectators(state.spectators);
+            setStartRequestTime(state.isStartRequested ? state.startRequestTime + Date.now() : null);  
+            if (state.game){
+                client.onGameState(state.game); 
+            }         
+        }
+
         client.onGameState = (state) => {
             setLetters(state.letters);
             setPlayers(state.players);
@@ -100,9 +112,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
             setCurrentPlayerIndex(state.currentPlayerIndex);
             setTime(Date.now() + state.time);
             setRound({ current: state.currentRound, total: state.totalRounds });
-            setStarted(state.isStarted);
-            setSpectators(state.spectators);
-            setStartRequestTime(state.isStartRequested ? state.startRequestTime + Date.now() : null);
+
             setHintMask(null);
             setWords(null);
             //console.log(isStarted, state.currentRound);
@@ -198,7 +208,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                 <div className="game__center-container">
                     <div className="players">
                         {spectators && spectators.map((player, index) => {
-                            return <div>{player}</div>
+                            return <div>{player.name}</div>
                         })}
                     </div>
                     <div className="players">

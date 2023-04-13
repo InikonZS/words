@@ -22,16 +22,16 @@ export interface IPlayerData{
 }
 
 export interface IGameState{
-    isStarted: boolean;
+  //  isStarted: boolean;
     letters: ILetter[][];
     players: Array<IPlayerData>;
     currentPlayerIndex: number;
     time: number;
     currentRound: number;
     totalRounds: number;
-    spectators: Array<string>;
-    isStartRequested: boolean;
-    startRequestTime: number;
+   // spectators: Array<string>;
+  //  isStartRequested: boolean;
+  //  startRequestTime: number;
     currentMove: number;
 }
 

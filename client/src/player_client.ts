@@ -1,4 +1,5 @@
 import { IGameState, ILetter } from "./gameLogic/interfaces";
+import { IRoomState } from "./gameLogic/roomLogic";
 import Socket from "./socket";
 
 export class PlayerClient{
@@ -7,6 +8,8 @@ export class PlayerClient{
     onGameState: (state:IGameState)=>void;
     onCorrectWord: (word: ILetter[])=>void;
     onSelectLetter: (word: ILetter[])=>void;
+
+    onRoomState: (state: IRoomState)=>void;
     roomName: string;
     get playerName(){
         return this.socket.name;
@@ -16,6 +19,11 @@ export class PlayerClient{
         this.roomName = roomName;
         this.socket = socket;
         socket.onMessage = (message)=>{
+            if (message.type == 'roomState'){
+                const state: IRoomState = message.data;
+                this.onRoomState(state);
+            }
+
             if (message.type == 'state'){
                 const state = message.data;
                 this.onGameState(state);
@@ -55,7 +63,7 @@ export class PlayerClient{
         })
     }
 
-    getState():Promise<IGameState>{
+    getState():Promise<IRoomState>{
         console.log('getState');
         return this.socket.sendState({
             type: 'getState',
