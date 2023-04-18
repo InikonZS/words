@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import '../../style.css';
-// import './user-edit-popup.css';
+import './user-edit-popup.css';
 
 type UserEditPopupProps = {
   onClose: (q: string | null) => void;
