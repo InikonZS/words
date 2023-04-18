@@ -1,80 +1,67 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useState } from "react";
 import Socket from "../socket";
 import { AnimatedList } from '../animatedList';
 import '../style.css';
 import './lobby.css';
-import { useLangContext } from "../context";
+// import { useLangContext } from "../context";
 import { UserEditPopup } from '../components/user-edit-popup/user-edit-popup';
+import { TopPanel } from '../components/top-panel/top-panel';
 
 interface ILobbyProps {
     socket: Socket;
-    onSingle: ()=>void;
-    onMulti: ()=>void;
+    pageName: string;
+    onSingle: () => void;
+    onMulti: () => void;
+    onBack: ()=> void;
 }
 
-export function Lobby({ socket, onSingle, onMulti }: ILobbyProps) {
-    const [userEditMode, setUserEditMode] = useState(false);
-    const [ava, setAva] = useState<string | null>(null);
+export function Lobby({ socket, pageName, onSingle, onMulti, onBack }: ILobbyProps) {
+    // const [userEditMode, setUserEditMode] = useState(false);
+    // const [ava, setAva] = useState<string | null>(null);
 
-    const {setLang, currentLang} = useLangContext();
+    // const { setLang, currentLang } = useLangContext();
 
-    const changeAvatar = (str: string) => {
-        const httpMode = true; 
-        setUserEditMode(false)
-        if (!str) {
-          console.log('image is not selected')
-          return
-        }
-        if (httpMode){
-          fetch('http://localhost:4002/uploadAvatar', {body: JSON.stringify({avatar: str.slice(str.indexOf(",") + 1)}), method: 'POST'});
-        } else {
-          socket.sendState({
-            type: "userAvatar",
-            data: {
-              img: str.slice(str.indexOf(",") + 1)
-            }
-          })
-        }
-      }
+    // const changeAvatar = (str: string) => {
+    //     const httpMode = true;
+    //     setUserEditMode(false)
+    //     if (!str) {
+    //         console.log('image is not selected')
+    //         return
+    //     }
+    //     if (httpMode) {
+    //         fetch('http://localhost:4002/uploadAvatar', { body: JSON.stringify({ avatar: str.slice(str.indexOf(",") + 1) }), method: 'POST' });
+    //     } else {
+    //         socket.sendState({
+    //             type: "userAvatar",
+    //             data: {
+    //                 img: str.slice(str.indexOf(",") + 1)
+    //             }
+    //         })
+    //     }
+    // }
 
     //const [items, setItems] = useState([]);
     return (
         <div className="lobby">
             <div className="lobby__wrapper">
-            {userEditMode && <UserEditPopup onClose={changeAvatar} />}
+                {/* {userEditMode && <UserEditPopup onClose={changeAvatar} />} */}
 
-            <div className="user-info__wrapper">            
-            <div className="user-info__picture" onClick={() => {
-              setUserEditMode(true)
-            }}>
-              {ava && <img className="user-info__img" src={`${ava}`} width="100" height="100" alt="avatar" />}
-              user block
-            </div>
-            <div className="user-info__info-block">
-              {/* <div className="user-info__username">Hello, <span>{user.userName}</span></div> */}
-            </div>
-          </div>
+                <TopPanel socket={socket} onBack={onBack} pageName={pageName}/>                
 
-                {socket ? <div>userName: {socket.name}</div> : <div>connecting...</div>}
-                <button onClick={()=>{
-                    setLang();
-                    console.log(currentLang);
-                }}>change lang</button>
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
                         <button className="btn lobby__button lobby__button--single" onClick={() => {
                             onSingle();
                         }}>single</button>
-                         <button className="btn lobby__button lobby__button--multi" onClick={() => {
+                        <button className="btn lobby__button lobby__button--multi" onClick={() => {
                             onMulti();
                         }}>multiplayer</button>
                     </div>
-                    
+
                     {/* <AnimatedList></AnimatedList> */}
 
                 </div>
             </div>
-
         </div>
     )
 }

@@ -43,7 +43,7 @@ export  function UserEditPopup({onClose}: UserEditPopupProps) {
         <canvas className="user-edit-popup__canvas" ref={canvasRef} width={256} height={256}></canvas>
 
         <div className="user-edit-popup__input-wrapper">
-          <label htmlFor="input__file" className="user-edit-popup__label">Choose file</label>
+          <label htmlFor="input__file" className="user-edit-popup__label">Load avatar</label>
           <input type="file" id="input__file" name="file" className="user-edit-popup__input-avatar" onChange={(e) => {
             const file = e?.target?.files?.[0] || null; 
             if(file) {

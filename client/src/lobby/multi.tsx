@@ -5,14 +5,16 @@ import './lobby.css';
 import { useLangContext } from "../context";
 import { ChangeWordsLang } from '../components/words-lang/words-lang';
 import { langList } from '../gameLogic/logicGenerator';
+import { TopPanel } from "../components/top-panel/top-panel";
 
 interface IMultiProps {
     socket: Socket;
+    pageName: string;
     onRoomJoin: (name: string) => void;
     onBack: ()=>void;
 }
 
-export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
+export function Multi({ socket, pageName, onRoomJoin, onBack }: IMultiProps) {
     const [roomName, setRoomName] = useState('');
     const [langIndex, setLangIndex] = useState(0);
     const langs = langList.map(it=> it.name);
@@ -22,7 +24,7 @@ export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
     return (
         <div className="lobby">
             <div className="lobby__wrapper">
-                {socket ? <div>userName: {socket.name}</div> : <div>connecting...</div>}
+                {/* {socket ? <div>userName: {socket.name}</div> : <div>connecting...</div>}
 
                 <button onClick={()=>{
                     onBack();
@@ -31,7 +33,9 @@ export function Multi({ socket, onRoomJoin, onBack }: IMultiProps) {
                 <button onClick={()=>{
                     setLang();
                     console.log(currentLang);
-                }}>change lang</button>
+                }}>change lang</button> */}
+
+                <TopPanel socket={socket} onBack={onBack} pageName={pageName} />
 
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
