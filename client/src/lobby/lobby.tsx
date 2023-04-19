@@ -50,6 +50,7 @@ export function Lobby({ socket, pageName, onSingle, onMulti, onBack }: ILobbyPro
 
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
+                        <h2 className="lobby__title">Select game mode:</h2>
                         <button className="btn lobby__button lobby__button--single" onClick={() => {
                             onSingle();
                         }}>single</button>

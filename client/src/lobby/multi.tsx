@@ -39,38 +39,38 @@ export function Multi({ socket, pageName, onRoomJoin, onBack }: IMultiProps) {
 
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
+                        <h2 className="lobby__title">Multiplayer mode</h2>
 
-                        <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />
+                        <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />                       
 
-                    <button className="btn lobby__button lobby__button--create" onClick={() => {
-                        socket.sendState({
-                            type: 'createRoom',
-                            data: {
-                                lang: langIndex
-                            }
-                        })
-                    }}>create room</button>
+                        <button className="btn lobby__button lobby__button--create" onClick={() => {
+                            socket.sendState({
+                                type: 'createRoom',
+                                data: {
+                                    lang: langIndex
+                                }
+                            })
+                        }}>create room</button>
 
-                    <button className="btn lobby__button lobby__button--get" onClick={() => {
-                        socket.sendState({
-                            type: 'getRooms',
-                            data: {}
-                        })
-                    }}>get rooms</button>
+                        <button className="btn lobby__button lobby__button--get" onClick={() => {
+                            socket.sendState({
+                                type: 'getRooms',
+                                data: {}
+                            })
+                        }}>get rooms</button>
 
-                    <label className="lobby__label lobby__label--room-name" htmlFor="room-name">Enter the room name:</label>
-                    <input className="lobby__input lobby__input--room-name" id="room=name" onChange={(e) => {
-                        setRoomName(e.target.value)
-                    }}></input>
+                        <label className="lobby__label lobby__label--room-name" htmlFor="room-name">Enter the room name:</label>
+                        <input className="lobby__input lobby__input--room-name" id="room=name" onChange={(e) => {
+                            setRoomName(e.target.value)
+                        }}></input>
 
-                    <button className="btn lobby__button lobby__button--join" onClick={() => {
-                        onRoomJoin(roomName);
-                    }}>join room</button>
+                        <button className="btn lobby__button lobby__button--join" onClick={() => {
+                            onRoomJoin(roomName);
+                        }}>join room</button>
 
                     </div>
                 </div>
             </div>
-
         </div>
     )
 }

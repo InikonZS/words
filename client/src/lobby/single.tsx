@@ -37,8 +37,11 @@ export function Single({ socket, pageName, onLocal, onBot, onBack }: ISingleProp
 
                 <div className="lobby__center-container">
                     <div className="lobby__buttons-wrapper">
+                    <h2 className="lobby__title">Singleplayer mode</h2>
 
-                    <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />
+                    <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />                   
+
+                    <h3>Select game type:</h3>
 
                     <button className="btn lobby__button lobby__button--single-bot" onClick={()=>{
                         onBot(langIndex);

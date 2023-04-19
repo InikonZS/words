@@ -62,7 +62,6 @@
   transition: all 0.3s ease;
 }
 
-
 .user-info__wrapper {
   width: 20%;
   padding: calc(var(--base) * 10) calc(var(--base) * 15);
