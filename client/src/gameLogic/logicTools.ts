@@ -3,6 +3,7 @@ import {ruWords} from "../ru_words";
 import {byWords} from "../bel_words";
 import {pl} from "./pl_words";
 import { ILetter } from "./interfaces";
+import { hex } from "../consts";
 
 export const formattedWordsRu = ruWords.split('\n').filter(it=> it.length>=2);
 export const formattedWordsEn = words.split('\n').filter(it=> it.length>=2);
@@ -232,8 +233,44 @@ export function placeWord(word: string, letters: ILetter[][], randomPoint:ILette
 //export const [generateLettersEn, freqRandomEn] = getLetterGenerator(frequency, abc);
 //export const [generateLettersRu, freqRandomRu] = getLetterGenerator(ru_freq, ru);
 
+const moves = [
+    {x: 0, y: 1},
+    {x: 0, y: -1},
+    {x: 1, y: 0},
+    {x: -1, y: 0},
+    {x: 1, y: 1},
+    {x: -1, y: -1},
+    {x: 1, y: -1},
+    {x: -1, y: 1},
+]
+
 export function isClosest(x: number, y:number, x1: number, y1:number){
     return (((x - x1 == -1) || (x - x1 == 1) || (x - x1 == 0)) && ((y - y1 == -1) || (y - y1 == 1) || (y - y1 == 0))) && !(x == x1 && y == y1)
+}
+
+const movesHex = [
+    {x: 0, y: -1},
+    {x: -1, y: 0},
+    {x: 0, y: 1},
+    {x: 1, y: -1},
+    {x: 1, y: 0},
+    {x: 1, y: 1},
+]
+
+export function isClosestHex(x: number, y:number, x1: number, y1:number){
+    const signX = y % 2 == 0 ? -1 : 1;
+    const mv = movesHex.map(step => ({y: step.y+y, x: signX * step.x+x}));
+    return !!mv.find(move=> move.x == x1 && move.y == y1)
+}
+
+export function getClosestHex(x:number, y:number){
+    const signX = y % 2 == 0 ? -1 : 1;
+    return movesHex.map(step => ({y: step.y+y, x: signX * step.x+x}));
+}
+
+export function getClosest(x:number, y:number){
+    const signX = y % 2 == 0 ? -1 : 1;
+    return moves.map(step => ({y: step.y+y, x: signX * step.x+x}));
 }
 
 export function checkWord(word: Array<ILetter>, formattedWords:Array<string>): [boolean, string]{
@@ -248,8 +285,8 @@ export function findWordsByPart(part:string, formattedWords:Array<string>){
     })
 }
 
-export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, current:Array<ILetter>, findWordsByPart: (part: string)=>Array<string>){
-    const closeList = [
+export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, current:Array<ILetter>, findWordsByPart: (part: string)=>Array<string>, getClosest:(x: number, y:number)=>Array<{x:number, y:number}>){
+    const closeList = /*[
         letters[y-1]?.[x],
         letters[y+1]?.[x],
         letters[y]?.[x+1],
@@ -258,7 +295,7 @@ export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, cur
         letters[y+1]?.[x-1],
         letters[y-1]?.[x+1],
         letters[y+1]?.[x+1],
-    ].filter(it => it).filter(jt=>{
+    ]*/getClosest(x, y).map(it=>letters[it.y]?.[it.x]).filter(it => it).filter(jt=>{
         return !current.find(it=>it.id == jt.id);
     });
     //const wordList:Array<string> = [];
@@ -274,7 +311,7 @@ export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, cur
                 //wordList.push(findWord);
                 fullWordList.push(findFullWord);
             }
-            const childList = traceOne(letters, letter.x, letter.y, findFullWord, findWordsByPart);
+            const childList = traceOne(letters, letter.x, letter.y, findFullWord, findWordsByPart, getClosest);
             fullWordList.splice(fullWordList.length, 0, ...childList);
             //wordList.splice(wordList.length, 0, ...childList);
         } else {
@@ -284,9 +321,9 @@ export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, cur
     return fullWordList;//wordList;
 }
 
-export function traceField(letters:Array<Array<ILetter>>, findWordsByPart: (part: string)=>Array<string>){
+export function traceField(letters:Array<Array<ILetter>>, findWordsByPart: (part: string)=>Array<string>, _hex:boolean = hex){
     return letters.map(row => row.map(letter=>{
-        return traceOne(letters, letter.x, letter.y, [letter], findWordsByPart);
+        return traceOne(letters, letter.x, letter.y, [letter], findWordsByPart, _hex? getClosestHex : getClosest);
     }))
 }
 
