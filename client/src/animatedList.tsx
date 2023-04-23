@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './animatedList.css';
 import { ILetter } from "./gameLogic/interfaces";
+import { hex } from "./consts";
 
 interface IAnimatedItemProps{
     data: Array<any>;
@@ -93,7 +94,14 @@ export function AnimatedList({}: IAnimatedListProps){
 }
 
 export function LineOverlay({word, pointer, base}: {word: Array<ILetter>, pointer?: {x: number, y: number}, base: number}){
-    const lineData = word.map((it, i)=> ({l: i==0?'M' : 'L', x: it.x * (60 + 10) * base + 35*base, y: it.y * (60 + 10) * base + 35 * base}));//[{l: 'M', x: 10, y: 10}, {l: 'L', x: 30, y:30}];
+    const hexWidth = (3 ** 0.5 / 2);
+    const lineDataHex = word.map((it, i)=> ({
+        l: i==0?'M' : 'L', 
+        x: (it.x * (60 * hexWidth + 10) * base + 35 * base + ((it.y % 2 == 0) ? 0 : ((60 * hexWidth + 10)/2 * base))) , 
+        y: (it.y * (60* 0.75 + 10)  * base + 0.5*(60 + 10) * base) 
+    }));//[{l: 'M', x: 10, y: 10}, {l: 'L', x: 30, y:30}];
+    const lineDataDefault = word.map((it, i)=> ({l: i==0?'M' : 'L', x: it.x * (60 + 10) * base + 35*base, y: it.y * (60 + 10) * base + 35 * base}));//[{l: 'M', x: 10, y: 10}, {l: 'L', x: 30, y:30}];
+    const lineData = hex ? lineDataHex : lineDataDefault;
     const lineString = lineData.map(it=> `${it.l}${it.x} ${it.y}`).join(' ');
     const pointerString = pointer ? `L${pointer.x} ${pointer.y}`: '';
     return <div>

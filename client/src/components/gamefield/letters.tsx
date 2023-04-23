@@ -4,6 +4,8 @@ import { PlayerLocal } from "../../player_local";
 import { ILetter, IPlayerData } from "../../gameLogic/interfaces";
 import { isClosest } from "../../gameLogic/logicTools";
 import { LineOverlay, WordOverlay } from "../../animatedList";
+import './hex.css';
+import { hex } from "../../consts";
 
 interface ILettersProps {
   client: PlayerClient | PlayerLocal;
@@ -127,7 +129,7 @@ export function Letters({ client, players, currentPlayerIndex, selected, scale, 
   }
 
   const getLetterClassName = (letter: ILetter) => {
-    return `letter ${selected.find(it => it.id == letter.id) ? "letter_selected" : ""} ${animate.find(it => it.id == letter.id) ? "letter_hide" : ""}`
+    return `${cellStyle} ${selected.find(it => it.id == letter.id) ? "letter_selected" : ""} ${animate.find(it => it.id == letter.id) ? "letter_hide" : ""}`
   }
 
   const handleMouseDown = (letter: ILetter) => {
@@ -147,7 +149,9 @@ export function Letters({ client, players, currentPlayerIndex, selected, scale, 
       client.selectLetter([...selected.slice(0, selected.length - 1)]);
     }
   }
-  
+  //const hex = true;
+  const rowStyle = hex ? 'hex_row' : 'row';
+  const cellStyle = hex ? 'hex_cell' : 'letter';
   return (
     <div className="field__group">
       <div className="field"
@@ -157,7 +161,7 @@ export function Letters({ client, players, currentPlayerIndex, selected, scale, 
       >
         {
           letters.map((row, ri) => {
-            return <div className="row">
+            return <div className={rowStyle}>
               {
                 row.map((letter, li) => {
                   return <div className={getLetterClassName(letter)}
