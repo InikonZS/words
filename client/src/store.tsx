@@ -1,4 +1,6 @@
-import { PayloadAction, configureStore, createSlice } from '@reduxjs/toolkit'
+import { PayloadAction, configureStore, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import thunkMiddleware from 'redux-thunk';
 // ...
 
 export interface CounterState {
@@ -8,6 +10,14 @@ value: number
 const initialState: CounterState = {
     value: 0,
 }
+
+export const getData = createAsyncThunk(
+    'get_data',
+    async (arg: string) => {
+      const response = await new Promise<{data:number, arg: string}>(res => setTimeout(()=>res({data:1234, arg: arg}), 1000));
+      return response;
+    }
+  )
 
 export const counterSlice = createSlice({
 name: 'counter',
@@ -28,15 +38,30 @@ reducers: {
     state.value += action.payload
     },
 },
+extraReducers: (builder)=>{
+    builder.addCase(getData.fulfilled, (state, action)=>{
+        console.log('action', action);
+        state.value+=1;
+    })
+}
 })
 
 export const store = configureStore({
+    //middleware: [thunkMiddleware],
     reducer: {
         counter: counterSlice.reducer
     }
 })
 
+
+
 export const { increment, decrement, incrementByAmount } = counterSlice.actions
+interface AppState{
+    value: number
+}
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector;
+export type AppDispatch = typeof store.dispatch;
 
 
 
