@@ -12,6 +12,9 @@ import { Localization } from './localization/localization';
 import { LangContext } from './context';
 import { WinScreen } from './components/winScreen/winScreen';
 import { IWinData } from "./gameLogic/interfaces";
+import { store } from "./store";
+import { Provider } from 'react-redux'
+
 
 const langModel = new Localization();
 const getUrlHashProps = ()=>{
@@ -144,6 +147,7 @@ export default function App() {
 
   return (
     <LangContext.Provider value={langModel}>
+    <Provider store={store}>
       <div className="game">
         {/*socket == null && 'connecting...'*/}
         {pageName == 'lobby' && <Lobby socket={socket}  pageName={pageName}
@@ -202,6 +206,7 @@ export default function App() {
         />}
         {/*<GameField />*/}
       </div>
+    </Provider>
     </LangContext.Provider>
   )
 }

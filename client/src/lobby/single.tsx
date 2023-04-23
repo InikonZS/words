@@ -6,6 +6,9 @@ import { useLangContext } from "../context";
 import { ChangeWordsLang } from '../components/words-lang/words-lang';
 import { langList } from "../gameLogic/logicGenerator";
 import { TopPanel } from "../components/top-panel/top-panel";
+import { useDispatch, useSelector } from "react-redux";
+import { createAction } from "@reduxjs/toolkit";
+import { decrement, incrementByAmount } from "../store";
 
 interface ISingleProps {
     socket: Socket;
@@ -20,10 +23,17 @@ export function Single({ socket, pageName, onLocal, onBot, onBack }: ISingleProp
     const langs = langList.map(it=> it.name);
     console.log(langList);
     const {setLang, currentLang} = useLangContext();
+    const value: number = useSelector<any, any>(state=> state);
+    const dispatch = useDispatch();
 
     //const [items, setItems] = useState([]);
     return (
         <div className="lobby">
+            <p>{JSON.stringify(value)}</p>
+            <button onClick={()=>{
+                console.log('click')
+                dispatch(incrementByAmount(10));
+            }}>inc</button>
             <div className="lobby__wrapper">
                 {/* <button onClick={()=>{
                     onBack();
