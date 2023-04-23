@@ -68,17 +68,3 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
 }
-
-.user-edit-popup-close{
-    animation: user-edit-popup-hide 1s forwards;
-}
-
-@keyframes user-edit-popup-hide{
-    from {
-        transform: scale(1, 1);
-    }
-
-    to {
-        transform: scale(0, 0);
-    }
-}

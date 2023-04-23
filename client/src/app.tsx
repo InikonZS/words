@@ -146,7 +146,7 @@ export default function App() {
     <LangContext.Provider value={langModel}>
       <div className="game">
         {/*socket == null && 'connecting...'*/}
-        {pageName == 'lobby' && <Lobby socket={socket} 
+        {pageName == 'lobby' && <Lobby socket={socket}  pageName={pageName}
           onMulti = {()=>{
             setPageName('multi');
           }}
@@ -154,8 +154,12 @@ export default function App() {
           onSingle = {()=>{
             setPageName('single');
           }}
+
+          onBack = {()=>{
+            setPageName('lobby');
+          }}
         ></Lobby>}
-        {pageName == 'multi' && <Multi socket={socket}
+        {pageName == 'multi' && <Multi socket={socket} pageName={pageName}
         onBack = {()=>{
           setPageName('lobby');
         }}
@@ -165,7 +169,7 @@ export default function App() {
           joinRoom(name);
         }}        
         />}
-        {pageName == 'single' && <Single 
+        {pageName == 'single' && <Single socket={socket} pageName={pageName}
           onBack = {()=>{
             setPageName('lobby');
           }}

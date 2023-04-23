@@ -1,0 +1,155 @@
+.user-edit-popup {
+  position: absolute;
+  width: calc(var(--base) * 350);
+  top: calc(var(--base) * 20);
+  left: calc(50% + (calc(var(--base) * -175)));
+  padding: calc(var(--base) * 15);
+  font-size: calc(var(--base) * 20);
+  line-height: 150%;
+  background: linear-gradient(to bottom, #73d1ee 0%, #6917c7 100%);
+  border: 1px solid #73d1ee;
+  border-radius: calc(var(--base) * 7);
+  box-shadow: 0px 0px 5px #73d1ee;
+  animation: user-edit-popup-open 1s;
+  z-index: 1000;
+}
+
+@keyframes user-edit-popup-open {
+  from {
+    transform: scale(0, 0);
+  }
+
+  to {
+    transform: scale(1, 1);
+  }
+}
+
+.user-edit-popup-close {
+  animation: user-edit-popup-hide 1s forwards;
+}
+
+@keyframes user-edit-popup-hide {
+  from {
+    transform: scale(1, 1);
+  }
+
+  to {
+    transform: scale(0, 0);
+  }
+}
+
+.user-edit-popup__wrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-edit-popup__canvas {
+  width: calc(var(--base) * 256);
+  height: calc(var(--base) * 256);
+  border-radius: 50%;  
+  margin-bottom: calc(var(--base) * 20);
+}
+
+.user-edit-popup__input-wrapper {
+  width: 100%;
+  position: relative;
+  text-align: center;
+}
+
+.user-edit-popup__input-avatar {
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+}
+
+.user-edit-popup__label {
+  position: relative;
+  display: block;
+  max-width: calc(var(--base) * 290);
+  margin: 0 auto;
+  padding: calc(var(--base) * 5);
+  color: #fff;
+  font-size: calc(var(--base) * 24);
+  line-height: 130%;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #73d1ee; 
+  border-radius: calc(var(--base) * 5);
+}
+
+.user-edit-popup__label:before {
+  content: '';
+  position: absolute;
+  top: calc(var(--base) * 7);
+  left: calc(var(--base) * 46);
+  width: calc(var(--base) * 25);
+  height: calc(var(--base) * 25);
+  background-image: url('../../assets/load-file.svg');
+  background-repeat: no-repeat;
+  background-size: calc(var(--base) * 25) calc(var(--base) * 25); 
+  transition: all 0.3s ease;
+}
+
+.user-edit-popup__label:focus,
+.user-edit-popup__label:hover {
+  box-shadow: 0px 0px 8px #72c2eb;
+}
+
+.user-edit-popup__buttons-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-top: calc(var(--base) * 15);
+}
+
+.user-edit-popup__button {
+  position: relative;
+  overflow: hidden;
+  min-width: calc(var(--base) * 100);
+  width: 40%;
+  height: calc(var(--base) * 45);
+  margin: calc(var(--base) * 15);
+  padding: calc(var(--base) * 10) calc(var(--base) * 5);
+  font-size: calc(var(--base) * 20);
+  color: #fff;
+  transition: all 0.3s ease;
+  border-radius: calc(var(--base) * 7);
+  overflow: hidden;
+}
+
+.user-edit-popup__button--ok {
+  border-top: #40c9f3;
+  background: linear-gradient(to bottom, #40c9f3 0%, #0d718f 100%);
+  border-bottom: 1px solid #0d718f;
+}
+
+.user-edit-popup__button--ok:before {
+  content: '';
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(var(--base) * 20);
+  position: absolute;
+  transform: translateX(-100%) rotate(45deg);
+  transition: all 0.5s;
+  filter: blur(8px);
+  background: linear-gradient(to left, transparent 0%, #fff 40%, #fff 60%, transparent 100%);
+}
+
+.user-edit-popup__button--ok:hover:before {
+  transform: translateX(100%) rotate(45deg);
+}
+
+.user-edit-popup__button--cancel {
+  background-color: transparent;
+  border: 1px solid #73d1ee;
+}
+
+.user-edit-popup__button--cancel:focus,
+.user-edit-popup__button--cancel:hover {
+  box-shadow: 0px 0px 8px #72c2eb;
+}
