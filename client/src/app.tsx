@@ -40,13 +40,14 @@ export default function App() {
   const [fix, setFix] = useState(0);
   const [scale, setScale] = useState(0);
   const [winData, setWinData] = useState<IWinData>(null);
+  const [users, setUsers] = useState<Array<{name: string, online: boolean}>>([]);
 
   const joinRoom = (name:string)=>{
     socket.sendState({
       type: 'joinRoom',
       data: { roomName: name }
     }).then(res => {
-      console.log(res);
+      console.log('join res => ', res);
       if (res === true) {
           //onRoomJoin(roomName);
           setPlayer(new PlayerClient(socket, name));
@@ -81,6 +82,29 @@ export default function App() {
       const socket = new Socket();
       socket.onConnect = ()=>{
         setSocket(socket);
+        socket.onMessage=(msg)=>{
+          console.log('msg -> ', msg.type, msg.data);
+          if (msg && msg.type =="userUpdate"){
+            setUsers(last=>{
+              let found = last.find(it=> it.name == msg.data.name);
+              found.online = msg.data.online;
+              return [...last];
+            })
+          }
+
+          if (msg && msg.type =="userConnect"){
+            setUsers(last=>{
+              last.push({name: msg.data.name, online: msg.data.online})
+              return [...last];
+            })
+          }
+        }
+        socket.sendState({
+          type: 'getUsers'
+        }).then(res=>{
+          setUsers(res.map((it: any)=> ({name: it.name, online: it.online})))
+          console.log(res);
+        })
       }
       socket.onClose = ()=>{
         socket.destroy();
@@ -106,10 +130,10 @@ export default function App() {
       //console.log(hash);
       const inviteRoomId = hash['id'];
       if (inviteRoomId){
-        console.log(inviteRoomId);
-        setTimeout(()=>{
+        console.log('invite ', inviteRoomId);
+        //setTimeout(()=>{
           joinRoom(inviteRoomId);
-        }, 3000);
+        //}, 3000);
       }
     }
     window.addEventListener('popstate', h);
@@ -145,6 +169,7 @@ export default function App() {
     document.body.style.setProperty('--base', scale.toString() + 'px');
   }, [scale]);
 
+  console.log(users);
   return (
     <LangContext.Provider value={langModel}>
     <Provider store={store}>

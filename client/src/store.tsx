@@ -1,6 +1,5 @@
 import { PayloadAction, configureStore, createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
-import thunkMiddleware from 'redux-thunk';
 // ...
 
 export interface CounterState {

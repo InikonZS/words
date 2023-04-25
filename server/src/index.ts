@@ -108,7 +108,7 @@ socket.on('request', (request) => {
       }
 
       if (parsed.type == 'getUsers') {
-        const names = parsed.data.names;
+        const names = parsed.data?.names || users.map(it=>it.name);
         if (names instanceof Array){
           connection.sendUTF(JSON.stringify({
             type: 'privateMessage',
@@ -119,7 +119,8 @@ socket.on('request', (request) => {
                 return {
                   name: found.name,
                   nick: found.nick,
-                  ava: found.ava
+                  ava: found.ava,
+                  online: found.online
                 }
               } else {
                 return {
@@ -155,11 +156,39 @@ socket.on('request', (request) => {
           nick: user.nick,
           ava: user.ava
         }
-      }))  
+      }));
     }
   }
   if (!user){
     user = new LobbyUser(rooms, connection);
+    user.onUpdate = ()=>{
+      users.forEach(it=>{
+        if (it.online){
+          it.connection.sendUTF(JSON.stringify({
+            type: 'userUpdate',
+            data: {
+              name: user.name,
+              nick: user.nick,
+              ava: user.ava,
+              online: user.online
+            }
+          }))
+        }
+      })
+    }
+    users.forEach(it=>{
+      if (it.online){
+        it.connection.sendUTF(JSON.stringify({
+          type: 'userConnect',
+          data: {
+            name: user.name,
+            nick: user.nick,
+            ava: user.ava,
+            online: user.online
+          }
+        }))
+      }
+    })
     users.push(user);
     connection.sendUTF(JSON.stringify({
       type: 'newSession',
@@ -169,7 +198,7 @@ socket.on('request', (request) => {
         nick: user.nick,
         ava: user.ava
       }
-    }))
+    }));
   }
   //const user = new LobbyUser(rooms, connection);
 })

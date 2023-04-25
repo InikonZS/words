@@ -157,11 +157,11 @@ export class RoomLogic{
     }
 
     connectPlayer(playerName: string){
-        return this.game.connectPlayer(playerName);
+        return this.game?.connectPlayer(playerName);
     }
 
     disconnectPlayer(playerName: string){
-        return this.game.disconnectPlayer(playerName);
+        return this.game?.disconnectPlayer(playerName);
     }
 
 }

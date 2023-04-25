@@ -8,6 +8,8 @@ export class LobbyUser{
     name: string = Math.random().toFixed(5);
     nick: string;
     ava: string;
+    online: boolean;
+    onUpdate: ()=>void;
 
     constructor(rooms: Rooms, _connection: connection){
         this.session = Math.random().toString() + Date.now().toString();
@@ -18,6 +20,7 @@ export class LobbyUser{
     updateConnection(_connection: connection){
         this.connection = _connection; 
         const rooms = this.rooms;
+        this.online = true;
         _connection.on('message', (message: Message)=>{
             if (message.type == 'utf8') {
                 const parsed = JSON.parse(message.utf8Data)
@@ -76,16 +79,23 @@ export class LobbyUser{
                     }))
                 }
             }
+        });
+        this.onUpdate?.();
+        _connection.on("close", ()=>{
+            this.online = false;
+            this.onUpdate();
         })
     }
 
     updateNick(nick: string){
         this.nick = nick;
+        this.onUpdate();
         return true;
     }
 
     updateAva(ava: string){
         this.ava = ava;
+        this.onUpdate();
         return true;
     }
 }
