@@ -24,14 +24,7 @@ export function Single({ socket, pageName, onLocal, onBot, onBack }: ISingleProp
     //const [items, setItems] = useState([]);
     return (
         <div className="lobby">
-            <div className="lobby__wrapper">
-                {/* <button onClick={()=>{
-                    onBack();
-                }}>back</button>
-                <button onClick={()=>{
-                    setLang();
-                    console.log(currentLang);
-                }}>change lang</button> */}
+            <div className="lobby__wrapper">               
 
                 <TopPanel socket={socket} onBack={onBack} pageName={pageName}/>             
 
