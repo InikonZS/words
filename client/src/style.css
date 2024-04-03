@@ -68,3 +68,19 @@ body {
     background-size: contain;
     background-repeat: no-repeat;
 }
+
+.debug__size{
+    position: absolute;
+    width: calc(var(--base) * 1506);
+    height: calc(var(--base) * 1130);
+    border: #f00 2px solid;
+}
+
+@media (max-aspect-ratio: 1/1) {
+    .debug__size{
+        position: absolute;
+        width: calc(var(--base) * 780);
+        height: calc(var(--base) * 1130);
+        border: #f00 2px solid;
+    }
+}
