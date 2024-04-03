@@ -4,6 +4,7 @@ import { AnimatedList } from '../animatedList';
 import '../style.css';
 import './lobby.css';
 import { TopPanel } from '../components/top-panel/top-panel';
+import { useSettingsContext } from "../context";
 
 interface ILobbyProps {
     socket: Socket;
@@ -16,10 +17,12 @@ interface ILobbyProps {
 export function Lobby({ socket, pageName, onSingle, onMulti, onBack }: ILobbyProps) {
   
     //const [items, setItems] = useState([]);
+    const {isDebug} = useSettingsContext();
     return (
         <div className="lobby">
+           
             <div className="lobby__wrapper">              
-
+                {isDebug && <div className="debug__size"></div>}
                 <TopPanel socket={socket} onBack={onBack} pageName={pageName}/>                
 
                 <div className="lobby__center-container">

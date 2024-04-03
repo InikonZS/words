@@ -12,6 +12,7 @@ import { moveTime } from "../../consts";
 import { PlayerLocal } from "../../player_local";
 import { Hints } from '../hints/hints';
 import { Letters } from './letters';
+import { useSettingsContext } from "../../context";
 
 interface IGameFieldProps {
     player: PlayerClient | PlayerLocal;
@@ -173,11 +174,11 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
             }
         }
     }   
-
+    const {isDebug} = useSettingsContext();
     return (
         (
             <div className="game__wrapper">
-
+                {isDebug && <div className="debug__size"></div>}
                 <div className={`start-block ${showStartGame ? "start-block--show" : "start-block--hide"}`}>
                     <button className="btn start-block__button" onClick={() => {
                         player.startGame();

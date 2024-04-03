@@ -3,6 +3,7 @@ import { IPlayerData, IWinData } from "../../gameLogic/interfaces";
 import { PlayerClient } from "../../player_client";
 import { PlayerLocal } from "../../player_local";
 import "./winScreen.css";
+import { useSettingsContext } from "../../context";
 
 interface IWinScreenProps {
     winData: IWinData;
@@ -12,7 +13,7 @@ interface IWinScreenProps {
 export function WinScreen({ winData, onClose }: IWinScreenProps) {
     const sortedPlayers = [...winData.players].sort((a, b)=> b.points - a.points);
     console.log(sortedPlayers);
-    const isDebug = false;
+    const {isDebug} = useSettingsContext();
     return (
         <div className="winScreen">
             {isDebug && <div className="debug__size"></div>}

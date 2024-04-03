@@ -9,7 +9,7 @@ import { PlayerClient } from "./player_client";
 import { PlayerLocal } from './player_local';
 import { YandexPlatform } from './platforms/yandex/yandex';
 import { Localization } from './localization/localization';
-import { LangContext } from './context';
+import { LangContext, SettingsContext} from './context';
 import { WinScreen } from './components/winScreen/winScreen';
 import { IWinData } from "./gameLogic/interfaces";
 
@@ -120,11 +120,12 @@ export default function App() {
     const resize = () => {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      let w = 780;
+      let w = 1130 / 3 * 4;
       let h = 1130;
-      if (matchMedia('(min-aspect-ratio: 1/1)').matches){
-          w = 1130 / 3 * 4;
-          h = 1130;
+      //always use MAX-, not MIN- its important for == state
+      if (matchMedia('(max-aspect-ratio: 1/1)').matches){
+        w = 780;
+        h = 1130;
       }
       const aspect = h / w;
       const size = Math.min(height / aspect, width);
@@ -143,6 +144,7 @@ export default function App() {
   }, [scale]);
 
   return (
+    <SettingsContext.Provider value={{isDebug: false}}>
     <LangContext.Provider value={langModel}>
       <div className="game">
         {/*socket == null && 'connecting...'*/}
@@ -203,5 +205,6 @@ export default function App() {
         {/*<GameField />*/}
       </div>
     </LangContext.Provider>
+    </SettingsContext.Provider>
   )
 }
