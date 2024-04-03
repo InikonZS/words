@@ -1,0 +1,87 @@
+.winScreen{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.winScreen__players{
+    display: flex;
+    margin-bottom: calc(var(--base) * 55);
+}
+
+.winScreen__player{
+    width: calc(var(--base) * 250);
+    margin-bottom: calc(var(--base) * 15);
+    padding: calc(var(--base) * 15);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    border: 1px solid #73d1ee;
+    transition: all 0.5s ease;
+    border-radius: calc(var(--base) * 7);
+    background-color: #100738;
+    margin: calc(var(--base) * 15);
+    font-size: calc(var(--base) * 28);
+}
+
+.winScreen__close{
+    width: calc(var(--base) * 300);
+    height: calc(var(--base) * 80);
+    font-size: calc(var(--base) * 32);
+    color: #fff;
+    border-top: #40c9f3;
+    background: linear-gradient(to bottom, #40c9f3 0%, #0d718f 100%);
+    border-bottom: 1px solid #0d718f;
+    border-radius: calc(var(--base) * 10);
+}
+
+.winPlayer__place{
+    margin: calc(var(--base) * 5) 0px;
+}
+
+.winPlayer__name{
+    align-self: center;
+    font-size: calc(var(--base) * 38);
+    font-weight: bold;
+    color: #40c9f3;
+    margin: calc(var(--base) * 5) 0px;
+}
+
+.winPlayer__points{
+    margin: calc(var(--base) * 5) 0px;
+}
+
+.winPlayer__words{
+    margin: calc(var(--base) * 5) 0px;
+}
+
+.winPlayer__word{
+    margin: calc(var(--base) * 5) 0px;
+    margin-left: calc(var(--base) * 15);
+    position: relative;
+}
+
+.winPlayer__word::before{
+    content: "";
+    position: absolute;
+    background-color: #49e43b;
+    border-radius: 100%;
+    width: calc(var(--base) * 5);
+    height: calc(var(--base) * 5);
+    top: 50%;
+    left: calc(var(--base) * -15);;
+    transform: translateY(-50%);
+}
+
+.winPlayer__key{
+    color: #49e43b;
+}
+
+.winPlayer__value{
+    font-weight: bold;
+    font-size: calc(var(--base) * 32);
+}

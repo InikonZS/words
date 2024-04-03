@@ -23,17 +23,7 @@ export function Multi({ socket, pageName, onRoomJoin, onBack }: IMultiProps) {
     //const [items, setItems] = useState([]);
     return (
         <div className="lobby">
-            <div className="lobby__wrapper">
-                {/* {socket ? <div>userName: {socket.name}</div> : <div>connecting...</div>}
-
-                <button onClick={()=>{
-                    onBack();
-                }}>back</button>
-                
-                <button onClick={()=>{
-                    setLang();
-                    console.log(currentLang);
-                }}>change lang</button> */}
+            <div className="lobby__wrapper">              
 
                 <TopPanel socket={socket} onBack={onBack} pageName={pageName} />
 
