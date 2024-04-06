@@ -36,7 +36,11 @@ export class LobbyUser{
 
                 if (parsed.type == 'createRoom') {
                     const lang = parsed.data?.lang || 0;
-                    const name = rooms.addRoom(lang);
+                    const hex = parsed.data?.hex || false;
+                    const sx = parsed.data?.sx || 10;
+                    const sy = parsed.data?.sy || 10;
+                    const rounds = parsed.data?.rounds || 3;
+                    const name = rooms.addRoom(lang, hex, sx, sy, rounds);
                     _connection.sendUTF(JSON.stringify({
                         type: 'privateMessage',
                         requestId: parsed.requestId,

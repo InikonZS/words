@@ -37,7 +37,11 @@ export function Multi({ socket, pageName, onRoomJoin, onBack }: IMultiProps) {
                             socket.sendState({
                                 type: 'createRoom',
                                 data: {
-                                    lang: langIndex
+                                    lang: langIndex,
+                                    hex: false,
+                                    sx: 10,
+                                    sy: 10,
+                                    rounds: 3
                                 }
                             })
                         }}>create room</button>

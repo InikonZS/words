@@ -11,8 +11,8 @@ class Room{
     lastActivity: number;
     onRemove: ()=>void;
 
-    constructor(name: string, lang: number){
-        this.logic = new RoomLogic(name, lang/*langList.map(it=> it.gen)[lang]*/);
+    constructor(name: string, lang: number, hex: boolean, sx: number, sy: number, rounds: number){
+        this.logic = new RoomLogic(name, lang/*langList.map(it=> it.gen)[lang]*/, hex, sx, sy, rounds);
         this.name = name;
         this.lastActivity = Date.now();
     }
@@ -46,9 +46,9 @@ export class Rooms{
 
     }
 
-    addRoom(lang: number){
+    addRoom(lang: number, hex: boolean, sx: number, sy: number, rounds: number){
         Rooms.counter++;
-        const room = new Room('room' + Rooms.counter, lang);  
+        const room = new Room('room' + Rooms.counter, lang, hex, sx, sy, rounds);  
         room.onRemove = ()=>{
             const index = this.rooms.findIndex(it=> it.name == room.name);
             if (index != -1){
