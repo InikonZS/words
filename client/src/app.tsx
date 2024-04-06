@@ -175,12 +175,12 @@ export default function App() {
           onBack = {()=>{
             setPageName('lobby');
           }}
-          onLocal={(lang)=>{
-            setPlayer(new PlayerLocal(lang, false));
+          onLocal={(lang, hexMode)=>{
+            setPlayer(new PlayerLocal(lang, hexMode, false));
             setPageName('gameField');
           }}
-          onBot = {(lang)=>{
-            setPlayer(new PlayerLocal(lang, true));
+          onBot = {(lang, hexMode)=>{
+            setPlayer(new PlayerLocal(lang, hexMode, true));
             setPageName('gameField');
           }}
         />}

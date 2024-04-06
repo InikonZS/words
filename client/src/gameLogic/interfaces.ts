@@ -33,6 +33,7 @@ export interface IGameState{
   //  isStartRequested: boolean;
   //  startRequestTime: number;
     currentMove: number;
+    hexMode: boolean
 }
 
 export interface IWinData {

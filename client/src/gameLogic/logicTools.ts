@@ -3,7 +3,7 @@ import {ruWords} from "../ru_words";
 import {byWords} from "../bel_words";
 import {pl} from "./pl_words";
 import { ILetter } from "./interfaces";
-import { hex } from "../consts";
+//import { hex } from "../consts";
 
 export const formattedWordsRu = ruWords.split('\n').filter(it=> it.length>=2);
 export const formattedWordsEn = words.split('\n').filter(it=> it.length>=2);
@@ -116,9 +116,9 @@ export function freqRandom(abc:string, sumFreq: Array<number>):string{
 //(window as any).rnd = freqRandom;
 //console.log(freqRandom());
 
-export function generateLetters(x: number, y: number, abc: string, sumFreq:Array<number>):ILetter[][]{
+export function generateLetters(x: number, y: number, abc: string, sumFreq:Array<number>, hexMode: boolean):ILetter[][]{
     //const sumFreq = getSumFreq(freq);
-    return new Array(y).fill(null).map((it, i)=> new Array(x).fill('').map((jt, j)=> {
+    return new Array(y).fill(null).map((it, i)=> new Array(x - ((i % 2 == 1 && hexMode )? 1 : 0)).fill('').map((jt, j)=> {
         return {
             letter: freqRandom(abc, sumFreq),//abc[Math.floor(Math.random() * abc.length)],
             x: j,
@@ -321,9 +321,9 @@ export function traceOne(letters:Array<Array<ILetter>>, x: number, y:number, cur
     return fullWordList;//wordList;
 }
 
-export function traceField(letters:Array<Array<ILetter>>, findWordsByPart: (part: string)=>Array<string>, _hex:boolean = hex){
+export function traceField(letters:Array<Array<ILetter>>, findWordsByPart: (part: string)=>Array<string>, hex:boolean){
     return letters.map(row => row.map(letter=>{
-        return traceOne(letters, letter.x, letter.y, [letter], findWordsByPart, _hex? getClosestHex : getClosest);
+        return traceOne(letters, letter.x, letter.y, [letter], findWordsByPart, hex? getClosestHex : getClosest);
     }))
 }
 

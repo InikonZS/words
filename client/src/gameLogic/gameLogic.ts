@@ -26,12 +26,15 @@ export class GameLogic{
     moveCounter: number = 0;
     roundCounter: number = 0;
     maxRound: number = 3;
+    hexMode: boolean;
 
-    constructor(gen: ILangGen, players: IPlayerData[]){
+    constructor(gen: ILangGen, hexMode: boolean, sx: number, sy: number, rounds: number, players: IPlayerData[]){
         this.gen = gen;
         this.players = players;
         this.currentPlayerIndex = -1;
-        this.letters = this.gen.generateLetters(10, 10);
+        this.hexMode = hexMode;
+        this.maxRound = rounds;
+        this.letters = this.gen.generateLetters(sx, sy, hexMode);
 
         this.addCrystals();
         this.isStarted = true;
@@ -287,7 +290,8 @@ export class GameLogic{
             time: - Date.now() + this.startMoveTime + (moveTime * 1000),
             currentRound: this.roundCounter ,
             totalRounds: this.maxRound,
-            currentMove: this.moveCounter
+            currentMove: this.moveCounter,
+            hexMode: this.hexMode
         }
     }
 
@@ -303,7 +307,7 @@ export class GameLogic{
 
     bot(){
         if (this.players[this.currentPlayerIndex]?.name == 'bot'){
-            const allWords = this.gen.traceField(this.letters);
+            const allWords = this.gen.traceField(this.letters, this.hexMode);
             const linearList: Array<Array<ILetter>> = [];
             allWords.forEach(row=>{
                 row.forEach(words=>{
@@ -360,7 +364,7 @@ export class GameLogic{
     }
 
     showWords(name: string){
-        const allWords = this.gen.traceField(this.letters);
+        const allWords = this.gen.traceField(this.letters, this.hexMode);
         const linearList: Array<Array<ILetter>> = [];
         allWords.forEach(row=>{
             row.forEach(words=>{
@@ -384,7 +388,7 @@ export class GameLogic{
     }
 
     showMask(name: string){
-        const allWords = this.gen.traceField(this.letters);
+        const allWords = this.gen.traceField(this.letters, this.hexMode);
         let linearList: Array<Array<ILetter>> = [];
         allWords.forEach(row=>{
             row.forEach(words=>{

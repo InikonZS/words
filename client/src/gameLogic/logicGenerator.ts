@@ -3,8 +3,8 @@ import { abc, ru, bel, formattedWordsRu, formattedWordsBy, formattedWordsEn, fre
 
 export interface ILangGen{
     randomLetter():string;
-    generateLetters(x: number, y: number):Array<Array<ILetter>>;
-    traceField(letters: ILetter[][]):ILetter[][][][];
+    generateLetters(x: number, y: number, hexMode: boolean):Array<Array<ILetter>>;
+    traceField(letters: ILetter[][], hexMode: boolean):ILetter[][][][];
     checkWord(letters: ILetter[]):[result:boolean, word:string];
 }
 
@@ -24,12 +24,12 @@ class UniGen implements ILangGen{
     randomLetter(): string {
         return freqRandom(this.abc, this.sumFreq);
     }
-    generateLetters(x: number, y: number,): ILetter[][] {
+    generateLetters(x: number, y: number, hexMode: boolean): ILetter[][] {
         //return genPl();
-        return generateLetters(x, y, this.abc, this.sumFreq);
+        return generateLetters(x, y, this.abc, this.sumFreq, hexMode);
     }
-    traceField(letters: ILetter[][]): ILetter[][][][] {
-        return traceField(letters, (part)=> findWordsByPart(part, this.words));
+    traceField(letters: ILetter[][], hexMode: boolean): ILetter[][][][] {
+        return traceField(letters, (part)=> findWordsByPart(part, this.words), hexMode);
     }
     checkWord(letters: ILetter[]): [result: boolean, word: string] {
         return checkWord(letters, this.words);

@@ -17,9 +17,9 @@ export class PlayerLocal{
     }
     //onLeave: ()=>void;
 
-    constructor(lang: number, bot: boolean) { 
+    constructor(lang: number, hexMode: boolean, bot: boolean) { 
         this.name = 'local';
-        this.gameLogic = new RoomLogic('local_room', lang);
+        this.gameLogic = new RoomLogic('local_room', lang, hexMode);
         this.gameLogic.onGameState.add(this.handleGameState);
         this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);

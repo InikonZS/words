@@ -43,6 +43,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
     const [startRequestTime, setStartRequestTime] = useState(null);
     const [words, setWords] = useState<Array<string>>(null);
     const [showStartGame, setShowStartGame] = useState(true);
+    const [hex, setHexMode] = useState(false);
 
     useEffect(() => {
         const tm = setInterval(() => {
@@ -98,6 +99,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
         })
 
         client.onRoomState = (state) =>{
+            setHexMode(state.hexMode);
             setStarted(state.isStarted);
             setSpectators(state.spectators);
             setStartRequestTime(state.isStartRequested ? state.startRequestTime + Date.now() : null);  
@@ -107,6 +109,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
         }
 
         client.onGameState = (state) => {
+            setHexMode(state.hexMode);
             setLetters(state.letters);
             setPlayers(state.players);
             //if (currentPlayerIndex !== state.currentPlayerIndex){
@@ -236,7 +239,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                                 submitWord(selected);
                             } } 
                             client={player} players={players} currentPlayerIndex={currentPlayerIndex} selected={selected} 
-                            scale={scale} letters={letters} animate={animate} hintMask={hintMask} />
+                            scale={scale} letters={letters} animate={animate} hintMask={hintMask} hex={hex}/>
                         </div>}
 
                         <div className="field__item field__item--right">
