@@ -14,7 +14,8 @@ export interface IRoomState{
     isStartRequested: boolean,
     startRequestTime: number,
     game: IGameState,
-    hexMode: boolean
+    hexMode: boolean,
+    roomName: string
 }
 
 export class RoomLogic{
@@ -126,7 +127,8 @@ export class RoomLogic{
             spectators: this.players,
             isStartRequested: !!this.gameStartTimer,
             startRequestTime: - Date.now() + this.gameStartRequestTime + (10000),
-            game: this.game?.getState()
+            game: this.game?.getState(),
+            roomName: this.name
         }
     }
 

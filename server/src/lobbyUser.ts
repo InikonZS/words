@@ -16,12 +16,13 @@ export class LobbyUser{
     }
 
     updateConnection(_connection: connection){
+        if(this.connection == _connection){return}
         this.connection = _connection; 
         const rooms = this.rooms;
         _connection.on('message', (message: Message)=>{
             if (message.type == 'utf8') {
                 const parsed = JSON.parse(message.utf8Data)
-                console.log("Message", parsed)
+                console.log("Message c", parsed)
                 if (!('type' in parsed)) {
                     return;
                 }

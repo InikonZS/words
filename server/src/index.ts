@@ -102,7 +102,7 @@ socket.on('request', (request) => {
   connection.on('message', (message)=>{
     if (message.type == 'utf8'){
       const parsed = JSON.parse(message.utf8Data)
-      console.log("Message", parsed)
+      //console.log("Message", parsed)
       if (!('type' in parsed)) {
           return;
       }
