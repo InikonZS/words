@@ -78,6 +78,9 @@ export default function App() {
       const socket = new Socket();
       socket.onConnect = ()=>{
         setSocket(socket);
+        if (player instanceof PlayerClient){
+          player.updateSocket(socket);
+        }
       }
       socket.onClose = ()=>{
         socket.destroy();
@@ -88,7 +91,7 @@ export default function App() {
         setTimeout(()=>{
           console.log('try connect');
           //recursive reconnect attempt
-          //connect();
+          connect();
         }, 3000);
       }
     }

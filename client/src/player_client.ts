@@ -16,7 +16,13 @@ export class PlayerClient{
     }
 
     constructor(socket:Socket, roomName: string){
+        console.log('created player client');
         this.roomName = roomName;
+        //this.socket = socket;
+        this.updateSocket(socket);
+    }
+
+    updateSocket(socket:Socket){
         this.socket = socket;
         socket.onMessage = (message)=>{
             if (message.type == 'roomState'){

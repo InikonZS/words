@@ -23,11 +23,14 @@ class Room{
         if (existingPlayer){
             existingPlayer.updateConnection(user);
             console.log('restore player');
+            this.logic.join(user.name);
         } else {
             const playerServer = new PlayerServer(this.logic, user);
             this.players.push(playerServer);
+            //const playerIndex = this.players.length-1;
             playerServer.onLeave = ()=>{
-                this.players.splice(this.players.length-1, 1);
+                const playerIndex = this.players.findIndex(it=> it.user.name == user.name);
+                this.players.splice(playerIndex, 1);
             }
             this.logic.join(user.name);
             console.log('new player');

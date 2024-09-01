@@ -49,7 +49,7 @@ export class LobbyUser{
                 }
 
                 if (parsed.type == 'joinRoom') {
-                    console.log('joinRoom');
+                    console.log('joinRoom', this.name);
                     const result = rooms.join(this, parsed.data.roomName);
                     _connection.sendUTF(JSON.stringify({
                         type: 'privateMessage',

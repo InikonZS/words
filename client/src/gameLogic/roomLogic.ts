@@ -105,9 +105,12 @@ export class RoomLogic{
     }
 
     join(userName: string){
-        this.players.push({
-            name: userName
-        });
+        console.log('players room', this.players);
+        if (this.players.find(it=>it.name == userName) == undefined){
+            this.players.push({
+                name: userName
+            });
+        }
         this.sendState();
     }
 
@@ -139,6 +142,11 @@ export class RoomLogic{
 
     }*/
     leave(playerName:string){
+        this.players = this.players.filter(it=> it.name != playerName); 
+        console.log('leave room logic', !!this.game);
+        if (!this.game){
+            return;
+        }
         return this.game.leavePlayer(playerName);
     }
 
@@ -151,6 +159,9 @@ export class RoomLogic{
     }
 
     shuffle(name: string) {
+        if (!this.game){
+            return;
+        }
         return this.game.shuffle(name);
     }
 
@@ -163,6 +174,7 @@ export class RoomLogic{
     }
 
     submitWord(playerName: string, selected:Array<ILetter>){
+        console.log('room players', this.players)
         return this.game.submitWord(playerName, selected);
     }
 
@@ -171,6 +183,10 @@ export class RoomLogic{
     }
 
     disconnectPlayer(playerName: string){
+        //this.players = this.players.filter(it=> it.name != playerName); 
+        if (!this.game){
+            return;
+        }
         return this.game.disconnectPlayer(playerName);
     }
 

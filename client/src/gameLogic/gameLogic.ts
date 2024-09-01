@@ -27,6 +27,7 @@ export class GameLogic{
     roundCounter: number = 0;
     maxRound: number = 3;
     hexMode: boolean;
+    locked = false;
 
     constructor(gen: ILangGen, hexMode: boolean, sx: number, sy: number, rounds: number, players: IPlayerData[]){
         this.gen = gen;
@@ -57,7 +58,9 @@ export class GameLogic{
             console.log('next round'); 
             this.roundCounter += 1;    
         }
-       
+        if (this.players.length ==0 ){
+            this.stopGame();
+        }
     }
 
     stopGame(){
@@ -90,6 +93,7 @@ export class GameLogic{
     leavePlayer(playerName:string){
         //this.leaveSpectator(playerName);
         const playerIndex = this.players.findIndex(it=> playerName == it.name);
+        let result = false;
         if (playerIndex != -1) {
             this.players.splice(playerIndex, 1);
             if (this.currentPlayerIndex >= this.players.length){
@@ -97,9 +101,14 @@ export class GameLogic{
                 this.nextPlayer(0);
             }
             this.onGameState.emit(this.getState());
-            return true;
+            result = true;
         }
-        return false;
+        console.log('leave player, remains', this.players.length)
+        if (this.players.length == 0){
+            this.locked = false;
+            this.stopGame();
+        }
+        return result;
     }
 
     connectPlayer(playerName: string){
@@ -194,6 +203,7 @@ export class GameLogic{
         const [isCorrect, word] = this.gen.checkWord(selected);//selected.map(it=> it.letter).join('');
         if ( isCorrect || word == ''){
             console.log('correct ', word);
+            this.locked = true;
             current.correctWords.push(word);
             //clearTimeout(this.moveTimer);
             //this.moveTimer = null;
@@ -223,6 +233,7 @@ export class GameLogic{
                 //setAnimate([]);
                 //this.currentPlayerIndex = (this.currentPlayerIndex + 1) % this.players.length;
                 this.nextPlayer(this.getNextPlayerIndex());
+                this.locked = false;
                 
                 //this.bot();
                 //setCurrentPlayerIndex(last => (last + 1) % players.length);

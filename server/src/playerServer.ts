@@ -14,10 +14,6 @@ export class PlayerServer {
     constructor(gameLogic: RoomLogic, user: LobbyUser) { 
         this.user = user;
         this.gameLogic = gameLogic;
-        this.gameLogic.onGameState.add(this.handleState);
-        this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
-        this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
-        this.gameLogic.onRoomState.add(this.handleRoomState);
         this.updateConnection(user);
     }
 
@@ -26,8 +22,19 @@ export class PlayerServer {
             clearTimeout(this.disconnectTimeout);
             this.disconnectTimeout = null;
         }
-        this.connection = user.connection;
+        
+        this.gameLogic.onGameState.add(this.handleState);
+        this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
+        this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
+        this.gameLogic.onRoomState.add(this.handleRoomState);
         this.gameLogic.connectPlayer(user.name);
+
+        if (this.connection == user.connection){
+            console.log('actual connection');
+            return;
+        }
+        this.connection = user.connection;
+        
         this.connection.on('message', (message) => {
             this.handleMessage(message);
         });
@@ -37,7 +44,7 @@ export class PlayerServer {
             this.gameLogic.disconnectPlayer(user.name);
             this.disconnectTimeout = setTimeout(()=>{
                 this.leaveRoom();
-            }, 3000);
+            }, 20000);
            /* this.gameLogic.onGameState.remove(this.handleState);
             this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
             this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);*/
