@@ -10,6 +10,8 @@ export class PlayerServer {
     private connection: connection;
     onLeave: ()=>void;
     disconnectTimeout: NodeJS.Timeout;
+    uid: number;
+    clearConnection: ()=>void;
 
     constructor(gameLogic: RoomLogic, user: LobbyUser) { 
         this.user = user;
@@ -19,56 +21,78 @@ export class PlayerServer {
         this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
         this.gameLogic.onRoomState.add(this.handleRoomState);
         this.updateConnection(user);
+        this.uid = Math.random();
     }
 
     updateConnection(user: LobbyUser){
+        
         if (this.disconnectTimeout){
             clearTimeout(this.disconnectTimeout);
             this.disconnectTimeout = null;
         }
-        this.connection = user.connection;
+        
+        /*this.gameLogic.onGameState.add(this.handleState);
+        this.gameLogic.onCorrectWord.add(this.handleCorrectWord);
+        this.gameLogic.onSelectLetter.add(this.handleSelectLetter);
+        this.gameLogic.onRoomState.add(this.handleRoomState);*/
         this.gameLogic.connectPlayer(user.name);
-        this.connection.on('message', (message) => {
+        if (this.connection == user.connection){
+            console.log('actual connection');
+            return;
+        }
+        this.connection = user.connection;
+        
+        const hMessage = (message: any) => {
             this.handleMessage(message);
-        });
+        }
+        this.connection.on('message', hMessage);
 
-        this.connection.on('close', (reasonCode, description) => {
+        const hClose = (reasonCode: number, description: string) => {
             console.log('Close!!!!', description);
             this.gameLogic.disconnectPlayer(user.name);
             this.disconnectTimeout = setTimeout(()=>{
                 this.leaveRoom();
-            }, 3000);
+            }, 20000);
            /* this.gameLogic.onGameState.remove(this.handleState);
             this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
             this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);*/
-        })
+        }
+        this.connection.on('close', hClose);
+        this.clearConnection = ()=>{
+            this.connection.off('message', hMessage);
+            this.connection.off('close', hClose);
+        }
     }
 
     handleState = (state: IGameState)=>{
         this.user.connection.sendUTF(JSON.stringify({
           type: 'state',
-          data: state
+          data: state,
+          room: this.gameLogic.name
         }))
     }
 
     handleRoomState = (state: IRoomState)=>{
         this.user.connection.sendUTF(JSON.stringify({
             type: 'roomState',
-            data: state
+            data: state,
+            room: this.gameLogic.name
         }))
     }
 
     handleCorrectWord = (state: ILetter[])=>{
         this.user.connection.sendUTF(JSON.stringify({
             type: 'correctWord',
-            data: state
+            data: state,
+            room: this.gameLogic.name
         }))
         }
 
     handleSelectLetter = (state: ILetter[])=>{
         this.user.connection.sendUTF(JSON.stringify({
             type: 'selectLetter',
-            data: state
+            data: state,
+            room: this.gameLogic.name
         }))
         }
 
@@ -80,6 +104,10 @@ export class PlayerServer {
                 return;
             }
 
+            if (parsed.room != this.gameLogic.name){
+                return;
+            }
+
             if (parsed.type == 'getState') {
                 console.log('getState');
                 this.user.connection.sendUTF(JSON.stringify({
@@ -87,7 +115,7 @@ export class PlayerServer {
                     requestId: parsed.requestId,
                     data: this.gameLogic.getState()
                 }))
-            }
+            } 
 
             if (parsed.type == 'leaveRoom') {
                 //const status = this.gameLogic.leavePlayer(this.user.name);
@@ -104,6 +132,7 @@ export class PlayerServer {
             }
 
             if (parsed.type == 'submitWord') {
+                console.log('playerServer uid ', this.uid);
                 this.gameLogic.submitWord(this.user.name, parsed.data.selected);
                 /*connection.sendUTF(JSON.stringify({
                   type: 'privateMessage',
@@ -165,9 +194,10 @@ export class PlayerServer {
     leaveRoom(){
         const status = this.gameLogic.leave(this.user.name);
         this.onLeave?.();
-        this.gameLogic.onGameState.remove(this.handleState);
+        this.clearConnection?.();
+        /*this.gameLogic.onGameState.remove(this.handleState);
         this.gameLogic.onCorrectWord.remove(this.handleCorrectWord);
-        this.gameLogic.onSelectLetter.remove(this.handleSelectLetter); 
+        this.gameLogic.onSelectLetter.remove(this.handleSelectLetter);*/
         return status;   
     }
 }

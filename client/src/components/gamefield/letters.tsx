@@ -5,7 +5,7 @@ import { ILetter, IPlayerData } from "../../gameLogic/interfaces";
 import { isClosest } from "../../gameLogic/logicTools";
 import { LineOverlay, WordOverlay } from "../../animatedList";
 import './hex.css';
-import { hex } from "../../consts";
+//import { hex } from "../../consts";
 
 interface ILettersProps {
   client: PlayerClient | PlayerLocal;
@@ -17,9 +17,10 @@ interface ILettersProps {
   letters: Array<Array<ILetter>>;
   animate: Array<ILetter>;
   hintMask: Array<Array<Array<number>>>;
+  hex: boolean
 }
 
-export function Letters({ client, players, currentPlayerIndex, selected, scale, onSubmit, letters, animate, hintMask }: ILettersProps) {
+export function Letters({ client, players, currentPlayerIndex, selected, scale, onSubmit, letters, animate, hintMask, hex}: ILettersProps) {
   const [pointer, setPointer] = useState<{ x: number, y: number }>(null);
   const [winWord, setWinWord] = useState<Array<ILetter>>(null);
   const fieldRef = useRef<HTMLDivElement>();
@@ -203,7 +204,7 @@ export function Letters({ client, players, currentPlayerIndex, selected, scale, 
           })
         }
       </div>
-      <LineOverlay word={selected} pointer={pointer} base={scale}></LineOverlay>
+      <LineOverlay word={selected} pointer={pointer} base={scale} hex={hex}></LineOverlay>
       {winWord && <WordOverlay word={winWord}></WordOverlay>}
     </div>
   )

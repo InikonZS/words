@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import './animatedList.css';
 import { ILetter } from "./gameLogic/interfaces";
-import { hex } from "./consts";
+//import { hex } from "./consts";
 
 interface IAnimatedItemProps{
     data: Array<any>;
@@ -93,7 +93,7 @@ export function AnimatedList({}: IAnimatedListProps){
     )
 }
 
-export function LineOverlay({word, pointer, base}: {word: Array<ILetter>, pointer?: {x: number, y: number}, base: number}){
+export function LineOverlay({word, pointer, base, hex}: {word: Array<ILetter>, pointer?: {x: number, y: number}, base: number, hex: boolean}){
     const hexWidth = (3 ** 0.5 / 2);
     const lineDataHex = word.map((it, i)=> ({
         l: i==0?'M' : 'L', 

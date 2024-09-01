@@ -102,7 +102,7 @@ socket.on('request', (request) => {
   connection.on('message', (message)=>{
     if (message.type == 'utf8'){
       const parsed = JSON.parse(message.utf8Data)
-      console.log("Message", parsed)
+      //console.log("Message", parsed)
       if (!('type' in parsed)) {
           return;
       }
@@ -143,9 +143,12 @@ socket.on('request', (request) => {
   console.log(new Date() + ' Connection accepted.')
   //const player = new PlayerServer(gameLogic, connection);
   let user: LobbyUser = null;
+  console.log('params', params);
   if (params['session']){
     user = users.find(it=> it.session == params['session']);
+    //console.log('user', user);
     if (user){
+      console.log('restore user', user.name);
       user.updateConnection(connection);
       connection.sendUTF(JSON.stringify({
         type: 'restoreSession',
@@ -160,6 +163,7 @@ socket.on('request', (request) => {
   }
   if (!user){
     user = new LobbyUser(rooms, connection);
+    console.log('new user', user.name);
     users.push(user);
     connection.sendUTF(JSON.stringify({
       type: 'newSession',

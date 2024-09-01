@@ -10,13 +10,14 @@ import { TopPanel } from "../components/top-panel/top-panel";
 interface ISingleProps {
     socket: Socket;
     pageName: string;
-    onLocal: (lang: number)=>void;
-    onBot: (lang: number)=>void;
+    onLocal: (lang: number, hexMode: boolean)=>void;
+    onBot: (lang: number, hexMode: boolean)=>void;
     onBack: ()=>void;
 }
 
 export function Single({ socket, pageName, onLocal, onBot, onBack }: ISingleProps) {
     const [langIndex, setLangIndex] = useState(0);
+    const [fieldHexMode, setFieldHexMode] = useState<boolean>(false);
     const langs = langList.map(it=> it.name);
     console.log(langList);
     const {setLang, currentLang} = useLangContext();
@@ -32,15 +33,17 @@ export function Single({ socket, pageName, onLocal, onBot, onBack }: ISingleProp
                     <div className="lobby__buttons-wrapper">
                     <h2 className="lobby__title">Singleplayer mode</h2>
 
-                    <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />                   
+                    <ChangeWordsLang langs={langs} langIndex={langIndex} setLangIndex={setLangIndex} />   
+
+                    <button onClick={()=>setFieldHexMode(last=> !last)}>{fieldHexMode? 'hex' : 'rect'}</button>                
 
                     <h3>Select game type:</h3>
 
                     <button className="btn lobby__button lobby__button--single-bot" onClick={()=>{
-                        onBot(langIndex);
+                        onBot(langIndex, fieldHexMode);
                     }}>with bot</button>
                     <button className="btn lobby__button lobby__button--single-local" onClick={()=>{
-                        onLocal(langIndex);
+                        onLocal(langIndex, fieldHexMode);
                     }}>{currentLang['singlePlayerButton']}</button>
 
                     </div>

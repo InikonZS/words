@@ -78,6 +78,9 @@ export default function App() {
       const socket = new Socket();
       socket.onConnect = ()=>{
         setSocket(socket);
+        if (player instanceof PlayerClient){
+          player.updateSocket(socket);
+        }
       }
       socket.onClose = ()=>{
         socket.destroy();
@@ -88,7 +91,7 @@ export default function App() {
         setTimeout(()=>{
           console.log('try connect');
           //recursive reconnect attempt
-          //connect();
+          connect();
         }, 3000);
       }
     }
@@ -175,12 +178,12 @@ export default function App() {
           onBack = {()=>{
             setPageName('lobby');
           }}
-          onLocal={(lang)=>{
-            setPlayer(new PlayerLocal(lang, false));
+          onLocal={(lang, hexMode)=>{
+            setPlayer(new PlayerLocal(lang, hexMode, false));
             setPageName('gameField');
           }}
-          onBot = {(lang)=>{
-            setPlayer(new PlayerLocal(lang, true));
+          onBot = {(lang, hexMode)=>{
+            setPlayer(new PlayerLocal(lang, hexMode, true));
             setPageName('gameField');
           }}
         />}

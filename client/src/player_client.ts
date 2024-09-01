@@ -16,12 +16,21 @@ export class PlayerClient{
     }
 
     constructor(socket:Socket, roomName: string){
+        console.log('created player client');
         this.roomName = roomName;
+        //this.socket = socket;
+        this.updateSocket(socket);
+    }
+
+    updateSocket(socket:Socket){
         this.socket = socket;
         socket.onMessage = (message)=>{
+            if (message.room != this.roomName) return;
             if (message.type == 'roomState'){
                 const state: IRoomState = message.data;
-                this.onRoomState(state);
+                if (state.roomName == this.roomName){
+                    this.onRoomState(state);
+                }
             }
 
             if (message.type == 'state'){
@@ -52,14 +61,16 @@ export class PlayerClient{
     submitWord(selected:ILetter[]){
         this.socket.sendState({
             type: 'submitWord',
-            data: {selected}
+            data: {selected},
+            room: this.roomName
         })
     }
 
     selectLetter(selected:ILetter[]){
         this.socket.sendState({
             type: 'selectLetter',
-            data: selected
+            data: selected,
+            room: this.roomName
         })
     }
 
@@ -67,21 +78,24 @@ export class PlayerClient{
         console.log('getState');
         return this.socket.sendState({
             type: 'getState',
-            data: {}
+            data: {},
+            room: this.roomName
         })
     }
 
     leaveRoom(){
         return this.socket.sendState({
             type: 'leaveRoom',
-            data: {}
+            data: {},
+            room: this.roomName
         })
     }
 
     shuffle() {
         return this.socket.sendState({
             type: 'shuffle',
-            data: {}
+            data: {},
+            room: this.roomName
         })
     }
 
@@ -89,14 +103,16 @@ export class PlayerClient{
         //this.gameLogic.start();
         return this.socket.sendState({
             type: 'requestStart',
-            data: {}
+            data: {},
+            room: this.roomName
         })
     }
 
     showWords():Promise<string[]>{
         return this.socket.sendState({
             type: 'showWords',
-            data: {}
+            data: {},
+            room: this.roomName
         })
         //return [];
     }
@@ -104,7 +120,8 @@ export class PlayerClient{
     showMask():Promise<number[][][]>{
         return this.socket.sendState({
             type: 'showMask',
-            data: {}
+            data: {},
+            room: this.roomName
         })
     }
 }

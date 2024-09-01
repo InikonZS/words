@@ -1,2 +1,2 @@
 export const moveTime = 30;
-export const hex = false;
+//export const hex = true;

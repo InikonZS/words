@@ -16,12 +16,13 @@ export class LobbyUser{
     }
 
     updateConnection(_connection: connection){
+        if(this.connection == _connection){return}
         this.connection = _connection; 
         const rooms = this.rooms;
         _connection.on('message', (message: Message)=>{
             if (message.type == 'utf8') {
                 const parsed = JSON.parse(message.utf8Data)
-                console.log("Message", parsed)
+                console.log("Message c", parsed)
                 if (!('type' in parsed)) {
                     return;
                 }
@@ -36,7 +37,11 @@ export class LobbyUser{
 
                 if (parsed.type == 'createRoom') {
                     const lang = parsed.data?.lang || 0;
-                    const name = rooms.addRoom(lang);
+                    const hex = parsed.data?.hex || false;
+                    const sx = parsed.data?.sx || 10;
+                    const sy = parsed.data?.sy || 10;
+                    const rounds = parsed.data?.rounds || 3;
+                    const name = rooms.addRoom(lang, hex, sx, sy, rounds);
                     _connection.sendUTF(JSON.stringify({
                         type: 'privateMessage',
                         requestId: parsed.requestId,
@@ -45,7 +50,7 @@ export class LobbyUser{
                 }
 
                 if (parsed.type == 'joinRoom') {
-                    console.log('joinRoom');
+                    console.log('joinRoom', this.name);
                     const result = rooms.join(this, parsed.data.roomName);
                     _connection.sendUTF(JSON.stringify({
                         type: 'privateMessage',

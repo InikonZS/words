@@ -13,7 +13,9 @@ export interface IRoomState{
     spectators: ISpectator[],
     isStartRequested: boolean,
     startRequestTime: number,
-    game: IGameState
+    game: IGameState,
+    hexMode: boolean,
+    roomName: string
 }
 
 export class RoomLogic{
@@ -30,10 +32,18 @@ export class RoomLogic{
     onSelectLetter: Signal<ILetter[]> = new Signal();
 
     onRoomState: Signal<IRoomState> = new Signal();
+    sx: number;
+    sy: number;
+    hexMode: boolean;
+    rounds: number;
 
-    constructor(name: string, lang: number){
+    constructor(name: string, lang: number, hexMode: boolean, sx: number = 10, sy: number = 10, rounds: number = 3){
         this.lang = lang;
         this.name = name;
+        this.hexMode = hexMode;
+        this.sx = sx;
+        this.sy = sy;
+        this.rounds = rounds
         /*this.logic = new GameLogic(langList.map(it=> it.gen)[lang], []);
         this.name = name;
         this.lastActivity = Date.now();*/
@@ -52,7 +62,7 @@ export class RoomLogic{
     }
 
     startGame(){
-        const game = new GameLogic(langList.map(it=> it.gen)[this.lang], this.generatePlayers());
+        const game = new GameLogic(langList.map(it=> it.gen)[this.lang], this.hexMode, this.sx, this.sy, this.rounds, this.generatePlayers());
         game.onGameState.add((state)=>{
             this.onGameState.emit(state);
         })
@@ -96,9 +106,12 @@ export class RoomLogic{
     }
 
     join(userName: string){
-        this.players.push({
-            name: userName
-        });
+        console.log('players room', this.players);
+        if (this.players.find(it=>it.name == userName) == undefined){
+            this.players.push({
+                name: userName
+            });
+        }
         this.sendState();
     }
 
@@ -110,10 +123,12 @@ export class RoomLogic{
         return {
             isStarted: this.isStarted(),
             lang: this.lang,
+            hexMode: this.hexMode,
             spectators: this.players,
             isStartRequested: !!this.gameStartTimer,
             startRequestTime: - Date.now() + this.gameStartRequestTime + (10000),
-            game: this.game?.getState()
+            game: this.game?.getState(),
+            roomName: this.name
         }
     }
 
@@ -129,6 +144,11 @@ export class RoomLogic{
 
     }*/
     leave(playerName:string){
+        this.players = this.players.filter(it=> it.name != playerName); 
+        console.log('leave room logic', !!this.game);
+        if (!this.game){
+            return;
+        }
         return this.game.leavePlayer(playerName);
     }
 
@@ -141,6 +161,9 @@ export class RoomLogic{
     }
 
     shuffle(name: string) {
+        if (!this.game){
+            return;
+        }
         return this.game.shuffle(name);
     }
 
@@ -153,14 +176,19 @@ export class RoomLogic{
     }
 
     submitWord(playerName: string, selected:Array<ILetter>){
+        console.log('room players', this.players)
         return this.game.submitWord(playerName, selected);
     }
 
     connectPlayer(playerName: string){
-        return this.game.connectPlayer(playerName);
+        return this.game?.connectPlayer(playerName);
     }
 
     disconnectPlayer(playerName: string){
+        //this.players = this.players.filter(it=> it.name != playerName); 
+        if (!this.game){
+            return;
+        }
         return this.game.disconnectPlayer(playerName);
     }
 
