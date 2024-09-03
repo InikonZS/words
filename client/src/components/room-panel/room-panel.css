@@ -1,0 +1,92 @@
+.room-panel{
+    width: calc(var(--base)* 270);
+    padding: calc(var(--base)* 20);
+    padding-bottom: calc(var(--base)* 25);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #be37f3;
+    border-radius: calc(var(--base)* 7);
+    box-shadow: 0px 0px 12px #8904bd;
+}
+
+.room-panel__head{
+    margin-bottom: calc(var(--base)* 24);
+}
+
+.room-panel__players{
+
+}
+
+.room-panel__player{
+
+}
+
+.room-panel__room-name{
+    color: #73d1ee;
+    font-size: calc(var(--base)* 24);
+    font-weight: bold;
+    margin-bottom: calc(var(--base)* 16);
+}
+.room-panel__button {
+    position: relative;
+    width: calc(var(--base) * 150);
+    height: calc(var(--base) * 45);
+    margin: calc(var(--base) * 0);
+    padding: calc(var(--base) * 10) calc(var(--base) * 5);
+    font-size: calc(var(--base) * 20);
+    color: #fff;
+    border-radius: calc(var(--base) * 7);
+    transition: all 0.5s;
+    overflow: hidden;
+}
+
+.room-panel__button--back {
+    position: relative;
+    border-top: #40c9f3;
+    background: linear-gradient(to bottom, #40c9f3 0%, #0d718f 100%);
+    border-bottom: 1px solid #0d718f;
+}
+  
+.room-panel__button--back:after {
+    content: '';
+    position: absolute;
+    top: calc(var(--base) * 11);
+    left: calc(var(--base) * 20);
+    width: calc(var(--base) * 25);
+    height: calc(var(--base) * 25);
+    background-image: url('../../assets/arrow-back.svg');
+    background-repeat: no-repeat;
+    background-size: calc(var(--base) * 25) calc(var(--base) * 25); 
+    transition: all 0.3s ease;
+}
+
+/*one-line*/
+.room-panel__head{
+    margin-bottom: calc(var(--base)*0);
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+.room-panel{
+    width: calc(var(--base)* 375);
+    padding: calc(var(--base)* 10);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    border: none;
+    box-shadow: none
+}
+
+.room-panel__room-name {
+    font-size: calc(var(--base)* 24);
+    font-weight: bold;
+    margin-left: calc(var(--base)* 18);
+    margin-bottom: calc(var(--base)* 0);
+    display: flex;
+    align-items: center;
+}
+
+.room-panel__players{
+    display: none;
+}
