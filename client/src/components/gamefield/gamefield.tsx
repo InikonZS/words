@@ -122,7 +122,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
             setWords(null);
             //console.log(isStarted, state.currentRound);
             if ((state.currentRound >= state.totalRounds)) {
-                //onWin({ players: state.players });
+                onWin({ players: state.players });
             }
             //}
         }
