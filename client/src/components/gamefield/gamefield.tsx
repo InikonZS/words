@@ -13,6 +13,7 @@ import { PlayerLocal } from "../../player_local";
 import { Hints } from '../hints/hints';
 import { Letters } from './letters';
 import { useSettingsContext } from "../../context";
+import { RoomPanel } from "../room-panel/room-panel";
 
 interface IGameFieldProps {
     player: PlayerClient | PlayerLocal;
@@ -189,7 +190,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                     }}> click to start</button>
                 </div>
 
-                <div className="game__nav">
+                {/*<div className="game__nav">
                     <span> room: {player.roomName}</span>
                     {startRequestTime}
 
@@ -207,14 +208,14 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                     <button onClick={() => {
                         document.body.requestFullscreen();
                     }}>fullscreen</button>
-                </div>
+                </div>*/}
 
                 <div className="game__center-container">
-                    <div className="players">
+                    {/*<div className="players">
                         {spectators && spectators.map((player, index) => {
                             return <div>{player.name}</div>
                         })}
-                    </div>
+                    </div>*/}
                     <div className="players">
                         {players.map((player, index) => {
                             return <Player playerData={player} isActive={currentPlayerIndex == index}></Player>
@@ -227,6 +228,7 @@ export default function GameField({ player, onLeave, onWin, scale }: IGameFieldP
                     <div className="field__wrapper">
 
                         <div className="field__item field__item--left">
+                            <RoomPanel spectators={spectators} client={player} onLeave={onLeave} />
                             {words && <div className="hint-words">
                                 {words.slice(0, 20).map(it => {
                                     return <span>{it} </span>

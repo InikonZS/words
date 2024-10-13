@@ -63,7 +63,6 @@
 }
 
 .user-info__wrapper {
-  width: 20%;
   padding: calc(var(--base) * 10) calc(var(--base) * 15);
   display: flex;
   justify-content: space-between;
@@ -77,6 +76,7 @@
 }
 
 .user-info__picture {
+  flex-shrink: 0;
   width: calc(var(--base) * 70);
   height: calc(var(--base) * 70);
   display: flex;
